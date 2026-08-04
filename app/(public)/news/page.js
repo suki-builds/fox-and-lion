@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import { fetchFromDato } from '../../../lib/datocms';
 import { NEWS_LIST_QUERY } from '../../../lib/queries';
+import PostCard from '../../../components/PostCard';
 
 export const revalidate = 3600;
 
@@ -13,24 +13,23 @@ export default async function NewsListPage() {
   const posts = data.allNewsPosts;
 
   return (
-    <div className="container">
+    <div className="container" style={{ paddingTop: '2.5rem' }}>
       <h1>News</h1>
-      <ul className="post-list">
+      <div className="post-grid" style={{ marginTop: '2rem' }}>
+        {posts.length === 0 && (
+          <p style={{ padding: '1.5rem' }}>Nothing published yet.</p>
+        )}
         {posts.map((post) => (
-          <li key={post.id}>
-            <span className="post-meta">
-              {new Date(post.publishedDate).toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              })}
-            </span>
-            <h2>
-              <Link href={`/news/${post.slug}`}>{post.title}</Link>
-            </h2>
-          </li>
+          <PostCard
+            key={post.id}
+            href={`/news/${post.slug}`}
+            date={post.publishedDate}
+            title={post.title}
+            showMedia={false}
+            category="News"
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

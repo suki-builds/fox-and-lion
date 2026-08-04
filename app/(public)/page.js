@@ -1,8 +1,12 @@
 import Link from 'next/link';
 import { fetchFromDato } from '../../lib/datocms';
 import { ANALYSIS_LIST_QUERY, NEWS_LIST_QUERY } from '../../lib/queries';
+import PostCard from '../../components/PostCard';
+import IllustrationPlaceholder from '../../components/IllustrationPlaceholder';
+import DefenceNewsList from '../../components/DefenceNewsList';
+import JobsList from '../../components/JobsList';
 
-export const revalidate = 3600; // re-check DatoCMS once an hour
+export const revalidate = 3600;
 
 export default async function HomePage() {
   const [analysisData, newsData] = await Promise.all([
@@ -10,51 +14,106 @@ export default async function HomePage() {
     fetchFromDato(NEWS_LIST_QUERY),
   ]);
 
-  const latestAnalysis = analysisData.allAnalysisPosts.slice(0, 3);
+  const analysisPosts = analysisData.allAnalysisPosts;
+  const featured = analysisPosts[0];
+  const recentAnalysis = analysisPosts.slice(1, 5);
   const latestNews = newsData.allNewsPosts.slice(0, 5);
 
+  const featuredDate = featured?.publishedDate
+    ? new Date(featured.publishedDate).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
+    : null;
+
   return (
-    <div className="container">
-      <section style={{ margin: '3rem 0' }}>
-        <h1>Fox and Lion</h1>
-        <p>UK and European defence technology, analysed properly.</p>
-      </section>
+    <>
+      {featured && (
+        <section className="hero">
+          <div className="hero__media">
+            {featured.coverImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={featured.coverImage.url} alt={featured.coverImage.alt || ''} />
+            ) : (
+              <IllustrationPlaceholder label="Hero illustration TBD" />
+            )}
+          </div>
+          <div className="hero__copy">
+            <p className="hero__label">
+              Long Read <span>&mdash; Latest Analysis</span>
+            </p>
+            <h1>{featured.title}</h1>
+            {featured.excerpt && <p className="hero__desc">{featured.excerpt}</p>}
+            <div className="hero__meta">
+              {featured.author && <span>{featured.author}</span>}
+              {featured.author && featuredDate && <span>&middot;</span>}
+              {featuredDate && <span>{featuredDate}</span>}
+            </div>
+            <div className="hero__cta">
+              <Link href={`/analysis/${featured.slug}`} className="eyebrow-link">
+                Read the full analysis &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
-      <section>
-        <h2>Latest Analysis</h2>
-        <ul className="post-list">
-          {latestAnalysis.map((post) => (
-            <li key={post.id}>
-              <span className="post-meta">
-                {new Date(post.publishedDate).toLocaleDateString('en-GB', {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                })}
-              </span>
-              <h2>
-                <Link href={`/analysis/${post.slug}`}>{post.title}</Link>
-              </h2>
-              <p>{post.excerpt}</p>
-            </li>
+      <div className="container">
+        <div className="section-header">
+          <h2 className="section-label">Recent Analysis</h2>
+          <Link href="/analysis" className="section-link">
+            All articles &rsaquo;
+          </Link>
+        </div>
+        <div className="post-grid">
+          {recentAnalysis.length === 0 && (
+            <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>
+          )}
+          {recentAnalysis.map((post) => (
+            <PostCard
+              key={post.id}
+              href={`/analysis/${post.slug}`}
+              date={post.publishedDate}
+              title={post.title}
+              excerpt={post.excerpt}
+              byline={post.author}
+              category="Analysis"
+              coverImageUrl={post.coverImage?.url}
+              coverImageAlt={post.coverImage?.alt}
+            />
           ))}
-        </ul>
-        <Link href="/analysis">All Analysis &rarr;</Link>
-      </section>
+        </div>
 
-      <section>
-        <h2>Latest News</h2>
-        <ul className="post-list">
+        <div className="section-header">
+          <h2 className="section-label">Latest News</h2>
+          <Link href="/news" className="section-link">
+            All articles &rsaquo;
+          </Link>
+        </div>
+        <div className="post-grid">
+          {latestNews.length === 0 && (
+            <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>
+          )}
           {latestNews.map((post) => (
-            <li key={post.id}>
-              <h2>
-                <Link href={`/news/${post.slug}`}>{post.title}</Link>
-              </h2>
-            </li>
+            <PostCard
+              key={post.id}
+              href={`/news/${post.slug}`}
+              date={post.publishedDate}
+              title={post.title}
+              showMedia={false}
+              category="News"
+            />
           ))}
-        </ul>
-        <Link href="/news">All News &rarr;</Link>
-      </section>
-    </div>
+        </div>
+
+        <JobsList />
+
+        <div className="section-header">
+          <h2 className="section-label">Defence News</h2>
+        </div>
+        <DefenceNewsList />
+      </div>
+    </>
   );
 }

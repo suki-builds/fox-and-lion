@@ -26,29 +26,42 @@ export default async function CareersDetailPage({ params }) {
 
   if (!post) {
     return (
-      <div className="container">
+      <div className="container" style={{ paddingTop: '2.5rem' }}>
         <h1>Not found</h1>
         <p>This listing does not exist or has been unpublished.</p>
       </div>
     );
   }
 
+  const formattedDate = new Date(post.publishedDate).toLocaleDateString(
+    'en-GB',
+    { day: 'numeric', month: 'long', year: 'numeric' }
+  );
+
   return (
-    <article className="container">
-      <span className="post-meta">
-        {new Date(post.publishedDate).toLocaleDateString('en-GB', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        })}
-      </span>
+    <article className="container" style={{ paddingTop: '2.5rem' }}>
       <h1>{post.title}</h1>
-      <p>{post.description}</p>
-      <p>
-        <a href={post.applyUrl} target="_blank" rel="noopener noreferrer">
-          Apply here &rarr;
-        </a>
-      </p>
+
+      <div className="article-meta">
+        <div className="article-meta__block">
+          <span className="article-meta__label">Posted</span>
+          <span className="article-meta__value">{formattedDate}</span>
+        </div>
+      </div>
+
+      <div className="article-body">
+        <p>{post.description}</p>
+        <p>
+          <a
+            href={post.applyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="eyebrow-link"
+          >
+            Apply here &rarr;
+          </a>
+        </p>
+      </div>
     </article>
   );
 }

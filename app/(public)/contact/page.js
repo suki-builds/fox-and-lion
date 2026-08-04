@@ -4,7 +4,7 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="container">
+    <div className="container" style={{ paddingTop: '2.5rem' }}>
       <h1>Contact</h1>
       <p>
         Replace this with your real contact details or a contact form.

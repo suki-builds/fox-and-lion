@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import { fetchFromDato } from '../../../lib/datocms';
 import { ANALYSIS_LIST_QUERY } from '../../../lib/queries';
+import PostCard from '../../../components/PostCard';
 
 export const revalidate = 3600;
 
@@ -13,25 +13,26 @@ export default async function AnalysisListPage() {
   const posts = data.allAnalysisPosts;
 
   return (
-    <div className="container">
+    <div className="container" style={{ paddingTop: '2.5rem' }}>
       <h1>Analysis</h1>
-      <ul className="post-list">
+      <div className="post-grid" style={{ marginTop: '2rem' }}>
+        {posts.length === 0 && (
+          <p style={{ padding: '1.5rem' }}>Nothing published yet.</p>
+        )}
         {posts.map((post) => (
-          <li key={post.id}>
-            <span className="post-meta">
-              {new Date(post.publishedDate).toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              })}
-            </span>
-            <h2>
-              <Link href={`/analysis/${post.slug}`}>{post.title}</Link>
-            </h2>
-            <p>{post.excerpt}</p>
-          </li>
+          <PostCard
+            key={post.id}
+            href={`/analysis/${post.slug}`}
+            date={post.publishedDate}
+            title={post.title}
+            excerpt={post.excerpt}
+            byline={post.author}
+            category="Analysis"
+            coverImageUrl={post.coverImage?.url}
+            coverImageAlt={post.coverImage?.alt}
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

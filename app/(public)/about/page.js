@@ -4,7 +4,7 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="container">
+    <div className="container" style={{ paddingTop: '2.5rem' }}>
       <h1>About Fox and Lion</h1>
       <p>
         Replace this with your real About copy from the current Wix site.

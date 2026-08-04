@@ -4,12 +4,10 @@ import {
   ANALYSIS_LIST_QUERY,
   ANALYSIS_DETAIL_QUERY,
 } from '../../../../lib/queries';
+import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
 
 export const revalidate = 3600;
 
-// Pre-builds a page for every existing Analysis post at build time.
-// New posts published in DatoCMS after that will render on first request
-// (Next.js "ISR" — incremental static regeneration) then get cached.
 export async function generateStaticParams() {
   const data = await fetchFromDato(ANALYSIS_LIST_QUERY);
   return data.allAnalysisPosts.map((post) => ({ slug: post.slug }));
@@ -30,33 +28,57 @@ export default async function AnalysisDetailPage({ params }) {
 
   if (!post) {
     return (
-      <div className="container">
+      <div className="container" style={{ paddingTop: '2.5rem' }}>
         <h1>Not found</h1>
         <p>This article does not exist or has been unpublished.</p>
       </div>
     );
   }
 
+  const formattedDate = new Date(post.publishedDate).toLocaleDateString(
+    'en-GB',
+    { day: 'numeric', month: 'long', year: 'numeric' }
+  );
+
   return (
-    <article className="container">
-      <span className="post-meta">
-        {new Date(post.publishedDate).toLocaleDateString('en-GB', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        })}
-        {post.author ? ` · ${post.author}` : ''}
-      </span>
-      <h1>{post.title}</h1>
-      {post.coverImage && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={post.coverImage.url}
-          alt={post.coverImage.alt || ''}
-          style={{ width: '100%', height: 'auto', margin: '1.5rem 0' }}
-        />
-      )}
-      <StructuredText data={post.body} />
+    <article>
+      <section className="hero">
+        <div className="hero__media">
+          {post.coverImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={post.coverImage.url}
+              alt={post.coverImage.alt || ''}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          ) : (
+            <IllustrationPlaceholder />
+          )}
+        </div>
+        <div className="hero__copy">
+          <h1>{post.title}</h1>
+          {post.excerpt && <p className="hero__eyebrow">{post.excerpt}</p>}
+        </div>
+      </section>
+
+      <div className="container">
+        <div className="article-meta">
+          {post.author && (
+            <div className="article-meta__block">
+              <span className="article-meta__label">Author</span>
+              <span className="article-meta__value">{post.author}</span>
+            </div>
+          )}
+          <div className="article-meta__block">
+            <span className="article-meta__label">Date</span>
+            <span className="article-meta__value">{formattedDate}</span>
+          </div>
+        </div>
+
+        <div className="article-body">
+          <StructuredText data={post.body} />
+        </div>
+      </div>
     </article>
   );
 }
