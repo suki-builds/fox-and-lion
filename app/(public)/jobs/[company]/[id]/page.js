@@ -3,7 +3,7 @@ import { getJobDetail } from '../../../../../lib/ats';
 
 export async function generateMetadata({ params }) {
   const job = await getJobDetail(params.company, params.id);
-  return { title: job ? `${job.title} — ${job.company} — Fox and Lion` : 'Job not found — Fox and Lion' };
+  return { title: job ? `${job.title} — ${job.company} — Fox and Lion` : 'Role not found — Fox and Lion' };
 }
 
 export default async function JobDetailPage({ params }) {
@@ -13,7 +13,7 @@ export default async function JobDetailPage({ params }) {
     return (
       <div className="container">
         <Link href="/jobs" className="job-detail__back">
-          &larr; All jobs
+          &larr; All careers
         </Link>
         <div className="job-detail__not-found">
           <h1>Role not found</h1>
@@ -34,7 +34,7 @@ export default async function JobDetailPage({ params }) {
   return (
     <div className="container">
       <Link href="/jobs" className="job-detail__back">
-        &larr; All jobs
+        &larr; All careers
       </Link>
 
       <div className="job-detail__header">

@@ -1,8 +1,9 @@
 # Fox and Lion — Next.js site
 
-Phase 1 scaffold: core site with three manually-authored content sections
-(Analysis, News, Careers) backed by DatoCMS. No digest integration, no
-auth, no community layer — those come later.
+Phase 1 scaffold: core site with two manually-authored content sections
+(Analysis, News) backed by DatoCMS, plus a live jobs board sourced
+directly from company ATS APIs (see `lib/ats.js`). No digest integration,
+no auth, no community layer — those come later.
 
 ## What's already built
 
@@ -10,8 +11,11 @@ auth, no community layer — those come later.
   every current page together so that when the community layer (Phase 2)
   gets added, you add auth-checking middleware to one new `(community)`
   folder instead of touching these pages.
-- List and detail pages for Analysis, News, and Careers, all pulling from
-  DatoCMS via GraphQL.
+- List and detail pages for Analysis and News, pulling from DatoCMS via
+  GraphQL.
+- A live `/jobs` board pulling directly from each company's public ATS
+  API (Greenhouse, Lever) — see `lib/ats.js` for the company list and
+  the caching/exclusion notes.
 - Home, About, and Contact pages (About/Contact are static placeholders —
   edit the files directly, they don't need to live in DatoCMS since they
   change rarely).
@@ -56,15 +60,6 @@ names (the code queries by these names):
 | Commentary | `commentary` | Structured text |
 | Published Date | `published_date` | Date |
 
-**Careers Post** (model API name: `careers_post`)
-| Field label | Field API name | Type |
-|---|---|---|
-| Title | `title` | Single line string |
-| Slug | `slug` | Slug (linked to Title) |
-| Description | `description` | Multi-line text |
-| Apply URL | `apply_url` | Single line string |
-| Published Date | `published_date` | Date |
-
 DatoCMS auto-generates GraphQL field names from these — camelCase versions
 of what's above (e.g. `publishedDate`, `coverImage`, `sourceUrl`). If you
 name fields differently than this table, you'll need to update
@@ -92,10 +87,9 @@ least one entry to each DatoCMS model.
 
 ### 5. Migrate your existing content
 
-Manually copy each existing Analysis article, News item, and Careers post
-from Wix into the matching DatoCMS model. There's no shortcut for this —
-budget real time for it, especially for Analysis if there's a large
-back-catalogue.
+Manually copy each existing Analysis article and News item from Wix into
+the matching DatoCMS model. There's no shortcut for this — budget real
+time for it, especially for Analysis if there's a large back-catalogue.
 
 ### 6. Deploy to Vercel
 

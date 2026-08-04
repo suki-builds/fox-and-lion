@@ -32,7 +32,7 @@ const sourceSans = Source_Sans_3({
 
 export const metadata = {
   title: 'Fox and Lion',
-  description: 'UK and European defence technology analysis, news, and careers.',
+  description: 'UK and European defence technology analysis, news, and jobs.',
 };
 
 export default function RootLayout({ children }) {

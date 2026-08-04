@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { fetchFromDato } from '../../lib/datocms';
 import { ANALYSIS_LIST_QUERY, NEWS_LIST_QUERY } from '../../lib/queries';
+import { getAllJobs } from '../../lib/ats';
 import PostCard from '../../components/PostCard';
 import IllustrationPlaceholder from '../../components/IllustrationPlaceholder';
 import DefenceNewsList from '../../components/DefenceNewsList';
@@ -9,10 +10,15 @@ import JobsList from '../../components/JobsList';
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  const [analysisData, newsData] = await Promise.all([
+  const [analysisData, newsData, jobs] = await Promise.all([
     fetchFromDato(ANALYSIS_LIST_QUERY),
     fetchFromDato(NEWS_LIST_QUERY),
+    getAllJobs().catch((err) => {
+      console.warn('Homepage jobs fetch failed:', err);
+      return [];
+    }),
   ]);
+  const latestJobs = jobs.slice(0, 5);
 
   const analysisPosts = analysisData.allAnalysisPosts;
   const featured = analysisPosts[0];
@@ -107,7 +113,7 @@ export default async function HomePage() {
           ))}
         </div>
 
-        <JobsList />
+        <JobsList jobs={latestJobs} />
 
         <div className="section-header">
           <h2 className="section-label">Defence News</h2>

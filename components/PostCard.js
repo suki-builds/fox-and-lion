@@ -12,8 +12,8 @@ export function initials(name) {
 }
 
 // A single row in a post list — category, headline, excerpt, byline, date,
-// and an optional thumbnail. Used by the homepage feed plus the Analysis,
-// News, and Careers list pages so all four stay visually consistent.
+// and an optional thumbnail. Used by the homepage feed plus the Analysis
+// and News list pages so all three stay visually consistent.
 export default function PostCard({
   href,
   date,

@@ -1,13 +1,13 @@
 import { getAllJobs, COMPANIES } from '../../../lib/ats';
 import JobsBoard from '../../../components/JobsBoard';
 
-// No caching yet — each request re-fetches all four ATS APIs live. Fine
-// for now since the fetch-and-refresh scheduling is a deliberately
-// separate piece of work; revisit once that's built.
-export const dynamic = 'force-dynamic';
+// getAllJobs() is itself cached (see lib/ats.js) — this just needs to
+// match that window so the rendered page and the underlying data refresh
+// together.
+export const revalidate = 3600;
 
 export const metadata = {
-  title: 'Jobs — Fox and Lion',
+  title: 'Careers — Fox and Lion',
 };
 
 export default async function JobsPage() {
@@ -17,10 +17,10 @@ export default async function JobsPage() {
   return (
     <div className="container" style={{ paddingTop: '2.5rem' }}>
       <div className="jobs-board__header">
-        <h1>Defence Tech Jobs</h1>
+        <h1>Defence Tech Careers</h1>
         <p>
-          Open roles pulled directly from Anduril, Palantir, Shield AI, and Helsing&rsquo;s public
-          job boards &mdash; refreshed hourly.
+          Open roles pulled directly from Anduril, Palantir, and Helsing&rsquo;s public job
+          boards &mdash; refreshed hourly.
         </p>
       </div>
       <JobsBoard jobs={jobs} companies={companies} />
