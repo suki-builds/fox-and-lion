@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import IllustrationPlaceholder from './IllustrationPlaceholder';
 
-function initials(name) {
+export function initials(name) {
   return name
     .split(' ')
     .map((part) => part[0])

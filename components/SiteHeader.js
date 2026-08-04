@@ -28,6 +28,7 @@ export default function SiteHeader() {
           <Link href="/analysis">Analysis</Link>
           <Link href="/news">News</Link>
           <Link href="/careers">Careers</Link>
+          <Link href="/jobs">Jobs</Link>
         </nav>
         <div className="site-header__actions">
           <button type="button" className="site-header__search" aria-label="Search">
