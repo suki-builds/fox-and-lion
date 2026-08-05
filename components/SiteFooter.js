@@ -12,6 +12,7 @@ export default function SiteFooter() {
         </div>
         <nav className="site-footer__nav">
           <Link href="/about">About</Link>
+          <Link href="/submission-guidelines">Submission Guidelines</Link>
           <Link href="/contact">Contact</Link>
         </nav>
       </div>
