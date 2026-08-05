@@ -108,7 +108,7 @@ export default async function HomePage() {
               date={post.publishedDate}
               title={post.title}
               showMedia={false}
-              category="News"
+              sourceUrl={post.sourceUrl}
             />
           ))}
         </div>

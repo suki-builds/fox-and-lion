@@ -488,6 +488,10 @@ a {
   white-space: nowrap;
 }
 
+.post-card__source {
+  color: var(--color-accent);
+}
+
 .post-card__media {
   width: 220px;
   height: 132px;

@@ -11,9 +11,40 @@ export function initials(name) {
     .toUpperCase();
 }
 
-// A single row in a post list — category, headline, excerpt, byline, date,
-// and an optional thumbnail. Used by the homepage feed plus the Analysis
-// and News list pages so all three stay visually consistent.
+// Outlets whose name is an acronym, not a word — title-casing the domain
+// label would otherwise turn "rusi.org" into "Rusi" instead of "RUSI".
+// Add to this as more come up in real content.
+const SOURCE_NAME_OVERRIDES = {
+  rusi: 'RUSI',
+  bbc: 'BBC',
+  cnn: 'CNN',
+  npr: 'NPR',
+  pbs: 'PBS',
+  'euro-sd': 'Euro-SD',
+};
+
+// Derives a display name from a source URL's domain (e.g.
+// "https://www.reuters.com/..." -> "Reuters") since News posts only
+// store the URL, not a separate source-name field.
+function sourceNameFromUrl(url) {
+  if (!url) return null;
+  try {
+    const hostname = new URL(url).hostname.replace(/^www\./, '');
+    const label = hostname.split('.')[0];
+    const override = SOURCE_NAME_OVERRIDES[label.toLowerCase()];
+    if (override) return override;
+    return label
+      .split(/[-_]/)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  } catch {
+    return null;
+  }
+}
+
+// A single row in a post list — category, headline, excerpt, byline/source,
+// date, and an optional thumbnail. Used by the homepage feed plus the
+// Analysis and News list pages so all three stay visually consistent.
 export default function PostCard({
   href,
   date,
@@ -21,6 +52,7 @@ export default function PostCard({
   excerpt,
   byline,
   category,
+  sourceUrl,
   showMedia = true,
   coverImageUrl,
   coverImageAlt,
@@ -32,6 +64,7 @@ export default function PostCard({
         year: 'numeric',
       })
     : null;
+  const sourceName = sourceNameFromUrl(sourceUrl);
 
   return (
     <Link href={href} className="post-card">
@@ -44,6 +77,12 @@ export default function PostCard({
             <>
               <span className="post-card__avatar">{initials(byline)}</span>
               <span className="post-card__byline-name">{byline}</span>
+              {formattedDate && <span>&middot;</span>}
+            </>
+          )}
+          {sourceName && (
+            <>
+              <span className="post-card__source">{sourceName}</span>
               {formattedDate && <span>&middot;</span>}
             </>
           )}

@@ -26,7 +26,7 @@ export default async function NewsListPage() {
             date={post.publishedDate}
             title={post.title}
             showMedia={false}
-            category="News"
+            sourceUrl={post.sourceUrl}
           />
         ))}
       </div>

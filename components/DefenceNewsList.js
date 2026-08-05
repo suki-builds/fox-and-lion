@@ -51,7 +51,7 @@ export default function DefenceNewsList() {
           <span className="news-list__index">{String(index + 1).padStart(2, '0')}</span>
           <div>
             <h3 className="news-list__headline">{item.headline}</h3>
-            <span className="news-list__source">via {item.source}</span>
+            <span className="news-list__source">{item.source}</span>
             <span className="news-list__time">{item.time}</span>
           </div>
         </div>
