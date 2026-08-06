@@ -99,7 +99,50 @@ time for it, especially for Analysis if there's a large back-catalogue.
   project settings (Settings > Environment Variables).
 - Deploy. Vercel gives you a `*.vercel.app` preview URL immediately.
 
-### 7. Domain cutover (do this last, once everything is tested)
+### 7. Set up on-demand revalidation (DatoCMS webhooks)
+
+The homepage, `/analysis`, and `/news` are cached for an hour (`revalidate:
+3600`), so by default a newly published article won't appear until that
+hour is up. `/api/revalidate` (see `app/api/revalidate/route.js`) lets
+DatoCMS push an instant refresh instead, the moment you publish.
+
+First, generate a secret and set it in both `.env.local` (for local
+testing) and Vercel's project environment variables:
+
+```
+openssl rand -hex 32
+```
+
+Paste the result into `REVALIDATE_SECRET` in both places.
+
+Then, in DatoCMS, go to **Settings > Webhooks** and create **two**
+webhooks (one per content model — this is what tells `/api/revalidate`
+which pages to refresh, via the `type` query param, so you don't need to
+touch anything if DatoCMS ever changes its payload format):
+
+**Webhook 1 — Analysis**
+- URL: `https://<your-domain>/api/revalidate?type=analysis`
+- Headers: add `X-Revalidate-Secret` set to the `REVALIDATE_SECRET` value
+  above
+- Filters: restrict to the **Analysis Post** model only
+- Triggering events: **Update**, **Publish**, **Unpublish**, **Delete**
+  (Create is harmless to include too, but a freshly created, unpublished
+  draft isn't shown on the site, so there's nothing to revalidate yet)
+
+**Webhook 2 — News**
+- Same as above, but URL `https://<your-domain>/api/revalidate?type=news`
+  and filtered to the **News Post** model only
+
+Use your Vercel `*.vercel.app` URL until the domain cutover below is
+done, then switch both webhook URLs to `https://foxandlion.pub`.
+
+To confirm it's working: publish or edit an entry in DatoCMS, then check
+Settings > Webhooks > (the webhook) > delivery log for a `200` response
+with a body like `{"revalidated":true,"type":"analysis","paths":[...]}`,
+and confirm the change shows up on the live site immediately rather than
+after an hour.
+
+### 8. Domain cutover (do this last, once everything is tested)
 
 - In Vercel, add `foxandlion.pub` as a custom domain.
 - Update the domain's DNS records (wherever it's registered) to point at
