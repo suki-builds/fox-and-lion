@@ -2,6 +2,7 @@ import { StructuredText } from 'react-datocms';
 import { fetchFromDato } from '../../../../lib/datocms';
 import { NEWS_LIST_QUERY, NEWS_DETAIL_QUERY } from '../../../../lib/queries';
 import { buildMetadata } from '../../../../lib/seo';
+import { getOgImage } from '../../../../lib/ogImage';
 
 export const revalidate = 3600;
 
@@ -38,10 +39,18 @@ export default async function NewsDetailPage({ params }) {
     'en-GB',
     { day: 'numeric', month: 'long', year: 'numeric' }
   );
+  const thumbnail = post.sourceUrl ? await getOgImage(post.sourceUrl) : null;
 
   return (
     <article className="container" style={{ paddingTop: '2.5rem' }}>
       <h1>{post.title}</h1>
+
+      {thumbnail && (
+        <div className="news-detail__image">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={thumbnail} alt="" />
+        </div>
+      )}
 
       <div className="article-meta">
         <div className="article-meta__block">
