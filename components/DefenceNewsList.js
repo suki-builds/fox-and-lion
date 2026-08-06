@@ -1,60 +1,36 @@
-// Placeholder wire-headline aggregator — not backed by a real feed yet.
-// Swap ITEMS for a real news-aggregation source when one is wired up.
-const ITEMS = [
-  {
-    headline: 'Pentagon awards $2.4bn contract for next-generation electronic warfare systems',
-    source: 'Defense News',
-    time: '1h ago',
-  },
-  {
-    headline: 'UK Ministry of Defence confirms Challenger 3 upgrade delays amid supply chain strain',
-    source: 'Reuters',
-    time: '2h ago',
-  },
-  {
-    headline: 'NATO allies agree framework for shared drone logistics across eastern flank',
-    source: 'Politico Europe',
-    time: '3h ago',
-  },
-  {
-    headline: "Israel's Rafael unveils new loitering munition variant with extended 12-hour endurance",
-    source: 'Breaking Defense',
-    time: '4h ago',
-  },
-  {
-    headline: 'Australia accelerates sovereign missile production amid Indo-Pacific readiness review',
-    source: 'The Australian',
-    time: '5h ago',
-  },
-  {
-    headline: 'US Space Force seeks industry proposals for proliferated LEO ground architecture',
-    source: 'SpaceNews',
-    time: '6h ago',
-  },
-  {
-    headline: 'Germany approves €1.1bn Patriot battery transfer to Ukraine after parliamentary vote',
-    source: 'Der Spiegel',
-    time: '8h ago',
-  },
-  {
-    headline: "DSEI 2026: Key themes emerging ahead of London's largest defence exhibition",
-    source: 'Janes',
-    time: '10h ago',
-  },
-];
+import Link from 'next/link';
+import { getOgImage } from '../lib/ogImage';
+import { sourceNameFromUrl, timeAgo } from '../lib/format';
 
-export default function DefenceNewsList() {
+const MAX_ITEMS = 8;
+
+// Same underlying News content as the /news page and the homepage's
+// "Latest News" cards, just in a denser numbered-list format with a
+// thumbnail pulled from each source article's og:image.
+export default async function DefenceNewsList({ posts }) {
+  const items = (posts || []).slice(0, MAX_ITEMS);
+
+  if (items.length === 0) {
+    return <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>;
+  }
+
+  const thumbnails = await Promise.all(items.map((post) => getOgImage(post.sourceUrl)));
+
   return (
     <div className="news-list">
-      {ITEMS.map((item, index) => (
-        <div className="news-list__item" key={item.headline}>
+      {items.map((post, index) => (
+        <Link href={`/news/${post.slug}`} className="news-list__item" key={post.id}>
           <span className="news-list__index">{String(index + 1).padStart(2, '0')}</span>
+          {thumbnails[index] && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className="news-list__thumb" src={thumbnails[index]} alt="" />
+          )}
           <div>
-            <h3 className="news-list__headline">{item.headline}</h3>
-            <span className="news-list__source">{item.source}</span>
-            <span className="news-list__time">{item.time}</span>
+            <h3 className="news-list__headline">{post.title}</h3>
+            <span className="news-list__source">{sourceNameFromUrl(post.sourceUrl)}</span>
+            <span className="news-list__time">{timeAgo(post.publishedDate)}</span>
           </div>
-        </div>
+        </Link>
       ))}
     </div>
   );

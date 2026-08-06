@@ -1,6 +1,7 @@
 import { StructuredText } from 'react-datocms';
 import { fetchFromDato } from '../../../../lib/datocms';
 import { NEWS_LIST_QUERY, NEWS_DETAIL_QUERY } from '../../../../lib/queries';
+import { buildMetadata } from '../../../../lib/seo';
 
 export const revalidate = 3600;
 
@@ -11,7 +12,13 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const data = await fetchFromDato(NEWS_DETAIL_QUERY, { slug: params.slug });
-  return { title: `${data.newsPost?.title ?? 'News'} — Fox and Lion` };
+  const post = data.newsPost;
+  if (!post) return { title: 'News — Fox and Lion' };
+
+  return buildMetadata({
+    seoTags: post.seoTags,
+    fallbackTitle: `${post.title} — Fox and Lion`,
+  });
 }
 
 export default async function NewsDetailPage({ params }) {

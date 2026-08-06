@@ -4,6 +4,7 @@ import {
   ANALYSIS_LIST_QUERY,
   ANALYSIS_DETAIL_QUERY,
 } from '../../../../lib/queries';
+import { buildMetadata } from '../../../../lib/seo';
 import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
 
 export const revalidate = 3600;
@@ -17,7 +18,14 @@ export async function generateMetadata({ params }) {
   const data = await fetchFromDato(ANALYSIS_DETAIL_QUERY, {
     slug: params.slug,
   });
-  return { title: `${data.analysisPost?.title ?? 'Analysis'} — Fox and Lion` };
+  const post = data.analysisPost;
+  if (!post) return { title: 'Analysis — Fox and Lion' };
+
+  return buildMetadata({
+    seoTags: post.seoTags,
+    fallbackTitle: `${post.title} — Fox and Lion`,
+    fallbackDescription: post.excerpt,
+  });
 }
 
 export default async function AnalysisDetailPage({ params }) {
@@ -76,7 +84,25 @@ export default async function AnalysisDetailPage({ params }) {
         </div>
 
         <div className="article-body">
-          <StructuredText data={post.body} />
+          <StructuredText
+            data={post.body}
+            renderBlock={({ record }) => {
+              if (record.__typename === 'ImageBlockRecord' && record.asset) {
+                return (
+                  <figure className="article-body__image">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={record.asset.url}
+                      alt={record.asset.alt || ''}
+                      width={record.asset.width}
+                      height={record.asset.height}
+                    />
+                  </figure>
+                );
+              }
+              return null;
+            }}
+          />
         </div>
       </div>
     </article>

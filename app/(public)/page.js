@@ -118,7 +118,7 @@ export default async function HomePage() {
         <div className="section-header">
           <h2 className="section-label">Defence News</h2>
         </div>
-        <DefenceNewsList />
+        <DefenceNewsList posts={newsData.allNewsPosts} />
       </div>
     </>
   );
