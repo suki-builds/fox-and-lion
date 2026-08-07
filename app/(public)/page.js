@@ -68,8 +68,8 @@ export default async function HomePage() {
       <div className="container">
         <div className="section-header">
           <h2 className="section-label">Recent Analysis</h2>
-          <Link href="/analysis" className="section-link">
-            All articles &rsaquo;
+          <Link href="/analysis" className="section-cta">
+            View all analysis &#8599;
           </Link>
         </div>
         <div className="post-grid">
@@ -93,8 +93,8 @@ export default async function HomePage() {
 
         <div className="section-header">
           <h2 className="section-label">Latest News</h2>
-          <Link href="/news" className="section-link">
-            All articles &rsaquo;
+          <Link href="/news" className="section-cta">
+            View all news &#8599;
           </Link>
         </div>
         <div className="post-grid">
