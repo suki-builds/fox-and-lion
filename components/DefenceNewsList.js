@@ -1,12 +1,12 @@
-import Link from 'next/link';
-import { getOgImage } from '../lib/ogImage';
-import { sourceNameFromUrl, timeAgo } from '../lib/format';
+import { getPageMeta } from '../lib/ogImage';
+import { resolveSourceName, timeAgo } from '../lib/format';
 
 const MAX_ITEMS = 8;
 
 // Same underlying News content as the /news page and the homepage's
-// "Latest News" cards, just in a denser numbered-list format with a
-// thumbnail pulled from each source article's og:image.
+// "Latest News" cards, just in a denser numbered-list format. Image,
+// headline, and source name all link out to the original source article —
+// this list is a pointer to outlets' own reporting, not our commentary.
 export default async function DefenceNewsList({ posts }) {
   const items = (posts || []).slice(0, MAX_ITEMS);
 
@@ -14,24 +14,52 @@ export default async function DefenceNewsList({ posts }) {
     return <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>;
   }
 
-  const thumbnails = await Promise.all(items.map((post) => getOgImage(post.sourceUrl)));
+  const metas = await Promise.all(items.map((post) => getPageMeta(post.sourceUrl)));
 
   return (
     <div className="news-list">
-      {items.map((post, index) => (
-        <Link href={`/news/${post.slug}`} className="news-list__item" key={post.id}>
-          <span className="news-list__index">{String(index + 1).padStart(2, '0')}</span>
-          {thumbnails[index] && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img className="news-list__thumb" src={thumbnails[index]} alt="" />
-          )}
-          <div>
-            <h3 className="news-list__headline">{post.title}</h3>
-            <span className="news-list__source">{sourceNameFromUrl(post.sourceUrl)}</span>
-            <span className="news-list__time">{timeAgo(post.publishedDate)}</span>
+      {items.map((post, index) => {
+        const meta = metas[index];
+        const sourceName = resolveSourceName(meta.siteName, post.sourceUrl);
+
+        return (
+          <div className="news-list__item" key={post.id}>
+            <span className="news-list__index">{String(index + 1).padStart(2, '0')}</span>
+            {meta.image && (
+              <a
+                href={post.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="news-list__thumb"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={meta.image} alt="" />
+              </a>
+            )}
+            <div>
+              <a
+                href={post.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="news-list__headline-link"
+              >
+                <h3 className="news-list__headline">{post.title}</h3>
+              </a>
+              {sourceName && (
+                <a
+                  href={post.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="news-list__source"
+                >
+                  {sourceName}
+                </a>
+              )}
+              <span className="news-list__time">{timeAgo(post.publishedDate)}</span>
+            </div>
           </div>
-        </Link>
-      ))}
+        );
+      })}
     </div>
   );
 }
