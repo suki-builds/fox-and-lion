@@ -23,7 +23,6 @@ export default async function HomePage() {
   const analysisPosts = analysisData.allAnalysisPosts;
   const featured = analysisPosts[0];
   const recentAnalysis = analysisPosts.slice(1, 5);
-  const latestNews = newsData.allNewsPosts.slice(0, 5);
 
   const featuredDate = featured?.publishedDate
     ? new Date(featured.publishedDate).toLocaleDateString('en-GB', {
@@ -92,33 +91,14 @@ export default async function HomePage() {
         </div>
 
         <div className="section-header">
-          <h2 className="section-label">Latest News</h2>
+          <h2 className="section-label">Defence News</h2>
           <Link href="/news" className="section-cta">
             View all news &#8599;
           </Link>
         </div>
-        <div className="post-grid">
-          {latestNews.length === 0 && (
-            <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>
-          )}
-          {latestNews.map((post) => (
-            <PostCard
-              key={post.id}
-              href={`/news/${post.slug}`}
-              date={post.publishedDate}
-              title={post.title}
-              showMedia={false}
-              sourceUrl={post.sourceUrl}
-            />
-          ))}
-        </div>
+        <DefenceNewsList posts={newsData.allNewsPosts} />
 
         <JobsList jobs={latestJobs} />
-
-        <div className="section-header">
-          <h2 className="section-label">Defence News</h2>
-        </div>
-        <DefenceNewsList posts={newsData.allNewsPosts} />
       </div>
     </>
   );

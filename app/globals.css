@@ -562,7 +562,7 @@ a {
   min-height: 132px;
 }
 
-/* ---------- Numbered defence-news list ---------- */
+/* ---------- Defence news list ---------- */
 
 .news-list {
   display: grid;
@@ -586,12 +586,13 @@ a {
 
 .news-list__thumb {
   display: block;
-  width: 64px;
-  height: 48px;
+  width: 88px;
+  height: 88px;
   flex-shrink: 0;
   overflow: hidden;
   background: var(--color-panel);
   border: 1px solid var(--color-border);
+  border-radius: 6px;
 }
 
 .news-list__thumb img {
@@ -599,15 +600,6 @@ a {
   height: 100%;
   object-fit: cover;
   display: block;
-}
-
-.news-list__index {
-  font-family: var(--mono-stack);
-  font-size: 0.82rem;
-  color: var(--color-text-muted);
-  width: 1.5rem;
-  flex-shrink: 0;
-  padding-top: 0.15rem;
 }
 
 .news-list__headline-link {
