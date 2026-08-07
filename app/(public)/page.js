@@ -81,9 +81,8 @@ export default async function HomePage() {
               href={`/analysis/${post.slug}`}
               date={post.publishedDate}
               title={post.title}
-              excerpt={post.excerpt}
               byline={post.author}
-              category="Analysis"
+              category={post.category || 'Analysis'}
               coverImageUrl={post.coverImage?.url}
               coverImageAlt={post.coverImage?.alt}
             />

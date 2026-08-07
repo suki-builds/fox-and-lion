@@ -64,6 +64,7 @@ export default async function AnalysisDetailPage({ params }) {
           )}
         </div>
         <div className="hero__copy">
+          <span className="category-tag">{post.category || 'Analysis'}</span>
           <h1>{post.title}</h1>
           {post.excerpt && <p className="hero__eyebrow">{post.excerpt}</p>}
         </div>

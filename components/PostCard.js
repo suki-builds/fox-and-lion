@@ -12,14 +12,13 @@ export function initials(name) {
     .toUpperCase();
 }
 
-// A single row in a post list — category, headline, excerpt, byline/source,
-// date, and an optional thumbnail. Used by the homepage feed plus the
-// Analysis and News list pages so all three stay visually consistent.
+// A single row in a post list — category, headline, byline/source, date,
+// and an optional thumbnail. Used by the homepage feed plus the Analysis
+// and News list pages so both stay visually consistent.
 export default function PostCard({
   href,
   date,
   title,
-  excerpt,
   byline,
   category,
   sourceUrl,
@@ -39,13 +38,11 @@ export default function PostCard({
   return (
     <Link href={href} className="post-card">
       <div className="post-card__content">
-        {category && <span className="post-card__category">{category}</span>}
+        {category && <span className="category-tag">{category}</span>}
         <h2>{title}</h2>
-        {excerpt && <p className="post-card__excerpt">{excerpt}</p>}
         <div className="post-card__meta">
           {byline && (
             <>
-              <span className="post-card__avatar">{initials(byline)}</span>
               <span className="post-card__byline-name">{byline}</span>
               {formattedDate && <span>&middot;</span>}
             </>
