@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { initials } from './PostCard';
+import CompanyLogo from './CompanyLogo';
 
 const PAGE_SIZE = 30;
 
@@ -18,7 +18,8 @@ function formatDate(iso) {
 export default function JobsBoard({ jobs, companies }) {
   const [company, setCompany] = useState('all');
   const [roleType, setRoleType] = useState('all');
-  const [location, setLocation] = useState('all');
+  const [country, setCountry] = useState('all');
+  const [workplaceType, setWorkplaceType] = useState('all');
   const [sort, setSort] = useState('newest');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
@@ -27,8 +28,16 @@ export default function JobsBoard({ jobs, companies }) {
     [jobs]
   );
 
-  const locations = useMemo(
-    () => Array.from(new Set(jobs.flatMap((job) => job.locations))).sort(),
+  const countries = useMemo(
+    () =>
+      Array.from(
+        new Set(jobs.flatMap((job) => job.locations.map((loc) => loc.country).filter(Boolean)))
+      ).sort(),
+    [jobs]
+  );
+
+  const workplaceTypes = useMemo(
+    () => Array.from(new Set(jobs.map((job) => job.workplaceType).filter(Boolean))).sort(),
     [jobs]
   );
 
@@ -36,7 +45,10 @@ export default function JobsBoard({ jobs, companies }) {
     let list = jobs;
     if (company !== 'all') list = list.filter((job) => job.companySlug === company);
     if (roleType !== 'all') list = list.filter((job) => job.roleType === roleType);
-    if (location !== 'all') list = list.filter((job) => job.locations.includes(location));
+    if (country !== 'all') {
+      list = list.filter((job) => job.locations.some((loc) => loc.country === country));
+    }
+    if (workplaceType !== 'all') list = list.filter((job) => job.workplaceType === workplaceType);
 
     const sorted = [...list];
     if (sort === 'newest') {
@@ -47,7 +59,7 @@ export default function JobsBoard({ jobs, companies }) {
       sorted.sort((a, b) => a.title.localeCompare(b.title));
     }
     return sorted;
-  }, [jobs, company, roleType, location, sort]);
+  }, [jobs, company, roleType, country, workplaceType, sort]);
 
   const visible = filtered.slice(0, visibleCount);
 
@@ -96,17 +108,34 @@ export default function JobsBoard({ jobs, companies }) {
         </div>
 
         <div className="jobs-board__filter">
-          <label htmlFor="filter-location">Location</label>
+          <label htmlFor="filter-country">Country</label>
           <select
-            id="filter-location"
+            id="filter-country"
             className="jobs-board__select"
-            value={location}
-            onChange={withPagingReset(setLocation)}
+            value={country}
+            onChange={withPagingReset(setCountry)}
           >
-            <option value="all">All locations</option>
-            {locations.map((l) => (
-              <option key={l} value={l}>
-                {l}
+            <option value="all">All countries</option>
+            {countries.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="jobs-board__filter">
+          <label htmlFor="filter-workplace">Workplace</label>
+          <select
+            id="filter-workplace"
+            className="jobs-board__select"
+            value={workplaceType}
+            onChange={withPagingReset(setWorkplaceType)}
+          >
+            <option value="all">All workplace types</option>
+            {workplaceTypes.map((w) => (
+              <option key={w} value={w}>
+                {w}
               </option>
             ))}
           </select>
@@ -141,7 +170,7 @@ export default function JobsBoard({ jobs, companies }) {
             className="job-row"
             key={job.id}
           >
-            <span className="job-row__avatar">{initials(job.company)}</span>
+            <CompanyLogo name={job.company} domain={job.companyDomain} className="job-row__avatar" />
             <div className="job-row__main">
               <div className="job-row__title-line">
                 <span className="job-row__title">{job.title}</span>
@@ -155,6 +184,7 @@ export default function JobsBoard({ jobs, companies }) {
             </div>
             <div className="job-row__meta">
               {formatDate(job.postedAt) && <span>{formatDate(job.postedAt)}</span>}
+              {job.workplaceType && <span className="job-row__badge">{job.workplaceType}</span>}
               {job.employmentType && <span className="job-row__badge">{job.employmentType}</span>}
             </div>
           </Link>

@@ -693,6 +693,8 @@ a {
   font-weight: 600;
   color: var(--color-text-body);
   flex-shrink: 0;
+  object-fit: contain;
+  padding: 6px;
 }
 
 .job-row__main {

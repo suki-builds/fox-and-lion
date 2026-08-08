@@ -42,6 +42,7 @@ export default async function JobDetailPage({ params }) {
         <h1>{job.title}</h1>
         <div className="job-detail__meta">
           {job.location && <span>{job.location}</span>}
+          {job.workplaceType && <span>{job.workplaceType}</span>}
           {job.roleType !== 'Other' && <span>{job.roleType}</span>}
           {job.employmentType && <span>{job.employmentType}</span>}
           {formattedDate && <span>Posted {formattedDate}</span>}

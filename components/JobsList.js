@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { initials } from './PostCard';
+import CompanyLogo from './CompanyLogo';
 
 function formatDate(iso) {
   if (!iso) return null;
@@ -27,7 +27,7 @@ export default function JobsList({ jobs }) {
       {jobs.length === 0 && <p style={{ padding: '1.5rem 0' }}>No open roles right now.</p>}
       {jobs.map((job) => (
         <Link href={`/jobs/${job.companySlug}/${job.platformId}`} className="job-row" key={job.id}>
-          <span className="job-row__avatar">{initials(job.company)}</span>
+          <CompanyLogo name={job.company} domain={job.companyDomain} className="job-row__avatar" />
           <div className="job-row__main">
             <div className="job-row__title-line">
               <span className="job-row__title">{job.title}</span>
@@ -39,6 +39,7 @@ export default function JobsList({ jobs }) {
           </div>
           <div className="job-row__meta">
             {formatDate(job.postedAt) && <span>{formatDate(job.postedAt)}</span>}
+            {job.workplaceType && <span className="job-row__badge">{job.workplaceType}</span>}
             {job.employmentType && <span className="job-row__badge">{job.employmentType}</span>}
           </div>
         </Link>
