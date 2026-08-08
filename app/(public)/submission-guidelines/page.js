@@ -4,7 +4,7 @@ export const metadata = {
 
 // Static page (not pulled from DatoCMS) since this changes rarely — edit
 // this file directly when the guidelines are updated. Source: Contributors'
-// Guidelines.docx.
+// Guidelines v04.docx.
 export default function SubmissionGuidelinesPage() {
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
@@ -12,99 +12,140 @@ export default function SubmissionGuidelinesPage() {
 
       <div className="article-body">
         <p>
-          We kindly ask all those who wish to publish with Fox and Lion to read the
-          guidelines in full prior to submitting an article. Submissions that are not in
-          line with the guidelines will be removed from consideration. Thank you.
+          Contributors are kindly requested to read these guidelines in full before
+          submitting an article. Submissions that are not in line with the guidelines will
+          not be considered for publication. Thank you.
         </p>
         <p>
           Fox and Lion exists to bring clarity and candour to the conversation around
           defence capability and technology. We are fortunate to be read by platoon
-          leaders and procurement officials alike, by engineers, founders investors,
-          civil servants, and most importantly, serving and former warfighters. We ask a
-          great deal of the those who write for us, and in return we offer a readership
-          with genuine interest in what is written. Please read this guide in full before
-          you pitch. It will save us both time.
+          leaders and procurement officials alike, by engineers, founders, investors, and
+          civil servants, and, most importantly, by serving and former warfighters. We ask
+          a great deal of those who write for us, and in return we offer a readership with
+          a genuine interest in what is written. We would ask that this guide be read in
+          full before a pitch is made; it will save contributors and editors alike a great
+          deal of time.
         </p>
 
-        <h2>Who We Publish</h2>
+        <h2>Whom We Publish</h2>
         <p>
           Our contributors are those who have stood close enough to a subject to have
-          earnt an opinion on it. In practice, this usually means one or more of the
-          following: service in uniform, meaningful time inside government or industry,
-          or a clear record of peer-reviewed or otherwise rigorously tested research.
+          earned an opinion on it. In practice, this generally means one or more of the
+          following: service in uniform, meaningful time within government or industry, or
+          a clear record of peer-reviewed or otherwise rigorously tested research.
           Engineers, programme managers, and founders working at the sharp end of the
-          defence technology sector are all equally welcome. Other valuable experiences
-          that would qualify someone to write for Fox and Lion include considerable time
-          spent on the ground either working on or studying an issue of interest to our
-          readers, especially in a war zone. This can include work with an NGO or as a
-          journalist (please note, however, that we do not publish journalistic
-          reporting &mdash; our publication is dedicated to analysis and commentary).
-          Please explain to us clearly why your experience makes you the right person to
-          write the article you want to publish with us.
+          defence technology sector are all equally welcome. Other valuable grounding
+          includes considerable time spent on the ground, working on or studying an issue
+          of interest to our readers, particularly within a conflict zone; this may
+          include work with a non-governmental organisation or in journalism, though we
+          would note that Fox and Lion is dedicated to analysis and commentary rather than
+          journalistic reporting. We would ask that contributors explain clearly why their
+          experience makes them the right person to write the piece proposed.
         </p>
         <p>
-          We are conscious that our field has not always drawn on the full range of
-          talent available to it. Pitches from writers of backgrounds under-represented
-          in defence and technology commentary, and from those earlier in their careers
-          with something genuinely new to say are particularly welcome.
+          We are conscious that our field has not always drawn upon the full range of
+          talent available to it. Pitches from writers of backgrounds under-represented in
+          defence and technology, as well as from those earlier in their careers with
+          something genuinely new to say, are particularly welcome.
         </p>
         <p>
-          We are no longer accepting pitches or submissions from those whose only claim
-          to the subject is academic interest or from those absent other relevant
-          non-academic experience.
+          We are not in a position to accept pitches or submissions from those whose sole
+          claim to the subject is academic interest, absent other relevant, non-academic
+          experience.
         </p>
         <p>
-          We do not accept pitches or submissions routed through communications
-          agencies, PR consultants, or press offices. We would like to hear from the
-          author directly, whatever their seniority.
+          We do not accept pitches or submissions routed through communications agencies,
+          PR consultants, or press offices, and would ask to hear from the author
+          directly, whatever their seniority.
         </p>
 
         <h2>The Submission Process</h2>
         <p>
-          All pitches should be submitted through our submissions portal. You are kindly
-          asked not to submit pitches via email or any other forms of personal
-          communication. Pitches should be short (fewer than 200 words), comprising your
-          main argument and a couple of sentences on why your experience makes you
-          well-suited to address the topic in question.
+          All pitches should be submitted through our submissions portal; we would ask
+          that pitches not be sent by email or any other form of personal correspondence.
+          A pitch should be brief (under 200 words) comprising the main argument to be
+          made, together with a short account of why the author&rsquo;s experience
+          qualifies them to make it.
         </p>
         <p>
-          We read everything we receive, but we are a small team, and patience is
-          appreciated. We aim to response within five working days. If a fortnight
-          passes without a response, a polite follow-up through the portal is entirely
-          welcome. Silence on our end reflects our volume of work, never a judgement on
-          yours.
+          Every pitch received is read, though as a small team your patience is greatly
+          appreciated. We aim to respond within five working days. Should a fortnight pass
+          without a response from us, a polite follow-up through the portal is entirely
+          welcome. Silence on our part reflects the volume of work before us, never a
+          judgement on the pitch itself.
         </p>
         <p>
-          If we accept your pitch and ask for a full submission, it can take anywhere
-          from one day to over a week to review and edit your article. Being asked for a
-          full submission is not the same as being accepted for publication. We review
-          thoroughly, sometimes with the help of outside subject-matter experts, and we
-          do occasionally pass on pieces at that later stage. Should that happen, we will
-          try to point you toward another outlet that may be a better home for the work.
+          Should a pitch be accepted and a full submission requested, review and editing
+          may take anywhere from a day to over a week. Being asked for a full submission
+          is not equivalent to acceptance for publication; we review thoroughly, at times
+          with the assistance of outside subject-matter readers, and do occasionally
+          decline pieces at that later stage. Where this occurs, we will endeavour to
+          suggest another outlet that may better suit the work.
         </p>
         <p>
-          We also ask that contributors do not submit an article to us while it is under
-          consideration elsewhere, and that we are promptly informed if circumstances
-          change. Editorial time, once spent, cannot be recovered, and we take this
+          We would further ask that a piece not be submitted elsewhere while under
+          consideration with us, and that we be informed promptly should circumstances
+          change. Editorial time, once given, cannot be recovered, and we take this
           courtesy seriously in both directions.
         </p>
 
         <h2>Additional Notes</h2>
-        <ul>
-          <li>
-            <strong>Do not assume knowledge on behalf of the reader</strong> &mdash; Our
-            readership comprises a diverse range of professions and careers. Not everyone
-            has been through the same experience as yourself. Please take time to
-            explain concepts and terms so that a broad audience can understand.
-          </li>
-          <li>
-            <strong>No jargon</strong> &mdash; Following on from assuming knowledge,
-            acronyms, initialisms, and specialist terms are a staple of military
-            language. Unfortunately, they differ vastly from branch, to nation, to
-            specific areas of expertise. Aside from terms used most commonly, such as UN,
-            NATO,&hellip;
-          </li>
-        </ul>
+        <p>
+          <strong>On our readership.</strong> Fox and Lion is read across the world, and
+          contributors are asked to bear in mind that their work may reach those
+          unfamiliar with the institutions or context of a particular nation or region.
+        </p>
+        <p>
+          <strong>On assumed knowledge.</strong> Our readership spans a broad range of
+          professions and experience, and few readers will share a contributor&rsquo;s own
+          background. Contributors are asked to take the time to explain concepts and
+          terms with care, so that the piece may be followed by as wide an audience as
+          possible.
+        </p>
+        <p>
+          <strong>On specialist language.</strong> Acronyms, initialisms, and terms of art
+          are a feature of military and technical language, yet they vary considerably by
+          service, nation, and field. With the exception of the most widely understood
+          (UN, NATO, FY20XX for example) such terms should be spelled out and explained at
+          first use.
+        </p>
+        <p>
+          <strong>On form.</strong> We would ask that submissions take the form of a
+          considered article rather than a memorandum; bullet points and numbered lists
+          are not part of Fox and Lion&rsquo;s style. Prospective contributors are
+          encouraged to read previously published analyses to gain a fuller sense of the
+          form we publish.
+        </p>
+        <p>
+          <strong>On voice.</strong> Fox and Lion places considerable weight on personal
+          experience, and contributors who feel it appropriate are warmly encouraged to
+          write in the first person. Opening a piece with one&rsquo;s own experience is
+          often the most effective means of establishing credibility with the reader.
+        </p>
+        <p>
+          <strong>On sourcing.</strong> Contributors are kindly requested to cite factual
+          statements and the words of others by way of an embedded hyperlink, wherever
+          this is possible.
+        </p>
+        <p>
+          <strong>On the use of artificial intelligence.</strong> Contributions should
+          reflect the contributor&rsquo;s own judgement, research, and voice. While the
+          growing capability and ubiquity of artificial intelligence is recognised, Fox
+          and Lion&rsquo;s purpose rests upon personal experience and considered opinion,
+          and a published piece stands as a direct reflection of its author. Contributors
+          are strongly encouraged to write without recourse to artificial intelligence,
+          and submissions found to have been substantially generated or edited by such
+          tools will not be accepted.
+        </p>
+
+        <h2>Your Biography</h2>
+        <p>
+          A biography of two to three sentences should be included at the close of the
+          piece, setting out the author&rsquo;s background, affiliations, and previous
+          work. This is the appropriate place for credentials to speak for themselves;
+          contributors are welcome to include a hyperlink to a personal or company
+          website, a Substack, or the Amazon page for a published book.
+        </p>
       </div>
     </div>
   );
