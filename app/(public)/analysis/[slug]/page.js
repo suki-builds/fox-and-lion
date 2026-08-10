@@ -98,6 +98,7 @@ export default async function AnalysisDetailPage({ params }) {
                       width={record.asset.width}
                       height={record.asset.height}
                     />
+                    {record.asset.title && <figcaption>{record.asset.title}</figcaption>}
                   </figure>
                 );
               }
