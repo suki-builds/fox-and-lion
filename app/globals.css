@@ -88,23 +88,10 @@ a {
   white-space: nowrap;
 }
 
-.site-header__logo-mark {
-  font-family: var(--display-stack);
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--color-text);
+.site-header__logo-img {
   display: block;
-}
-
-.site-header__logo-sub {
-  font-family: var(--mono-stack);
-  font-size: 0.6rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  display: block;
-  margin-top: 0.15rem;
+  height: 34px;
+  width: auto;
 }
 
 .site-header__nav {
@@ -210,6 +197,10 @@ a {
 
   .site-header__inner {
     gap: 1rem;
+  }
+
+  .site-header__logo-img {
+    height: 26px;
   }
 
   .site-header__mobile-panel {

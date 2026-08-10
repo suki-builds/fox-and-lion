@@ -10,8 +10,8 @@ export default function SiteHeader() {
     <header className="site-header">
       <div className="site-header__inner">
         <Link href="/" className="site-header__logo" onClick={() => setMenuOpen(false)}>
-          <span className="site-header__logo-mark">Fox &amp; Lion</span>
-          <span className="site-header__logo-sub">Defence Review</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.png" alt="Fox and Lion" className="site-header__logo-img" />
         </Link>
         <nav className="site-header__nav">
           <Link href="/analysis">Analysis</Link>
