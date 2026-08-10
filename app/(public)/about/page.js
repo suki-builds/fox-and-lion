@@ -114,7 +114,11 @@ export default function AboutPage() {
         <h2>Keep Up With Us</h2>
         <p>
           Contributors are warmly invited to subscribe, so that new analysis, jobs, and
-          news may be delivered directly, or to follow along on LinkedIn, Reddit, and X.
+          news may be delivered directly, or to follow along on{' '}
+          <a href="https://www.linkedin.com/company/fox-and-lion/" target="_blank" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+          , Reddit, and X.
         </p>
       </div>
     </div>
