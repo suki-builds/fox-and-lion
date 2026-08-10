@@ -23,7 +23,7 @@ export default async function NewsListPage() {
           <PostCard
             key={post.id}
             href={`/news/${post.slug}`}
-            date={post.publishedDate}
+            date={post.publishedAt}
             title={post.title}
             showMedia={false}
             sourceUrl={post.sourceUrl}

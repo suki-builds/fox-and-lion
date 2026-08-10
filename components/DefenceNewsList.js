@@ -49,7 +49,7 @@ export default async function DefenceNewsList({ posts }) {
                   {sourceName}
                 </Link>
               )}
-              <span className="news-list__time">{formatDate(post.publishedDate)}</span>
+              <span className="news-list__time">{formatDate(post.publishedAt)}</span>
             </div>
           </div>
         );

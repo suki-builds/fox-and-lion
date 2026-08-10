@@ -36,7 +36,7 @@ export default async function NewsDetailPage({ params }) {
     );
   }
 
-  const formattedDate = new Date(post.publishedDate).toLocaleDateString(
+  const formattedDate = new Date(post.publishedAt).toLocaleDateString(
     'en-GB',
     { day: 'numeric', month: 'long', year: 'numeric' }
   );
