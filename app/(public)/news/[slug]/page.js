@@ -3,6 +3,7 @@ import { fetchFromDato } from '../../../../lib/datocms';
 import { NEWS_LIST_QUERY, NEWS_DETAIL_QUERY } from '../../../../lib/queries';
 import { buildMetadata } from '../../../../lib/seo';
 import { getPageMeta } from '../../../../lib/ogImage';
+import { resolveSourceName } from '../../../../lib/format';
 
 export const revalidate = 3600;
 
@@ -41,6 +42,7 @@ export default async function NewsDetailPage({ params }) {
   );
   const meta = post.sourceUrl ? await getPageMeta(post.sourceUrl) : null;
   const thumbnail = meta?.image;
+  const sourceName = post.sourceUrl ? resolveSourceName(meta?.siteName, post.sourceUrl) : null;
 
   return (
     <article className="container" style={{ paddingTop: '2.5rem' }}>
@@ -62,7 +64,7 @@ export default async function NewsDetailPage({ params }) {
           <span className="article-meta__label">Source</span>
           <span className="article-meta__value">
             <a href={post.sourceUrl} target="_blank" rel="noopener noreferrer">
-              {post.sourceUrl}
+              {sourceName || post.sourceUrl}
             </a>
           </span>
         </div>

@@ -1,11 +1,12 @@
+import Link from 'next/link';
 import { getPageMeta } from '../lib/ogImage';
 import { resolveSourceName, timeAgo } from '../lib/format';
 
 const MAX_ITEMS = 8;
 
 // The homepage's News section — a compact list, image/headline/source all
-// linking out to the original source article since this is a pointer to
-// outlets' own reporting, not our commentary.
+// linking to Fox and Lion's own internal summary page for that item, not
+// out to the original source article.
 export default async function DefenceNewsList({ posts }) {
   const items = (posts || []).slice(0, MAX_ITEMS);
 
@@ -20,38 +21,24 @@ export default async function DefenceNewsList({ posts }) {
       {items.map((post, index) => {
         const meta = metas[index];
         const sourceName = resolveSourceName(meta.siteName, post.sourceUrl);
+        const href = `/news/${post.slug}`;
 
         return (
           <div className="news-list__item" key={post.id}>
             {meta.image && (
-              <a
-                href={post.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="news-list__thumb"
-              >
+              <Link href={href} className="news-list__thumb">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={meta.image} alt="" />
-              </a>
+              </Link>
             )}
             <div>
-              <a
-                href={post.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="news-list__headline-link"
-              >
+              <Link href={href} className="news-list__headline-link">
                 <h3 className="news-list__headline">{post.title}</h3>
-              </a>
+              </Link>
               {sourceName && (
-                <a
-                  href={post.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="news-list__source"
-                >
+                <Link href={href} className="news-list__source">
                   {sourceName}
-                </a>
+                </Link>
               )}
               <span className="news-list__time">{timeAgo(post.publishedDate)}</span>
             </div>

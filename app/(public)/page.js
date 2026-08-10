@@ -45,9 +45,7 @@ export default async function HomePage() {
             )}
           </div>
           <div className="hero__copy">
-            <p className="hero__label">
-              Long Read <span>&mdash; Latest Analysis</span>
-            </p>
+            <p className="hero__label">Analysis</p>
             <h1>{featured.title}</h1>
             {featured.excerpt && <p className="hero__desc">{featured.excerpt}</p>}
             <div className="hero__meta">
