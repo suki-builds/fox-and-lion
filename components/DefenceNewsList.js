@@ -1,8 +1,17 @@
 import Link from 'next/link';
 import { getPageMeta } from '../lib/ogImage';
-import { resolveSourceName, timeAgo } from '../lib/format';
+import { resolveSourceName } from '../lib/format';
 
 const MAX_ITEMS = 8;
+
+function formatDate(date) {
+  if (!date) return null;
+  return new Date(date).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
 
 // The homepage's News section — a compact list, image/headline/source all
 // linking to Fox and Lion's own internal summary page for that item, not
@@ -40,7 +49,7 @@ export default async function DefenceNewsList({ posts }) {
                   {sourceName}
                 </Link>
               )}
-              <span className="news-list__time">{timeAgo(post.publishedDate)}</span>
+              <span className="news-list__time">{formatDate(post.publishedDate)}</span>
             </div>
           </div>
         );
