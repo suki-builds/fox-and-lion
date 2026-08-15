@@ -955,6 +955,7 @@ a {
 
 .article-body {
   max-width: 680px;
+  color: var(--color-text);
 }
 
 .article-body p {
@@ -972,6 +973,12 @@ a {
 
 .article-body a {
   color: var(--color-accent);
+}
+
+.article-body hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 2.5rem 0;
 }
 
 .article-body__image {
