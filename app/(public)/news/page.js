@@ -1,6 +1,7 @@
 import { fetchFromDato } from '../../../lib/datocms';
 import { NEWS_LIST_QUERY } from '../../../lib/queries';
 import { getPageMeta } from '../../../lib/ogImage';
+import { resolveSourceName } from '../../../lib/format';
 import { effectivePublishedAt, sortNewsByPublishedAt } from '../../../lib/newsDate';
 import PostCard from '../../../components/PostCard';
 
@@ -32,6 +33,7 @@ export default async function NewsListPage() {
             date={effectivePublishedAt(post)}
             title={post.title}
             sourceUrl={post.sourceUrl}
+            sourceName={resolveSourceName(metas[index]?.siteName, post.sourceUrl)}
             coverImageUrl={metas[index]?.image}
           />
         ))}

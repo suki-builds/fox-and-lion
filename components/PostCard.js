@@ -22,6 +22,7 @@ export default function PostCard({
   byline,
   category,
   sourceUrl,
+  sourceName: sourceNameProp,
   showMedia = true,
   coverImageUrl,
   coverImageAlt,
@@ -33,10 +34,12 @@ export default function PostCard({
         year: 'numeric',
       })
     : null;
-  // No live og:site_name fetch happens in this list view — resolveSourceName
-  // falls back to a domain guess for anything not in the curated table,
-  // same as everywhere else that displays a source name.
-  const sourceName = sourceUrl ? resolveSourceName(null, sourceUrl) : null;
+  // Callers that already fetched live og:site_name (e.g. the News list,
+  // which fetches it for the cover image anyway) can pass a resolved
+  // sourceName directly so it matches the Home Page and detail page. Falls
+  // back to resolving from the URL alone — a domain guess for anything not
+  // in the curated table — when no live siteName is available.
+  const sourceName = sourceNameProp ?? (sourceUrl ? resolveSourceName(null, sourceUrl) : null);
 
   return (
     <Link href={href} className="post-card">
