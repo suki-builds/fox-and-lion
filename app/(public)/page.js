@@ -70,7 +70,7 @@ export default async function HomePage() {
             View all analysis &#8599;
           </Link>
         </div>
-        <div className="post-grid">
+        <div className="recent-analysis-grid">
           {recentAnalysis.length === 0 && (
             <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>
           )}
