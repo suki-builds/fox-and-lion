@@ -1,5 +1,6 @@
 import { fetchFromDato } from '../../../lib/datocms';
 import { NEWS_LIST_QUERY } from '../../../lib/queries';
+import { getPageMeta } from '../../../lib/ogImage';
 import PostCard from '../../../components/PostCard';
 
 export const revalidate = 3600;
@@ -12,6 +13,10 @@ export default async function NewsListPage() {
   const data = await fetchFromDato(NEWS_LIST_QUERY);
   const posts = data.allNewsPosts;
 
+  // Same cached og:image fetch DefenceNewsList uses on the homepage — News
+  // posts don't have their own cover image field, only a sourceUrl.
+  const metas = await Promise.all(posts.map((post) => getPageMeta(post.sourceUrl)));
+
   return (
     <div className="container" style={{ paddingTop: '2.5rem' }}>
       <h1>News</h1>
@@ -19,14 +24,14 @@ export default async function NewsListPage() {
         {posts.length === 0 && (
           <p style={{ padding: '1.5rem' }}>Nothing published yet.</p>
         )}
-        {posts.map((post) => (
+        {posts.map((post, index) => (
           <PostCard
             key={post.id}
             href={`/news/${post.slug}`}
             date={post.publishedAt}
             title={post.title}
-            showMedia={false}
             sourceUrl={post.sourceUrl}
+            coverImageUrl={metas[index]?.image}
           />
         ))}
       </div>

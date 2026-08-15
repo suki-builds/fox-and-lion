@@ -40,6 +40,16 @@ export default function PostCard({
 
   return (
     <Link href={href} className="post-card">
+      {showMedia && (
+        <div className="post-card__media">
+          {coverImageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={coverImageUrl} alt={coverImageAlt || ''} />
+          ) : (
+            <IllustrationPlaceholder />
+          )}
+        </div>
+      )}
       <div className="post-card__content">
         {category && <span className="category-tag">{category}</span>}
         <h2>{title}</h2>
@@ -59,16 +69,6 @@ export default function PostCard({
           {formattedDate && <span className="post-card__date">{formattedDate}</span>}
         </div>
       </div>
-      {showMedia && (
-        <div className="post-card__media">
-          {coverImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={coverImageUrl} alt={coverImageAlt || ''} />
-          ) : (
-            <IllustrationPlaceholder />
-          )}
-        </div>
-      )}
     </Link>
   );
 }
