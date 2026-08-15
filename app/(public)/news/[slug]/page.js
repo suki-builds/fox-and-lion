@@ -4,6 +4,8 @@ import { NEWS_LIST_QUERY, NEWS_DETAIL_QUERY } from '../../../../lib/queries';
 import { buildMetadata } from '../../../../lib/seo';
 import { getPageMeta } from '../../../../lib/ogImage';
 import { resolveSourceName } from '../../../../lib/format';
+import { extractYouTubeId } from '../../../../lib/youtube';
+import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 
 export const revalidate = 3600;
 
@@ -43,16 +45,30 @@ export default async function NewsDetailPage({ params }) {
   const meta = post.sourceUrl ? await getPageMeta(post.sourceUrl) : null;
   const thumbnail = meta?.image;
   const sourceName = post.sourceUrl ? resolveSourceName(meta?.siteName, post.sourceUrl) : null;
+  const youtubeId = post.sourceUrl ? extractYouTubeId(post.sourceUrl) : null;
+  // YouTube's own watch-page og:image sits far past getPageMeta's 100KB
+  // read cap (YouTube front-loads a huge amount of inline JS/config before
+  // its <meta> tags), so meta.image comes back empty for these — derive the
+  // thumbnail directly from the video ID instead via YouTube's stable
+  // thumbnail CDN, no page fetch needed at all. hqdefault is used (not
+  // maxresdefault) since it's guaranteed to exist for every video.
+  const youtubeThumbnail = youtubeId
+    ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
+    : null;
 
   return (
     <article className="container" style={{ paddingTop: '2.5rem' }}>
       <h1>{post.title}</h1>
 
-      {thumbnail && (
-        <div className="news-detail__image">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={thumbnail} alt="" />
-        </div>
+      {youtubeId ? (
+        <YouTubeEmbed videoId={youtubeId} thumbnail={youtubeThumbnail} title={post.title} />
+      ) : (
+        thumbnail && (
+          <div className="news-detail__image">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={thumbnail} alt="" />
+          </div>
+        )
       )}
 
       <div className="article-meta">

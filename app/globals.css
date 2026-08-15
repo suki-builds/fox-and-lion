@@ -962,6 +962,66 @@ a {
   border: 1px solid var(--color-border);
 }
 
+.youtube-embed {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 1.5rem 0;
+  border: 1px solid var(--color-border);
+  background: var(--color-panel);
+  overflow: hidden;
+}
+
+.youtube-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.youtube-embed--thumb {
+  padding: 0;
+  cursor: pointer;
+}
+
+.youtube-embed--thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.youtube-embed__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 68px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 14, 24, 0.8);
+  border: 1px solid var(--color-accent);
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.youtube-embed--thumb:hover .youtube-embed__play {
+  background: var(--color-accent);
+}
+
+.youtube-embed__play svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--color-text);
+}
+
+.youtube-embed--thumb:hover .youtube-embed__play svg {
+  fill: #1a1206;
+}
+
 .article-meta {
   display: flex;
   gap: 2rem;
