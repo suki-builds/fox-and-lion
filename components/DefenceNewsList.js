@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { getPageMeta } from '../lib/ogImage';
 import { resolveSourceName } from '../lib/format';
+import { effectivePublishedAt, sortNewsByPublishedAt } from '../lib/newsDate';
 
 const MAX_ITEMS = 8;
 
@@ -17,7 +18,7 @@ function formatDate(date) {
 // linking to Fox and Lion's own internal summary page for that item, not
 // out to the original source article.
 export default async function DefenceNewsList({ posts }) {
-  const items = (posts || []).slice(0, MAX_ITEMS);
+  const items = sortNewsByPublishedAt(posts || []).slice(0, MAX_ITEMS);
 
   if (items.length === 0) {
     return <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>;
@@ -49,7 +50,7 @@ export default async function DefenceNewsList({ posts }) {
                   {sourceName}
                 </Link>
               )}
-              <span className="news-list__time">{formatDate(post.publishedAt)}</span>
+              <span className="news-list__time">{formatDate(effectivePublishedAt(post))}</span>
             </div>
           </div>
         );

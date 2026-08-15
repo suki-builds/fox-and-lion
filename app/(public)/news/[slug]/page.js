@@ -4,6 +4,7 @@ import { NEWS_LIST_QUERY, NEWS_DETAIL_QUERY } from '../../../../lib/queries';
 import { buildMetadata } from '../../../../lib/seo';
 import { getPageMeta } from '../../../../lib/ogImage';
 import { resolveSourceName } from '../../../../lib/format';
+import { effectivePublishedAt } from '../../../../lib/newsDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 
@@ -38,7 +39,7 @@ export default async function NewsDetailPage({ params }) {
     );
   }
 
-  const formattedDate = new Date(post.publishedAt).toLocaleDateString(
+  const formattedDate = new Date(effectivePublishedAt(post)).toLocaleDateString(
     'en-GB',
     { day: 'numeric', month: 'long', year: 'numeric' }
   );

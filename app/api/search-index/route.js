@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { fetchFromDato } from '../../../lib/datocms';
 import { SEARCH_ANALYSIS_QUERY, SEARCH_NEWS_QUERY } from '../../../lib/queries';
 import { stripMarkdown } from '../../../lib/markdown';
+import { effectivePublishedAt } from '../../../lib/newsDate';
 
 // Powers the site search overlay (components/SearchOverlay.js). Time-based
 // ISR here matches every other page (1hr), and app/api/revalidate/route.js
@@ -35,7 +36,7 @@ export async function GET() {
     title: post.title,
     excerpt: post.seoTags?.description || '',
     url: `/news/${post.slug}`,
-    date: post.publishedAt,
+    date: effectivePublishedAt(post),
   }));
 
   return NextResponse.json([...analysisItems, ...newsItems]);
