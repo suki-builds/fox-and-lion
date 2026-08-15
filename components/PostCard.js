@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import IllustrationPlaceholder from './IllustrationPlaceholder';
-import { sourceNameFromUrl } from '../lib/format';
+import { resolveSourceName } from '../lib/format';
 
 export function initials(name) {
   return name
@@ -33,7 +33,10 @@ export default function PostCard({
         year: 'numeric',
       })
     : null;
-  const sourceName = sourceNameFromUrl(sourceUrl);
+  // No live og:site_name fetch happens in this list view — resolveSourceName
+  // falls back to a domain guess for anything not in the curated table,
+  // same as everywhere else that displays a source name.
+  const sourceName = sourceUrl ? resolveSourceName(null, sourceUrl) : null;
 
   return (
     <Link href={href} className="post-card">
