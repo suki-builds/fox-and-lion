@@ -298,6 +298,31 @@ a {
   color: var(--color-text-body);
 }
 
+/* Both render Markdown excerpts (see components/ExcerptMarkdown.js) — these
+   reset the inner <p>'s margin to zero so a plain-text excerpt still looks
+   exactly like a single line of text, same as before the excerpt field
+   became Markdown. List styling only applies when a bullet list is used. */
+.hero__desc p,
+.hero__eyebrow p {
+  margin: 0;
+}
+
+.hero__desc ul,
+.hero__eyebrow ul {
+  margin: 0.5em 0 0 0;
+  padding-left: 1.2em;
+}
+
+.hero__desc li,
+.hero__eyebrow li {
+  margin-bottom: 0.3em;
+}
+
+.hero__desc li:last-child,
+.hero__eyebrow li:last-child {
+  margin-bottom: 0;
+}
+
 .hero__meta {
   display: flex;
   align-items: center;

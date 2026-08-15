@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { fetchFromDato } from '../../../lib/datocms';
 import { SEARCH_ANALYSIS_QUERY, SEARCH_NEWS_QUERY } from '../../../lib/queries';
+import { stripMarkdown } from '../../../lib/markdown';
 
 // Powers the site search overlay (components/SearchOverlay.js). Time-based
 // ISR here matches every other page (1hr), and app/api/revalidate/route.js
@@ -24,7 +25,7 @@ export async function GET() {
   const analysisItems = analysisData.allAnalysisPosts.map((post) => ({
     type: 'Analysis',
     title: post.title,
-    excerpt: post.excerpt || '',
+    excerpt: stripMarkdown(post.excerpt) || '',
     url: `/analysis/${post.slug}`,
     date: post.publishedDate,
   }));

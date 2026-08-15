@@ -5,7 +5,9 @@ import {
   ANALYSIS_DETAIL_QUERY,
 } from '../../../../lib/queries';
 import { buildMetadata } from '../../../../lib/seo';
+import { stripMarkdown } from '../../../../lib/markdown';
 import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
+import ExcerptMarkdown from '../../../../components/ExcerptMarkdown';
 
 export const revalidate = 3600;
 
@@ -24,7 +26,7 @@ export async function generateMetadata({ params }) {
   return buildMetadata({
     seoTags: post.seoTags,
     fallbackTitle: `${post.title} — Fox and Lion`,
-    fallbackDescription: post.excerpt,
+    fallbackDescription: stripMarkdown(post.excerpt),
   });
 }
 
@@ -66,7 +68,7 @@ export default async function AnalysisDetailPage({ params }) {
         <div className="hero__copy">
           <span className="category-tag">{post.category || 'Analysis'}</span>
           <h1>{post.title}</h1>
-          {post.excerpt && <p className="hero__eyebrow">{post.excerpt}</p>}
+          <ExcerptMarkdown className="hero__eyebrow">{post.excerpt}</ExcerptMarkdown>
         </div>
       </section>
 

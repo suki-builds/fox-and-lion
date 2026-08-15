@@ -6,6 +6,7 @@ import PostCard from '../../components/PostCard';
 import IllustrationPlaceholder from '../../components/IllustrationPlaceholder';
 import DefenceNewsList from '../../components/DefenceNewsList';
 import JobsList from '../../components/JobsList';
+import ExcerptMarkdown from '../../components/ExcerptMarkdown';
 
 export const revalidate = 3600;
 
@@ -47,7 +48,7 @@ export default async function HomePage() {
           <div className="hero__copy">
             <p className="hero__label">Analysis</p>
             <h1>{featured.title}</h1>
-            {featured.excerpt && <p className="hero__desc">{featured.excerpt}</p>}
+            <ExcerptMarkdown className="hero__desc">{featured.excerpt}</ExcerptMarkdown>
             <div className="hero__meta">
               {featured.author && <span>{featured.author}</span>}
               {featured.author && featuredDate && <span>&middot;</span>}
