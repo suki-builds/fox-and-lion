@@ -89,7 +89,7 @@ export default async function HomePage() {
         </div>
 
         <div className="section-header">
-          <h2 className="section-label">Defence News</h2>
+          <h2 className="section-label">Latest News</h2>
           <Link href="/news" className="section-cta">
             View all news &#8599;
           </Link>

@@ -18,7 +18,6 @@ export default function JobsList({ jobs }) {
       <div className="jobs-panel__header">
         <div className="jobs-panel__title">
           <span className="section-label">Defence Tech Careers</span>
-          <span className="jobs-panel__chip">Hiring now</span>
         </div>
         <Link href="/jobs" className="section-cta">
           View all careers &#8599;
