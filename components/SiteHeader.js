@@ -2,9 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import SearchOverlay from './SearchOverlay';
 
 export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  function openSearch() {
+    setMenuOpen(false);
+    setSearchOpen(true);
+  }
 
   return (
     <header className="site-header">
@@ -19,7 +26,7 @@ export default function SiteHeader() {
           <Link href="/jobs">Careers</Link>
         </nav>
         <div className="site-header__actions">
-          <button type="button" className="site-header__search" aria-label="Search">
+          <button type="button" className="site-header__search" aria-label="Search" onClick={openSearch}>
             &#128269;
           </button>
           <Link href="/contact" className="site-header__subscribe">
@@ -52,7 +59,7 @@ export default function SiteHeader() {
           </Link>
         </nav>
         <div className="site-header__mobile-actions">
-          <button type="button" className="site-header__search" aria-label="Search">
+          <button type="button" className="site-header__search" aria-label="Search" onClick={openSearch}>
             &#128269; Search
           </button>
           <Link
@@ -64,6 +71,8 @@ export default function SiteHeader() {
           </Link>
         </div>
       </div>
+
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
   );
 }

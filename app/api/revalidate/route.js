@@ -48,9 +48,12 @@ export async function POST(request) {
     // doesn't depend on it.
   }
 
-  const paths = ['/', routes.list];
+  const paths = ['/', routes.list, '/api/search-index'];
   revalidatePath('/');
   revalidatePath(routes.list);
+  // Both Analysis and News webhooks touch this — the search index spans
+  // all content types, so any change to either should refresh it.
+  revalidatePath('/api/search-index');
 
   const slug = extractSlug(body);
   if (slug) {
