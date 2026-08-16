@@ -223,11 +223,10 @@ a {
   gap: 0.3rem;
 }
 
-.site-footer__logo {
-  font-family: var(--display-stack);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: var(--color-text);
+.site-footer__logo-img {
+  height: 28px;
+  width: auto;
+  display: block;
 }
 
 .site-footer__copy {

@@ -13,7 +13,8 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <div className="site-footer__inner">
         <div className="site-footer__brand">
-          <span className="site-footer__logo">Fox &amp; Lion</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-wordmark.png" alt="Fox and Lion" className="site-footer__logo-img" />
           <p className="site-footer__copy">
             &copy; {new Date().getFullYear()} Fox and Lion Ltd. All rights reserved.
           </p>
