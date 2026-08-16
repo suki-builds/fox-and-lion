@@ -8,6 +8,7 @@ import { buildMetadata } from '../../../../lib/seo';
 import { stripMarkdown } from '../../../../lib/markdown';
 import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
 import ExcerptMarkdown from '../../../../components/ExcerptMarkdown';
+import { coverImageSrc } from '../../../../lib/datocmsImage';
 
 export const revalidate = 3600;
 
@@ -57,7 +58,7 @@ export default async function AnalysisDetailPage({ params }) {
           {post.coverImage ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={post.coverImage.url}
+              src={coverImageSrc(post.coverImage.url)}
               alt={post.coverImage.alt || ''}
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />

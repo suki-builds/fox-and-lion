@@ -270,7 +270,18 @@ a {
 }
 
 .hero__media {
-  min-height: 320px;
+  /* Fixed 1200:630 ratio so the header image is a consistent shape no
+     matter how much text sits in .hero__copy. Without this, the grid's
+     default stretch alignment made hero__media match whatever height the
+     text column needed (more text = taller container = more of the image
+     cropped away), and on the single-column mobile layout the container
+     had no definite height at all, so the image rendered at its raw
+     upload ratio instead of being constrained. align-self: start stops
+     grid from re-stretching this back to the text column's height on
+     desktop when the text is long. */
+  aspect-ratio: 1200 / 630;
+  align-self: start;
+  overflow: hidden;
 }
 
 .hero__copy {

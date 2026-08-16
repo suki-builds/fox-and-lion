@@ -7,6 +7,7 @@ import IllustrationPlaceholder from '../../components/IllustrationPlaceholder';
 import DefenceNewsList from '../../components/DefenceNewsList';
 import JobsList from '../../components/JobsList';
 import ExcerptMarkdown from '../../components/ExcerptMarkdown';
+import { coverImageSrc } from '../../lib/datocmsImage';
 
 export const revalidate = 3600;
 
@@ -40,7 +41,7 @@ export default async function HomePage() {
           <div className="hero__media">
             {featured.coverImage ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={featured.coverImage.url} alt={featured.coverImage.alt || ''} />
+              <img src={coverImageSrc(featured.coverImage.url)} alt={featured.coverImage.alt || ''} />
             ) : (
               <IllustrationPlaceholder label="Hero illustration TBD" />
             )}
