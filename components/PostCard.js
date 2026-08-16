@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import IllustrationPlaceholder from './IllustrationPlaceholder';
+import PostCardMedia from './PostCardMedia';
 import { resolveSourceName } from '../lib/format';
 
 export function initials(name) {
@@ -43,16 +43,7 @@ export default function PostCard({
 
   return (
     <Link href={href} className="post-card">
-      {showMedia && (
-        <div className="post-card__media">
-          {coverImageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={coverImageUrl} alt={coverImageAlt || ''} />
-          ) : (
-            <IllustrationPlaceholder />
-          )}
-        </div>
-      )}
+      {showMedia && <PostCardMedia src={coverImageUrl} alt={coverImageAlt} />}
       <div className="post-card__content">
         {category && <span className="category-tag">{category}</span>}
         <h2>{title}</h2>
