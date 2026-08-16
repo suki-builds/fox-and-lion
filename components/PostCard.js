@@ -26,6 +26,7 @@ export default function PostCard({
   showMedia = true,
   coverImageUrl,
   coverImageAlt,
+  coverRatio = false,
 }) {
   const formattedDate = date
     ? new Date(date).toLocaleDateString('en-GB', {
@@ -43,7 +44,13 @@ export default function PostCard({
 
   return (
     <Link href={href} className="post-card">
-      {showMedia && <PostCardMedia src={coverImageUrl} alt={coverImageAlt} />}
+      {showMedia && (
+        <PostCardMedia
+          src={coverImageUrl}
+          alt={coverImageAlt}
+          className={coverRatio ? 'post-card__media--cover-ratio' : undefined}
+        />
+      )}
       <div className="post-card__content">
         {category && <span className="category-tag">{category}</span>}
         <h2>{title}</h2>

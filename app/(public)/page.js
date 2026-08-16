@@ -81,8 +81,9 @@ export default async function HomePage() {
               title={post.title}
               byline={post.author}
               category={post.category || 'Analysis'}
-              coverImageUrl={post.coverImage?.url}
+              coverImageUrl={coverImageSrc(post.coverImage?.url)}
               coverImageAlt={post.coverImage?.alt}
+              coverRatio
             />
           ))}
         </div>

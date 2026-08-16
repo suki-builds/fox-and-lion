@@ -1,6 +1,7 @@
 import { fetchFromDato } from '../../../lib/datocms';
 import { ANALYSIS_LIST_QUERY } from '../../../lib/queries';
 import PostCard from '../../../components/PostCard';
+import { coverImageSrc } from '../../../lib/datocmsImage';
 
 export const revalidate = 3600;
 
@@ -27,8 +28,9 @@ export default async function AnalysisListPage() {
             title={post.title}
             byline={post.author}
             category={post.category || 'Analysis'}
-            coverImageUrl={post.coverImage?.url}
+            coverImageUrl={coverImageSrc(post.coverImage?.url)}
             coverImageAlt={post.coverImage?.alt}
+            coverRatio
           />
         ))}
       </div>
