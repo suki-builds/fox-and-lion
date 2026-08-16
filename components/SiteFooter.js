@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { XIcon, DiscordIcon, LinkedInIcon } from './SocialIcons';
+import { XIcon, DiscordIcon, LinkedInIcon, InstagramIcon } from './SocialIcons';
 
 const SOCIAL_LINKS = [
   { href: 'https://x.com/VulpesetLeo', label: 'X (Twitter)', Icon: XIcon },
   { href: 'https://discord.gg/8Jm3GYrPVU', label: 'Discord', Icon: DiscordIcon },
   { href: 'https://www.linkedin.com/company/fox-and-lion/', label: 'LinkedIn', Icon: LinkedInIcon },
+  { href: 'https://www.instagram.com/vulpesetleo', label: 'Instagram', Icon: InstagramIcon },
 ];
 
 export default function SiteFooter() {
