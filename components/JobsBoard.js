@@ -20,7 +20,8 @@ export default function JobsBoard({ jobs, companies }) {
   const [roleType, setRoleType] = useState('all');
   const [country, setCountry] = useState('all');
   const [workplaceType, setWorkplaceType] = useState('all');
-  const [sort, setSort] = useState('newest');
+  // No UI control for this anymore (sort dropdown hidden) - always newest.
+  const sort = 'newest';
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const roleTypes = useMemo(
@@ -138,20 +139,6 @@ export default function JobsBoard({ jobs, companies }) {
                 {w}
               </option>
             ))}
-          </select>
-        </div>
-
-        <div className="jobs-board__filter">
-          <label htmlFor="sort-jobs">Sort by</label>
-          <select
-            id="sort-jobs"
-            className="jobs-board__select"
-            value={sort}
-            onChange={(event) => setSort(event.target.value)}
-          >
-            <option value="newest">Newest</option>
-            <option value="company">Company (A&ndash;Z)</option>
-            <option value="title">Title (A&ndash;Z)</option>
           </select>
         </div>
       </div>
