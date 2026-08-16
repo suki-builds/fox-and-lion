@@ -37,17 +37,19 @@ export default async function HomePage() {
     <>
       {featured && (
         <section className="hero">
-          <div className="hero__media">
+          <Link href={`/analysis/${featured.slug}`} className="hero__media">
             {featured.coverImage ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={coverImageSrc(featured.coverImage.url)} alt={featured.coverImage.alt || ''} />
             ) : (
               <IllustrationPlaceholder label="Hero illustration TBD" />
             )}
-          </div>
+          </Link>
           <div className="hero__copy">
             <p className="hero__label">Analysis</p>
-            <h1>{featured.title}</h1>
+            <Link href={`/analysis/${featured.slug}`} className="hero__title-link">
+              <h1>{featured.title}</h1>
+            </Link>
             <div className="hero__meta">
               {featured.author && <span>{featured.author}</span>}
               {featured.author && featuredDate && <span>&middot;</span>}
