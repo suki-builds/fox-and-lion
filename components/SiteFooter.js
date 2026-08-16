@@ -1,4 +1,11 @@
 import Link from 'next/link';
+import { XIcon, DiscordIcon, LinkedInIcon } from './SocialIcons';
+
+const SOCIAL_LINKS = [
+  { href: 'https://x.com/VulpesetLeo', label: 'X (Twitter)', Icon: XIcon },
+  { href: 'https://discord.gg/8Jm3GYrPVU', label: 'Discord', Icon: DiscordIcon },
+  { href: 'https://www.linkedin.com/company/fox-and-lion/', label: 'LinkedIn', Icon: LinkedInIcon },
+];
 
 export default function SiteFooter() {
   return (
@@ -16,6 +23,20 @@ export default function SiteFooter() {
           <Link href="/submission-portal">Submit a Pitch</Link>
           <Link href="/contact">Contact</Link>
         </nav>
+        <div className="site-footer__socials">
+          {SOCIAL_LINKS.map(({ href, label, Icon }) => (
+            <a
+              key={href}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={label}
+              className="site-footer__social-link"
+            >
+              <Icon className="site-footer__social-icon" />
+            </a>
+          ))}
+        </div>
       </div>
     </footer>
   );

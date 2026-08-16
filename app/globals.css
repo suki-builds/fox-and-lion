@@ -252,6 +252,27 @@ a {
   color: var(--color-text);
 }
 
+.site-footer__socials {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.site-footer__social-link {
+  display: flex;
+  color: var(--color-text-muted);
+  transition: color 0.15s ease;
+}
+
+.site-footer__social-link:hover {
+  color: var(--color-accent);
+}
+
+.site-footer__social-icon {
+  width: 20px;
+  height: 20px;
+}
+
 /* ---------- Hero (home + article detail) ---------- */
 
 .hero {
