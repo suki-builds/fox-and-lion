@@ -227,6 +227,13 @@ a {
   height: 28px;
   width: auto;
   display: block;
+  /* .site-footer__brand is a column flex container, whose default
+     align-items: stretch forces cross-axis (width) to fill the container
+     unless the item opts out - and width: auto does NOT opt out, it's
+     equivalent to not setting a width at all. align-self here is what
+     actually keeps this at its intrinsic aspect ratio instead of being
+     stretched to the brand block's full width. */
+  align-self: flex-start;
 }
 
 .site-footer__copy {
