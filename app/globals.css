@@ -951,7 +951,18 @@ a {
 
 /* ---------- Article detail ---------- */
 
+.news-detail__title-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.news-detail__title-link:hover h1 {
+  color: var(--color-accent);
+}
+
 .news-detail__image {
+  display: block;
   margin: 1.5rem 0;
 }
 
@@ -961,6 +972,11 @@ a {
   object-fit: cover;
   display: block;
   border: 1px solid var(--color-border);
+  transition: opacity 0.15s ease;
+}
+
+.news-detail__image:hover img {
+  opacity: 0.85;
 }
 
 .youtube-embed {

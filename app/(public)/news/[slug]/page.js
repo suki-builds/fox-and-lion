@@ -59,16 +59,32 @@ export default async function NewsDetailPage({ params }) {
 
   return (
     <article className="container" style={{ paddingTop: '2.5rem' }}>
-      <h1>{post.title}</h1>
+      {post.sourceUrl ? (
+        <a
+          href={post.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="news-detail__title-link"
+        >
+          <h1>{post.title}</h1>
+        </a>
+      ) : (
+        <h1>{post.title}</h1>
+      )}
 
       {youtubeId ? (
         <YouTubeEmbed videoId={youtubeId} thumbnail={youtubeThumbnail} title={post.title} />
       ) : (
         thumbnail && (
-          <div className="news-detail__image">
+          <a
+            href={post.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="news-detail__image"
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={thumbnail} alt="" />
-          </div>
+          </a>
         )
       )}
 
