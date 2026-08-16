@@ -35,6 +35,7 @@ export default async function NewsListPage() {
             sourceUrl={post.sourceUrl}
             sourceName={resolveSourceName(metas[index]?.siteName, post.sourceUrl)}
             coverImageUrl={metas[index]?.image}
+            compact
           />
         ))}
       </div>

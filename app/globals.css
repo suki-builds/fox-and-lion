@@ -556,6 +556,47 @@ a {
   min-height: 132px;
 }
 
+/* Compact variant for the News list - denser than the roomier Analysis
+   card, and stays a side-by-side row at every breakpoint instead of
+   stacking the image above the text on mobile. Selectors are chained
+   with the base classes for extra specificity so these reliably win over
+   both the plain desktop rules and the @media(max-width:640px) block
+   above, regardless of source order. */
+.post-card.post-card--compact {
+  gap: 1rem;
+  padding: 1.1rem 0;
+}
+
+.post-card.post-card--compact .post-card__media {
+  width: 96px;
+  height: 96px;
+}
+
+.post-card.post-card--compact .post-card__content h2 {
+  font-size: 1.02rem;
+  line-height: 1.35;
+  margin: 0 0 0.35rem 0;
+}
+
+.post-card.post-card--compact .post-card__meta {
+  font-size: 0.74rem;
+}
+
+@media (max-width: 640px) {
+  .post-card.post-card--compact {
+    flex-direction: row;
+    gap: 0.85rem;
+    padding: 0.9rem 0;
+  }
+  .post-card.post-card--compact .post-card__media {
+    width: 76px;
+    height: 76px;
+  }
+  .post-card.post-card--compact .post-card__content h2 {
+    font-size: 0.95rem;
+  }
+}
+
 /* ---------- Defence news list ---------- */
 
 .news-list {
@@ -1143,6 +1184,7 @@ a {
   font-family: var(--mono-stack);
   font-size: 0.78rem;
   color: var(--color-text-muted);
+  text-align: center;
 }
 
 /* ---------- Submission form ---------- */

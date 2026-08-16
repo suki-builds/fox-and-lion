@@ -27,6 +27,7 @@ export default function PostCard({
   coverImageUrl,
   coverImageAlt,
   coverRatio = false,
+  compact = false,
 }) {
   const formattedDate = date
     ? new Date(date).toLocaleDateString('en-GB', {
@@ -43,7 +44,7 @@ export default function PostCard({
   const sourceName = sourceNameProp ?? (sourceUrl ? resolveSourceName(null, sourceUrl) : null);
 
   return (
-    <Link href={href} className="post-card">
+    <Link href={href} className={`post-card${compact ? ' post-card--compact' : ''}`}>
       {showMedia && (
         <PostCardMedia
           src={coverImageUrl}
