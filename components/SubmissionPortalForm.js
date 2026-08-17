@@ -141,6 +141,11 @@ export default function SubmissionPortalForm() {
       <section className="submission-form__section">
         <h2>Make your pitch</h2>
         <p className="submission-form__intro">A strong pitch answers three questions</p>
+        <ol className="submission-form__pitch-questions">
+          <li>What is your argument?</li>
+          <li>Why does it matter now?</li>
+          <li>Why are you the right writer?</li>
+        </ol>
 
         <div className="submission-form__field">
           <label htmlFor="pitch">

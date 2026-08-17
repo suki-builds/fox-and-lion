@@ -17,7 +17,17 @@ export default function SubmissionPortalPage() {
         in full &mdash; it will save contributors and editors alike a great deal of time.
       </p>
 
-      <SubmissionPortalForm />
+      <div className="submission-layout">
+        <SubmissionPortalForm />
+        <aside className="submission-sidebar">
+          <div className="submission-sidebar__box">
+            <p>Read the full submission guidelines before you pitch.</p>
+            <Link href="/submission-guidelines" className="submission-sidebar__link">
+              Submission Guidelines &rarr;
+            </Link>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

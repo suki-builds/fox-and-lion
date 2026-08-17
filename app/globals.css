@@ -1272,9 +1272,55 @@ a {
 
 /* ---------- Submission form ---------- */
 
+.submission-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 680px) 280px;
+  gap: 3rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .submission-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
 .submission-form {
   max-width: 680px;
   margin-top: 2rem;
+}
+
+.submission-sidebar {
+  margin-top: 2rem;
+}
+
+.submission-sidebar__box {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: var(--color-panel);
+}
+
+.submission-sidebar__box p {
+  color: var(--color-text-body);
+  font-size: 0.92rem;
+  line-height: 1.5;
+  margin: 0 0 1.1rem 0;
+}
+
+.submission-sidebar__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-accent);
+  font-weight: 600;
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+
+.submission-sidebar__link:hover {
+  color: var(--color-accent-hover);
 }
 
 .submission-form__section {
@@ -1294,6 +1340,20 @@ a {
   text-transform: uppercase;
   color: var(--color-accent);
   margin: -0.5rem 0 1.5rem 0;
+}
+
+.submission-form__pitch-questions {
+  margin: 0 0 1.5rem 0;
+  padding-left: 1.25rem;
+  color: var(--color-text-body);
+}
+
+.submission-form__pitch-questions li {
+  margin-bottom: 0.4rem;
+}
+
+.submission-form__pitch-questions li:last-child {
+  margin-bottom: 0;
 }
 
 .submission-form__row {
