@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import SearchOverlay from './SearchOverlay';
+import SearchIcon from './SearchIcon';
 
 export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -27,7 +28,7 @@ export default function SiteHeader() {
         </nav>
         <div className="site-header__actions">
           <button type="button" className="site-header__search" aria-label="Search" onClick={openSearch}>
-            &#128269;
+            <SearchIcon className="site-header__search-icon" />
           </button>
         </div>
         <button
@@ -57,7 +58,7 @@ export default function SiteHeader() {
         </nav>
         <div className="site-header__mobile-actions">
           <button type="button" className="site-header__search" aria-label="Search" onClick={openSearch}>
-            &#128269; Search
+            <SearchIcon className="site-header__search-icon" /> Search
           </button>
         </div>
       </div>

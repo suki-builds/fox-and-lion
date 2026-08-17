@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import Fuse from 'fuse.js';
+import SearchIcon from './SearchIcon';
 
 const DEBOUNCE_MS = 250;
 
@@ -105,7 +106,7 @@ export default function SearchOverlay({ open, onClose }) {
       <div className="search-overlay__panel" onClick={(event) => event.stopPropagation()}>
         <div className="search-overlay__input-row">
           <span className="search-overlay__icon" aria-hidden="true">
-            &#128269;
+            <SearchIcon className="search-overlay__icon-svg" />
           </span>
           <input
             ref={inputRef}

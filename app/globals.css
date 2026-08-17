@@ -132,6 +132,12 @@ a {
   color: var(--color-text);
 }
 
+.site-header__search-icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
 .site-header__menu-toggle {
   display: none;
   flex-direction: column;
@@ -1479,6 +1485,12 @@ a {
   font-size: 1rem;
   color: var(--color-text-muted);
   flex-shrink: 0;
+}
+
+.search-overlay__icon-svg {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
 .search-overlay__input {
