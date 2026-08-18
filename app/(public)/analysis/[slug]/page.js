@@ -8,7 +8,9 @@ import { buildMetadata } from '../../../../lib/seo';
 import { stripMarkdown } from '../../../../lib/markdown';
 import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
 import ExcerptMarkdown from '../../../../components/ExcerptMarkdown';
+import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 import { coverImageSrc } from '../../../../lib/datocmsImage';
+import { extractYouTubeId } from '../../../../lib/youtube';
 
 export const revalidate = 3600;
 
@@ -103,6 +105,33 @@ export default async function AnalysisDetailPage({ params }) {
                     />
                     {record.asset.title && <figcaption>{record.asset.title}</figcaption>}
                   </figure>
+                );
+              }
+              if (record.__typename === 'ExternalVideoRecord' && record.externalVideo) {
+                const video = record.externalVideo;
+                // providerUid is the bare video ID DatoCMS already extracted via
+                // oEmbed when the URL was pasted - extractYouTubeId(url) is only
+                // a fallback in case that's ever missing.
+                const videoId = video.providerUid || extractYouTubeId(video.url);
+                if (video.provider === 'youtube' && videoId) {
+                  return (
+                    <div className="article-body__video">
+                      <YouTubeEmbed
+                        videoId={videoId}
+                        thumbnail={video.thumbnailUrl}
+                        title={video.title}
+                      />
+                    </div>
+                  );
+                }
+                // Non-YouTube providers (e.g. Vimeo) fall back to a plain link
+                // rather than silently dropping the block.
+                return (
+                  <p className="article-body__video-fallback">
+                    <a href={video.url} target="_blank" rel="noopener noreferrer">
+                      {video.title || video.url}
+                    </a>
+                  </p>
                 );
               }
               return null;

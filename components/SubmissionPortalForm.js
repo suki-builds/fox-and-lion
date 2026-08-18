@@ -52,7 +52,8 @@ export default function SubmissionPortalForm() {
   const [checks, setChecks] = useState(
     Object.fromEntries(GUIDELINE_CHECKS.map((item) => [item.id, false]))
   );
-  const [submitAttempted, setSubmitAttempted] = useState(false);
+  // 'idle' | 'submitting' | 'success' | 'error'
+  const [status, setStatus] = useState('idle');
 
   const wordCount = countWords(fields.pitch);
   const allChecked = GUIDELINE_CHECKS.every((item) => checks[item.id]);
@@ -65,9 +66,20 @@ export default function SubmissionPortalForm() {
     return (event) => setChecks((prev) => ({ ...prev, [id]: event.target.checked }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    setSubmitAttempted(true);
+    setStatus('submitting');
+    try {
+      const res = await fetch('/api/submit-pitch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fields),
+      });
+      if (!res.ok) throw new Error('Submission failed');
+      setStatus('success');
+    } catch {
+      setStatus('error');
+    }
   }
 
   return (
@@ -192,13 +204,33 @@ export default function SubmissionPortalForm() {
       </section>
 
       <div className="submission-form__submit-row">
-        <button type="submit" className="submission-form__submit" disabled={!allChecked}>
-          Submit Pitch
+        <button
+          type="submit"
+          className="submission-form__submit"
+          disabled={!allChecked || status === 'submitting' || status === 'success'}
+        >
+          {status === 'submitting' ? 'Submitting…' : 'Submit Pitch'}
         </button>
-        {submitAttempted && (
-          <p className="submission-form__pending-note">
-            This form isn&rsquo;t connected to a submission backend yet, so nothing has
-            been sent. Ask your developer to wire up handling before sharing this page.
+        <p className="submission-form__privacy-note">
+          Your details are used only for editorial review of this pitch and won&rsquo;t be
+          shared beyond the Fox and Lion editorial team.
+          {/* TODO: link "editorial review" (or add a trailing "See our Privacy Policy")
+              once a privacy policy page exists. */}
+        </p>
+        {status === 'success' && (
+          <p className="submission-form__status-note is-success">
+            Thanks &mdash; we&rsquo;ve received your pitch and will be in touch if it&rsquo;s
+            a fit.
+          </p>
+        )}
+        {status === 'error' && (
+          <p className="submission-form__status-note is-error">
+            Something went wrong submitting your pitch. Please try again, or email it
+            directly to{' '}
+            <a href="mailto:foxandlion@advancedgrowinglabs.com">
+              foxandlion@advancedgrowinglabs.com
+            </a>{' '}
+            if the problem persists.
           </p>
         )}
       </div>
