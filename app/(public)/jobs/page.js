@@ -18,10 +18,6 @@ export default async function JobsPage() {
     <div className="container" style={{ paddingTop: '2.5rem' }}>
       <div className="jobs-board__header">
         <h1>Defence Tech Careers</h1>
-        <p>
-          Open roles pulled directly from Anduril, Palantir, and Helsing&rsquo;s public job
-          boards &mdash; refreshed hourly.
-        </p>
       </div>
       <JobsBoard jobs={jobs} companies={companies} />
     </div>
