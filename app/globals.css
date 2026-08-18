@@ -364,6 +364,20 @@ a {
   justify-content: center;
 }
 
+/* Analysis detail page only - the homepage hero keeps the default
+   centering above (there the image is typically the taller element), but
+   on the article page the text block (title + summary) is often taller
+   than the image, where centering would overflow/look awkward. Top-align
+   both the image and the text there instead, so "ANALYSIS" lines up with
+   the top of the image rather than the whole block floating mid-height. */
+.hero--top-aligned .hero__media {
+  align-self: start;
+}
+
+.hero--top-aligned .hero__copy {
+  justify-content: flex-start;
+}
+
 .hero__title-link {
   display: block;
   color: inherit;

@@ -55,7 +55,7 @@ export default async function AnalysisDetailPage({ params }) {
 
   return (
     <article>
-      <section className="hero">
+      <section className="hero hero--top-aligned">
         <div className="hero__media">
           {post.coverImage ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -69,7 +69,7 @@ export default async function AnalysisDetailPage({ params }) {
           )}
         </div>
         <div className="hero__copy">
-          <span className="category-tag">{post.category || 'Analysis'}</span>
+          <p className="hero__label">{post.category || 'Analysis'}</p>
           <h1>{post.title}</h1>
           <ExcerptMarkdown className="hero__eyebrow">{post.excerpt}</ExcerptMarkdown>
         </div>
