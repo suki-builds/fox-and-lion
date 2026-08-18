@@ -364,67 +364,6 @@ a {
   justify-content: center;
 }
 
-/* Analysis detail page only (components/AnalysisHero.js) - hero__media's
-   align-self: center above is never touched here or by the modifier
-   below, so the image's own position genuinely never changes between
-   modes. What changes is hero__copy: normally, as a grid item, it
-   stretches to match the row's height - and since the row auto-sizes to
-   whichever child is tallest, whenever hero__copy's own content is the
-   taller one, its box ends up EXACTLY as tall as that content, with zero
-   slack, which makes justify-content a no-op no matter what value it
-   has. Taking hero__copy out of the grid's row-sizing entirely
-   (position: absolute + inset: 0 against the grid area, which - since
-   hero__copy no longer contributes to it - ends up sized by hero__media
-   alone) fixes hero__copy's box to exactly the image's height regardless
-   of its own content, which is what makes justify-content: center vs
-   flex-start actually produce different results: centered content that
-   fits sits mid-box against the image; content taller than the box
-   overflows past its bottom edge (only, not symmetrically) once
-   flex-start is applied. AnalysisHero.js sets its own inline min-height
-   on the section (the larger of the two measured heights), since
-   decoupling hero__copy from row-sizing this way would otherwise let
-   overflowing text spill past the section's bottom border into whatever
-   follows it on the page. */
-.hero--article {
-  position: relative;
-  /* AnalysisHero.js sets an explicit min-height on this section (see the
-     comment above) so overflowing text has room. Without align-content:
-     start, that extra container height would stretch the grid's single
-     row track to fill it (grid's default behavior for auto rows in a
-     taller-than-content container) - which would then re-center
-     hero__media within that artificially-stretched row, reintroducing
-     the exact position-drift this is meant to prevent. This pins the row
-     to its natural (image-driven) size regardless of the container's
-     min-height. */
-  align-content: start;
-}
-
-.hero--article .hero__media {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-.hero--article .hero__copy {
-  grid-column: 2;
-  grid-row: 1;
-  position: absolute;
-  inset: 0;
-}
-
-@media (max-width: 760px) {
-  .hero--article .hero__copy {
-    position: static;
-    grid-column: 1;
-    grid-row: 2;
-  }
-}
-
-/* Only ever combined with .hero--article above - switches which edge
-   hero__copy's (now height-independent) content aligns to. */
-.hero--top-aligned .hero__copy {
-  justify-content: flex-start;
-}
-
 .hero__title-link {
   display: block;
   color: inherit;
