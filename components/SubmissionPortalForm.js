@@ -213,9 +213,11 @@ export default function SubmissionPortalForm() {
         </button>
         <p className="submission-form__privacy-note">
           Your details are used only for editorial review of this pitch and won&rsquo;t be
-          shared beyond the Fox and Lion editorial team.
-          {/* TODO: link "editorial review" (or add a trailing "See our Privacy Policy")
-              once a privacy policy page exists. */}
+          shared beyond the Fox and Lion editorial team. See our{' '}
+          <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
+            Privacy Policy
+          </a>
+          .
         </p>
         {status === 'success' && (
           <p className="submission-form__status-note is-success">
