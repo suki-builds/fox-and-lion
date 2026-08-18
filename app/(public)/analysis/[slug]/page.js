@@ -6,8 +6,7 @@ import {
 } from '../../../../lib/queries';
 import { buildMetadata } from '../../../../lib/seo';
 import { stripMarkdown } from '../../../../lib/markdown';
-import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
-import ExcerptMarkdown from '../../../../components/ExcerptMarkdown';
+import AnalysisHero from '../../../../components/AnalysisHero';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 import { coverImageSrc } from '../../../../lib/datocmsImage';
 import { extractYouTubeId } from '../../../../lib/youtube';
@@ -55,25 +54,13 @@ export default async function AnalysisDetailPage({ params }) {
 
   return (
     <article>
-      <section className="hero hero--top-aligned">
-        <div className="hero__media">
-          {post.coverImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={coverImageSrc(post.coverImage.url)}
-              alt={post.coverImage.alt || ''}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          ) : (
-            <IllustrationPlaceholder />
-          )}
-        </div>
-        <div className="hero__copy">
-          <p className="hero__label">{post.category || 'Analysis'}</p>
-          <h1>{post.title}</h1>
-          <ExcerptMarkdown className="hero__eyebrow">{post.excerpt}</ExcerptMarkdown>
-        </div>
-      </section>
+      <AnalysisHero
+        coverImageUrl={post.coverImage ? coverImageSrc(post.coverImage.url) : null}
+        coverImageAlt={post.coverImage?.alt}
+        category={post.category}
+        title={post.title}
+        excerpt={post.excerpt}
+      />
 
       <div className="container">
         <div className="article-meta">

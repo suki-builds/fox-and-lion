@@ -364,12 +364,16 @@ a {
   justify-content: center;
 }
 
-/* Analysis detail page only - the homepage hero keeps the default
-   centering above (there the image is typically the taller element), but
-   on the article page the text block (title + summary) is often taller
-   than the image, where centering would overflow/look awkward. Top-align
-   both the image and the text there instead, so "ANALYSIS" lines up with
-   the top of the image rather than the whole block floating mid-height. */
+/* Applied by components/AnalysisHero.js only when it measures the text
+   column as taller than the image - a plain grid row's height is always
+   driven by whichever child is tallest, so alignment properties alone
+   can't conditionally switch between "centered" and "top-aligned" based
+   on that comparison; it has to be measured and toggled at runtime. When
+   applied, both the image and the text top-align together, so "ANALYSIS"
+   lines up with the top of the image rather than the whole text block
+   overflowing symmetrically above and below it. The homepage hero never
+   gets this class - it keeps the default centering above unconditionally,
+   since there the image is typically the taller element anyway. */
 .hero--top-aligned .hero__media {
   align-self: start;
 }
@@ -423,7 +427,7 @@ a {
 
 .hero__desc li,
 .hero__eyebrow li {
-  margin-bottom: 0.3em;
+  margin-bottom: 0.5em;
 }
 
 .hero__desc li:last-child,
