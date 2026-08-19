@@ -118,7 +118,19 @@ export default function AboutPage() {
           <a href="https://www.linkedin.com/company/fox-and-lion/" target="_blank" rel="noopener noreferrer">
             LinkedIn
           </a>
-          , Reddit, and X.
+          ,{' '}
+          <a href="https://x.com/VulpesetLeo" target="_blank" rel="noopener noreferrer">
+            X
+          </a>
+          ,{' '}
+          <a href="https://discord.gg/8Jm3GYrPVU" target="_blank" rel="noopener noreferrer">
+            Discord
+          </a>
+          , and{' '}
+          <a href="https://www.instagram.com/vulpesetleo" target="_blank" rel="noopener noreferrer">
+            Instagram
+          </a>
+          .
         </p>
       </div>
     </div>
