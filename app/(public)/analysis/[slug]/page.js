@@ -1,4 +1,4 @@
-import { StructuredText } from 'react-datocms';
+import { StructuredText, SRCImage } from 'react-datocms';
 import { fetchFromDato } from '../../../../lib/datocms';
 import {
   ANALYSIS_LIST_QUERY,
@@ -93,17 +93,16 @@ export default async function AnalysisDetailPage({ params }) {
           <StructuredText
             data={post.body}
             renderBlock={({ record }) => {
-              if (record.__typename === 'ImageBlockRecord' && record.asset) {
+              if (record.__typename === 'ImageBlockRecord' && record.asset?.responsiveImage) {
+                const image = record.asset.responsiveImage;
                 return (
                   <figure className="article-body__image">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={record.asset.url}
-                      alt={record.asset.alt || ''}
-                      width={record.asset.width}
-                      height={record.asset.height}
+                    <SRCImage
+                      data={image}
+                      imgClassName="article-body__image-img"
+                      sizes="(max-width: 680px) 100vw, 680px"
                     />
-                    {record.asset.title && <figcaption>{record.asset.title}</figcaption>}
+                    {image.title && <figcaption>{image.title}</figcaption>}
                   </figure>
                 );
               }
