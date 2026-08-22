@@ -26,7 +26,27 @@ const FORWARDED_PARAMS = ['w', 'h', 'fit', 'q', 'dpr'];
 
 const CACHE_CONTROL = 'public, max-age=31536000, immutable';
 
+// Domains a Referer is allowed to come from. `.vercel.app` covers every
+// preview deployment (branch/hash prefix varies per build); `localhost` is
+// for local dev, where the browser sends a same-origin Referer for images
+// loaded off our own pages.
+const ALLOWED_REFERER_SUBSTRINGS = ['foxandlion.pub', 'vercel.app', 'localhost'];
+
+// Missing/empty Referer is allowed through - social link-preview crawlers,
+// RSS readers, and privacy-focused browsers routinely strip it, and that's
+// not something a hotlinker's own page load would ever produce anyway.
+function isAllowedReferer(referer) {
+  if (!referer) return true;
+  return ALLOWED_REFERER_SUBSTRINGS.some((domain) => referer.includes(domain));
+}
+
 export async function GET(request) {
+  const referer = request.headers.get('referer') || '';
+  if (!isAllowedReferer(referer)) {
+    console.warn(`[image-proxy] rejected referer="${referer}" at ${new Date().toISOString()}`);
+    return new Response('Forbidden', { status: 403 });
+  }
+
   const { searchParams } = new URL(request.url);
   const path = searchParams.get('path') || '';
 
