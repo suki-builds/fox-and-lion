@@ -32,6 +32,10 @@ const sourceSans = Source_Sans_3({
 });
 
 export const metadata = {
+  // Needed so the now-root-relative og:image/twitter:image URLs (see
+  // lib/seo.js) resolve to absolute URLs - required by the OG/Twitter
+  // spec, which crawlers won't resolve relative to the page themselves.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://foxandlion.pub'),
   title: 'Fox and Lion',
   description: 'UK and European defence technology analysis, news, and jobs.',
 };

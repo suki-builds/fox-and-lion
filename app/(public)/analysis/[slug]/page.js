@@ -10,6 +10,7 @@ import IllustrationPlaceholder from '../../../../components/IllustrationPlacehol
 import ExcerptMarkdown from '../../../../components/ExcerptMarkdown';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 import { coverImageSrc } from '../../../../lib/datocmsImage';
+import { proxiedImageUrl, proxiedSrcSet } from '../../../../lib/imageProxy';
 import { extractYouTubeId } from '../../../../lib/youtube';
 
 export const revalidate = 3600;
@@ -95,10 +96,19 @@ export default async function AnalysisDetailPage({ params }) {
             renderBlock={({ record }) => {
               if (record.__typename === 'ImageBlockRecord' && record.asset?.responsiveImage) {
                 const image = record.asset.responsiveImage;
+                // Rewritten through the image proxy so the raw
+                // datocms-assets.com host never reaches rendered HTML -
+                // see lib/imageProxy.js / app/api/image-proxy/route.js.
+                const proxiedImage = {
+                  ...image,
+                  src: proxiedImageUrl(image.src),
+                  srcSet: proxiedSrcSet(image.srcSet),
+                  webpSrcSet: proxiedSrcSet(image.webpSrcSet),
+                };
                 return (
                   <figure className="article-body__image">
                     <SRCImage
-                      data={image}
+                      data={proxiedImage}
                       imgClassName="article-body__image-img"
                       sizes="(max-width: 680px) 100vw, 680px"
                     />
