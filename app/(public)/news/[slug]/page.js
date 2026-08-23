@@ -6,6 +6,7 @@ import { resolveSourceName } from '../../../../lib/format';
 import { effectivePublishedAt } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
+import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
 
 export const revalidate = 3600;
 
@@ -101,7 +102,7 @@ export default async function NewsDetailPage({ params }) {
       </div>
 
       <div className="article-body">
-        <PrismicRichText field={post.data.commentary} />
+        <PrismicRichText field={post.data.commentary} components={sharedRichTextComponents} />
       </div>
     </article>
   );

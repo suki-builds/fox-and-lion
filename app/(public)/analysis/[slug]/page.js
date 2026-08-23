@@ -8,6 +8,7 @@ import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 import { coverImageSrc } from '../../../../lib/prismicImage';
 import { effectivePublishedAt } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
+import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
 
 export const revalidate = 3600;
 
@@ -28,6 +29,7 @@ export async function generateMetadata({ params }) {
 }
 
 const bodyComponents = {
+  ...sharedRichTextComponents,
   image: ({ node }) => (
     <figure className="article-body__image">
       <Image

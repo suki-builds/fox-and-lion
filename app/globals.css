@@ -1253,6 +1253,25 @@ a {
   margin: 2.5rem 0;
 }
 
+/* heading6 is repurposed as a caption/supplementary-note style (see
+   lib/richTextComponents.js) rather than an actual heading - kept out of
+   the document's heading outline for SEO/accessibility, styled to match
+   the existing .article-body__image figcaption convention below. */
+.article-body__caption {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0.5rem 0;
+}
+
+/* heading5 is repurposed as a plain section divider (see
+   lib/richTextComponents.js) - its text content is ignored entirely. */
+.article-body__divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 2rem 0;
+}
+
 .article-body__image {
   margin: 2rem 0;
 }
