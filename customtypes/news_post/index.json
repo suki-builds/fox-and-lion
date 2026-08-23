@@ -1,0 +1,118 @@
+{
+  "format": "page",
+  "id": "news_post",
+  "json": {
+    "Main": {
+      "uid": {
+        "config": {
+          "label": "UID"
+        },
+        "type": "UID"
+      },
+      "title": {
+        "config": {
+          "label": "Title",
+          "placeholder": "",
+          "useAsTitle": true
+        },
+        "type": "Text"
+      },
+      "source_url": {
+        "config": {
+          "label": "Source URL",
+          "placeholder": ""
+        },
+        "type": "Text"
+      },
+      "commentary": {
+        "config": {
+          "allowTargetBlank": true,
+          "label": "Commentary",
+          "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+          "placeholder": ""
+        },
+        "type": "StructuredText"
+      },
+      "published_at": {
+        "config": {
+          "label": "Published At",
+          "placeholder": ""
+        },
+        "type": "Timestamp"
+      },
+      "seo_description": {
+        "config": {
+          "label": "SEO Description",
+          "placeholder": ""
+        },
+        "type": "Text"
+      },
+      "seo_twitter_card": {
+        "config": {
+          "default_value": "summary_large_image",
+          "label": "SEO Twitter Card",
+          "options": [
+            "summary_large_image",
+            "summary"
+          ],
+          "placeholder": ""
+        },
+        "type": "Select"
+      },
+      "seo_no_index": {
+        "config": {
+          "default_value": false,
+          "label": "SEO No Index",
+          "placeholder_false": "false",
+          "placeholder_true": "true"
+        },
+        "type": "Boolean"
+      },
+      "seo_image": {
+        "config": {
+          "constraint": {},
+          "label": "SEO Image",
+          "thumbnails": []
+        },
+        "type": "Image"
+      },
+      "slices": {
+        "config": {
+          "choices": {}
+        },
+        "fieldset": "Slice Zone",
+        "type": "Slices"
+      }
+    },
+    "SEO & Metadata": {
+      "meta_title": {
+        "config": {
+          "label": "Meta Title",
+          "placeholder": "A title of the page used for social media and search engines"
+        },
+        "type": "Text"
+      },
+      "meta_description": {
+        "config": {
+          "label": "Meta Description",
+          "placeholder": "A brief summary of the page"
+        },
+        "type": "Text"
+      },
+      "meta_image": {
+        "config": {
+          "constraint": {
+            "height": 1260,
+            "width": 2400
+          },
+          "label": "Meta Image",
+          "thumbnails": []
+        },
+        "type": "Image"
+      }
+    }
+  },
+  "label": "News Post",
+  "repeatable": true,
+  "status": true
+}

@@ -1,0 +1,17 @@
+{
+  "repositoryName": "u7kye6y6",
+  "routes": [
+    {
+      "type": "analysis_post",
+      "path": "/analysis-post/:uid"
+    },
+    {
+      "type": "homepage",
+      "path": "/"
+    },
+    {
+      "type": "news_post",
+      "path": "/news-post/:uid"
+    }
+  ]
+}
