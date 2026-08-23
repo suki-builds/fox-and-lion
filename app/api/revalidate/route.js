@@ -1,81 +1,47 @@
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 
-// On-demand ISR revalidation, triggered by Prismic webhooks.
+// On-demand ISR revalidation, triggered by a single Prismic webhook
+// (Settings > Webhooks) pointed at this route — see README.md for exact
+// webhook configuration.
 //
-// Set up one webhook per page type in Prismic (Settings > Webhooks), each
-// pointed at this route with a different `type` query param — see
-// README.md for exact webhook configuration.
+// Unlike DatoCMS, Prismic doesn't support scoping a webhook to a specific
+// page type, and its secret is delivered as a `secret` field in the JSON
+// body rather than a custom header. So this revalidates both Analysis and
+// News every time, regardless of which one actually changed - harmless
+// (revalidatePath is cheap) and correct, just slightly broader than the
+// old per-type design DatoCMS allowed.
 //
-// We don't rely on parsing Prismic's webhook payload to figure out which
-// page type changed — the `type` query param (set per-webhook) already
-// tells us that, which sidesteps any uncertainty about the payload's exact
-// shape. We *do* try to pull the uid out of the payload for a precise,
-// single-page revalidation; if that fails for any reason (Prismic's
-// `api-update` payload's `documents` array is IDs, not full documents with
-// a `uid` — a UID may not actually be present without a follow-up API
-// call, and this deliberately doesn't make one) we fall back to
-// revalidating the whole list + the dynamic route pattern, which is always
-// correct, just slightly broader than necessary. Check a webhook's
-// delivery log in Prismic (Settings > Webhooks) to see the real payload
-// shape and tighten extractSlug() if it turns out uid is available after
-// all.
-const ROUTES_BY_TYPE = {
-  analysis: { list: '/analysis', detailPattern: '/analysis/[slug]', detailPrefix: '/analysis' },
-  news: { list: '/news', detailPattern: '/news/[slug]', detailPrefix: '/news' },
-};
-
-function extractSlug(body) {
-  return body?.documents?.[0]?.uid || body?.uid || null;
-}
-
+// Prismic's `documents` field is an array of page IDs, not full documents,
+// so there's no uid available here without a follow-up API call (which
+// this deliberately doesn't make) - every path below is revalidated by
+// pattern rather than by specific slug.
 export async function POST(request) {
-  const secret = request.headers.get('x-revalidate-secret');
-  if (!process.env.REVALIDATE_SECRET || secret !== process.env.REVALIDATE_SECRET) {
-    return NextResponse.json({ revalidated: false, message: 'Invalid or missing secret' }, { status: 401 });
-  }
-
-  const type = new URL(request.url).searchParams.get('type');
-  const routes = ROUTES_BY_TYPE[type];
-  if (!routes) {
-    return NextResponse.json(
-      { revalidated: false, message: `Unknown or missing "type" query param. Expected one of: ${Object.keys(ROUTES_BY_TYPE).join(', ')}` },
-      { status: 400 }
-    );
-  }
-
   let body = null;
   try {
     body = await request.json();
   } catch {
-    // Prismic always sends a JSON body, but don't fail the revalidation
-    // over a body we can't parse — the list + homepage revalidation below
-    // doesn't depend on it.
+    return NextResponse.json({ revalidated: false, message: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const paths = ['/', routes.list, '/api/search-index'];
+  if (!process.env.REVALIDATE_SECRET || body?.secret !== process.env.REVALIDATE_SECRET) {
+    return NextResponse.json({ revalidated: false, message: 'Invalid or missing secret' }, { status: 401 });
+  }
+
+  const paths = ['/', '/analysis', '/analysis/[slug]', '/news', '/news/[slug]', '/api/search-index'];
   revalidatePath('/');
-  revalidatePath(routes.list);
-  // Both Analysis and News webhooks touch this — the search index spans
-  // all content types, so any change to either should refresh it.
+  revalidatePath('/analysis');
+  revalidatePath('/analysis/[slug]', 'page');
+  revalidatePath('/news');
+  revalidatePath('/news/[slug]', 'page');
   revalidatePath('/api/search-index');
 
-  const slug = extractSlug(body);
-  if (slug) {
-    const detailPath = `${routes.detailPrefix}/${slug}`;
-    revalidatePath(detailPath);
-    paths.push(detailPath);
-  } else {
-    revalidatePath(routes.detailPattern, 'page');
-    paths.push(routes.detailPattern);
-  }
-
-  return NextResponse.json({ revalidated: true, type, paths });
+  return NextResponse.json({ revalidated: true, paths });
 }
 
 export async function GET() {
   return NextResponse.json(
-    { ok: true, message: 'POST only — this endpoint is for Prismic webhooks, see README.md.' },
+    { ok: true, message: 'POST only — this endpoint is for the Prismic webhook, see README.md.' },
     { status: 200 }
   );
 }

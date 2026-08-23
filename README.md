@@ -177,29 +177,28 @@ openssl rand -hex 32
 
 Paste the result into `REVALIDATE_SECRET` in both places.
 
-Then, in Prismic, go to **Settings > Webhooks** and create **two**
-webhooks (one per page type — this is what tells `/api/revalidate` which
-pages to refresh, via the `type` query param, so you don't need to touch
-anything if Prismic ever changes its webhook payload format):
+Then, in Prismic, go to **Settings > Webhooks** and create **one**
+webhook (Prismic can't scope a webhook to a specific page type the way
+DatoCMS could, and it delivers its secret as a `secret` field in the JSON
+body rather than a custom header — `/api/revalidate` is written for that,
+not DatoCMS's header-based mechanism):
 
-**Webhook 1 — Analysis**
-- URL: `https://<your-domain>/api/revalidate?type=analysis`
-- Headers: add `X-Revalidate-Secret` set to the `REVALIDATE_SECRET` value
-  above
-- Filter/trigger on the **Analysis Post** page type only
+- URL: `https://<your-domain>/api/revalidate`
+- Secret: the `REVALIDATE_SECRET` value above (Prismic includes whatever
+  you put here as `body.secret` on every request)
+- Triggers: at minimum, document publish and unpublish
 
-**Webhook 2 — News**
-- Same as above, but URL `https://<your-domain>/api/revalidate?type=news`
-  and filtered to the **News Post** page type only
+Every trigger revalidates both Analysis and News (plus the homepage and
+search index) regardless of which one actually changed — harmless, just
+slightly broader than DatoCMS's old per-type setup.
 
 Use your Vercel `*.vercel.app` URL until you've confirmed everything
-works, then switch both webhook URLs to `https://foxandlion.pub`.
+works, then switch the webhook URL to `https://foxandlion.pub`.
 
 To confirm it's working: publish or edit an entry in Prismic, then check
 Settings > Webhooks > (the webhook) > delivery log for a `200` response
-with a body like `{"revalidated":true,"type":"analysis","paths":[...]}`,
-and confirm the change shows up on the live site immediately rather than
-after an hour.
+with a body like `{"revalidated":true,"paths":[...]}`, and confirm the
+change shows up on the live site immediately rather than after an hour.
 
 ## Migrating from DatoCMS
 
