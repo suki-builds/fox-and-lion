@@ -1,0 +1,45 @@
+{
+  "id": "card_grid",
+  "name": "Card Grid",
+  "type": "SharedSlice",
+  "variations": [
+    {
+      "description": "Default",
+      "docURL": "",
+      "id": "default",
+      "imageUrl": "https://images.prismic.io/next-instant-start/HSB1ELHEX22f_IoP_card_grid_screenshot.png?auto=format,compress",
+      "name": "Default",
+      "primary": {
+        "cards": {
+          "config": {
+            "fields": {
+              "title": {
+                "config": {
+                  "label": "Title"
+                },
+                "type": "Text"
+              },
+              "description": {
+                "config": {
+                  "allowTargetBlank": true,
+                  "label": "Description",
+                  "multi": "paragraph,strong,em,hyperlink"
+                },
+                "type": "StructuredText"
+              },
+              "image": {
+                "config": {
+                  "label": "Image"
+                },
+                "type": "Image"
+              }
+            },
+            "label": "Cards"
+          },
+          "type": "Group"
+        }
+      },
+      "version": ""
+    }
+  ]
+}

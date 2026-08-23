@@ -1,0 +1,55 @@
+{
+  "description": "Hero section with text, image, and buttons",
+  "id": "hero",
+  "name": "Hero",
+  "type": "SharedSlice",
+  "variations": [
+    {
+      "description": "Default variation",
+      "docURL": "...",
+      "id": "default",
+      "imageUrl": "https://images.prismic.io/next-instant-start/N6lKoeTwp-eQKFNX_hero_screenshot.png?auto=format,compress",
+      "items": {},
+      "name": "Default",
+      "primary": {
+        "headline": {
+          "config": {
+            "allowTargetBlank": true,
+            "label": "Headline",
+            "placeholder": "",
+            "single": "heading1"
+          },
+          "type": "StructuredText"
+        },
+        "description": {
+          "config": {
+            "allowTargetBlank": true,
+            "label": "Description",
+            "multi": "paragraph,strong,em,hyperlink",
+            "placeholder": ""
+          },
+          "type": "StructuredText"
+        },
+        "background_image": {
+          "config": {
+            "label": "Background Image"
+          },
+          "type": "Image"
+        },
+        "interface_image": {
+          "config": {
+            "label": "Interface Image"
+          },
+          "type": "Image"
+        },
+        "logo": {
+          "config": {
+            "label": "Logo"
+          },
+          "type": "Image"
+        }
+      },
+      "version": "initial"
+    }
+  ]
+}

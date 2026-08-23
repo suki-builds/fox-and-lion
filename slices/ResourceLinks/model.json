@@ -1,0 +1,61 @@
+{
+  "id": "resource_links",
+  "name": "Resource Links",
+  "type": "SharedSlice",
+  "variations": [
+    {
+      "description": "Default",
+      "docURL": "",
+      "id": "default",
+      "imageUrl": "https://images.prismic.io/next-instant-start/Ce0iQfAOlh5iHQKy_resource_links_screenshot.png?auto=format,compress",
+      "name": "Default",
+      "primary": {
+        "resources": {
+          "config": {
+            "fields": {
+              "title": {
+                "config": {
+                  "label": "Title"
+                },
+                "type": "Text"
+              },
+              "description": {
+                "config": {
+                  "label": "Description"
+                },
+                "type": "Text"
+              },
+              "link": {
+                "config": {
+                  "allowTargetBlank": true,
+                  "allowText": true,
+                  "label": "Link",
+                  "select": "web"
+                },
+                "type": "Link"
+              }
+            },
+            "label": "Resources"
+          },
+          "type": "Group"
+        },
+        "cta_heading": {
+          "config": {
+            "label": "Call to Action Heading"
+          },
+          "type": "Text"
+        },
+        "cta_link": {
+          "config": {
+            "allowTargetBlank": true,
+            "allowText": true,
+            "label": "Call to Action Link",
+            "select": "web"
+          },
+          "type": "Link"
+        }
+      },
+      "version": ""
+    }
+  ]
+}
