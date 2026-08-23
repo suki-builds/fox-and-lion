@@ -1264,6 +1264,15 @@ a {
   margin: 0.5rem 0;
 }
 
+/* Pulls the caption in close when it directly follows an image (the
+   intended, typical case) - the gap otherwise comes from
+   .article-body__image's own 2rem bottom margin below, not from this
+   element's own (much smaller) top margin. Doesn't touch the caption's
+   spacing when it isn't preceded by an image. */
+.article-body__image + .article-body__caption {
+  margin-top: -1.6rem;
+}
+
 /* heading5 is repurposed as a plain section divider (see
    lib/richTextComponents.js) - its text content is ignored entirely. */
 .article-body__divider {
