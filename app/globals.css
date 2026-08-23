@@ -421,7 +421,7 @@ a {
 .hero__meta {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
   margin: 0.75rem 0 1.5rem;
 }
@@ -571,7 +571,7 @@ a {
 .post-card__meta {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.4rem;
   font-family: var(--mono-stack);
   font-size: 0.78rem;
   color: var(--color-text-muted);
@@ -1234,6 +1234,16 @@ a {
   margin: 0 0 1.3em 0;
 }
 
+/* h2-h4 otherwise inherit the sitewide heading rule's margin-bottom
+   (0.5em, no top margin) - too tight against the paragraph that follows,
+   compared to the 1.3em paragraph-to-paragraph gap above. h1 is left
+   alone since it's already large enough not to need this. */
+.article-body h2,
+.article-body h3,
+.article-body h4 {
+  margin-bottom: 0.8em;
+}
+
 .article-body ul {
   margin: 0 0 1.3em 0;
   padding-left: 1.3em;
@@ -1264,12 +1274,13 @@ a {
   margin: 0.5rem 0;
 }
 
-/* Pulls the caption in close when it directly follows an image (the
-   intended, typical case) - the gap otherwise comes from
-   .article-body__image's own 2rem bottom margin below, not from this
-   element's own (much smaller) top margin. Doesn't touch the caption's
-   spacing when it isn't preceded by an image. */
-.article-body__image + .article-body__caption {
+/* Pulls the caption in close when it directly follows an image or video
+   embed (the intended, typical case) - the gap otherwise comes from
+   .article-body__image/.article-body__video's own 2rem bottom margin
+   below, not from this element's own (much smaller) top margin. Doesn't
+   touch the caption's spacing when it isn't preceded by either. */
+.article-body__image + .article-body__caption,
+.article-body__video + .article-body__caption {
   margin-top: -1.6rem;
 }
 
