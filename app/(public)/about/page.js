@@ -4,7 +4,7 @@ export const metadata = {
   title: 'About — Fox and Lion',
 };
 
-// Static page (not pulled from DatoCMS) since this changes rarely — edit
+// Static page (not pulled from Prismic) since this changes rarely — edit
 // this file directly when the copy is updated. Source: About V01.docx.
 export default function AboutPage() {
   return (

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createContactMessage } from '../../../lib/datocmsCma';
+import { createContactMessage } from '../../../lib/formsSupabase';
 
 const REQUIRED_FIELDS = ['firstName', 'lastName', 'email', 'organisation', 'message'];
 const MAX_MESSAGE_LENGTH = 1000;

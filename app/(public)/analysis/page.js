@@ -1,7 +1,7 @@
-import { fetchFromDato } from '../../../lib/datocms';
-import { ANALYSIS_LIST_QUERY } from '../../../lib/queries';
+import { getAnalysisList } from '../../../lib/prismic';
 import PostCard from '../../../components/PostCard';
-import { coverImageSrc } from '../../../lib/datocmsImage';
+import { coverImageSrc } from '../../../lib/prismicImage';
+import { effectivePublishedAt, sortByPublishedAt } from '../../../lib/publishedDate';
 
 export const revalidate = 3600;
 
@@ -10,8 +10,7 @@ export const metadata = {
 };
 
 export default async function AnalysisListPage() {
-  const data = await fetchFromDato(ANALYSIS_LIST_QUERY);
-  const posts = data.allAnalysisPosts;
+  const posts = sortByPublishedAt(await getAnalysisList());
 
   return (
     <div className="container" style={{ paddingTop: '2.5rem' }}>
@@ -23,13 +22,13 @@ export default async function AnalysisListPage() {
         {posts.map((post) => (
           <PostCard
             key={post.id}
-            href={`/analysis/${post.slug}`}
-            date={post.publishedDate}
-            title={post.title}
-            byline={post.author}
-            category={post.category || 'Analysis'}
-            coverImageUrl={coverImageSrc(post.coverImage?.url)}
-            coverImageAlt={post.coverImage?.alt}
+            href={`/analysis/${post.uid}`}
+            date={effectivePublishedAt(post)}
+            title={post.data.title}
+            byline={post.data.author}
+            category={post.data.category || 'Analysis'}
+            coverImageUrl={coverImageSrc(post.data.cover_image?.url)}
+            coverImageAlt={post.data.cover_image?.alt}
             coverRatio
           />
         ))}

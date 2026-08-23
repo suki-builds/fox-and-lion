@@ -1,27 +1,32 @@
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 
-// On-demand ISR revalidation, triggered by DatoCMS webhooks.
+// On-demand ISR revalidation, triggered by Prismic webhooks.
 //
-// Set up one webhook per content model in DatoCMS (Settings > Webhooks),
-// each pointed at this route with a different `type` query param — see
+// Set up one webhook per page type in Prismic (Settings > Webhooks), each
+// pointed at this route with a different `type` query param — see
 // README.md for exact webhook configuration.
 //
-// We don't rely on parsing DatoCMS's webhook payload to figure out which
-// model changed — the `type` query param (set per-webhook) already tells
-// us that, which sidesteps any uncertainty about the payload's exact
-// shape. We *do* try to pull the slug out of the payload for a precise,
-// single-page revalidation; if that fails for any reason (unexpected
-// payload shape, a delete event with no slug, etc.) we fall back to
-// revalidating the whole list + the dynamic route pattern, which is
-// always correct, just slightly broader than necessary.
+// We don't rely on parsing Prismic's webhook payload to figure out which
+// page type changed — the `type` query param (set per-webhook) already
+// tells us that, which sidesteps any uncertainty about the payload's exact
+// shape. We *do* try to pull the uid out of the payload for a precise,
+// single-page revalidation; if that fails for any reason (Prismic's
+// `api-update` payload's `documents` array is IDs, not full documents with
+// a `uid` — a UID may not actually be present without a follow-up API
+// call, and this deliberately doesn't make one) we fall back to
+// revalidating the whole list + the dynamic route pattern, which is always
+// correct, just slightly broader than necessary. Check a webhook's
+// delivery log in Prismic (Settings > Webhooks) to see the real payload
+// shape and tighten extractSlug() if it turns out uid is available after
+// all.
 const ROUTES_BY_TYPE = {
   analysis: { list: '/analysis', detailPattern: '/analysis/[slug]', detailPrefix: '/analysis' },
   news: { list: '/news', detailPattern: '/news/[slug]', detailPrefix: '/news' },
 };
 
 function extractSlug(body) {
-  return body?.entity?.attributes?.slug || body?.slug || null;
+  return body?.documents?.[0]?.uid || body?.uid || null;
 }
 
 export async function POST(request) {
@@ -43,7 +48,7 @@ export async function POST(request) {
   try {
     body = await request.json();
   } catch {
-    // DatoCMS always sends a JSON body, but don't fail the revalidation
+    // Prismic always sends a JSON body, but don't fail the revalidation
     // over a body we can't parse — the list + homepage revalidation below
     // doesn't depend on it.
   }
@@ -70,7 +75,7 @@ export async function POST(request) {
 
 export async function GET() {
   return NextResponse.json(
-    { ok: true, message: 'POST only — this endpoint is for DatoCMS webhooks, see README.md.' },
+    { ok: true, message: 'POST only — this endpoint is for Prismic webhooks, see README.md.' },
     { status: 200 }
   );
 }

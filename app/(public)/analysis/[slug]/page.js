@@ -1,44 +1,73 @@
-import { StructuredText, SRCImage } from 'react-datocms';
-import { fetchFromDato } from '../../../../lib/datocms';
-import {
-  ANALYSIS_LIST_QUERY,
-  ANALYSIS_DETAIL_QUERY,
-} from '../../../../lib/queries';
+import Image from 'next/image';
+import { PrismicRichText } from '@prismicio/react';
+import { asText } from '@prismicio/client';
+import { getAnalysisList, getAnalysisBySlug } from '../../../../lib/prismic';
 import { buildMetadata } from '../../../../lib/seo';
-import { stripMarkdown } from '../../../../lib/markdown';
 import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
-import ExcerptMarkdown from '../../../../components/ExcerptMarkdown';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
-import { coverImageSrc } from '../../../../lib/datocmsImage';
-import { proxiedImageUrl, proxiedSrcSet } from '../../../../lib/imageProxy';
+import { coverImageSrc } from '../../../../lib/prismicImage';
+import { effectivePublishedAt } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
 
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const data = await fetchFromDato(ANALYSIS_LIST_QUERY);
-  return data.allAnalysisPosts.map((post) => ({ slug: post.slug }));
+  const posts = await getAnalysisList();
+  return posts.map((post) => ({ slug: post.uid }));
 }
 
 export async function generateMetadata({ params }) {
-  const data = await fetchFromDato(ANALYSIS_DETAIL_QUERY, {
-    slug: params.slug,
-  });
-  const post = data.analysisPost;
+  const post = await getAnalysisBySlug(params.slug);
   if (!post) return { title: 'Analysis — Fox and Lion' };
 
   return buildMetadata({
-    seoTags: post.seoTags,
-    fallbackTitle: `${post.title} — Fox and Lion`,
-    fallbackDescription: stripMarkdown(post.excerpt),
+    data: post.data,
+    fallbackTitle: `${post.data.title} — Fox and Lion`,
+    fallbackDescription: asText(post.data.excerpt),
   });
 }
 
+const bodyComponents = {
+  image: ({ node }) => (
+    <figure className="article-body__image">
+      <Image
+        src={node.url}
+        alt={node.alt || ''}
+        width={node.dimensions.width}
+        height={node.dimensions.height}
+        sizes="(max-width: 680px) 100vw, 680px"
+        style={{ width: '100%', height: 'auto' }}
+      />
+      {node.copyright && <figcaption>{node.copyright}</figcaption>}
+    </figure>
+  ),
+  embed: ({ node }) => {
+    const embed = node.oembed;
+    // Prismic already extracts the video ID via oEmbed when the URL was
+    // pasted (embed_url) - extractYouTubeId(embed_url) is only a fallback
+    // in case provider_name isn't recognized as YouTube by string match.
+    const videoId = extractYouTubeId(embed.embed_url);
+    if ((embed.provider_name || '').toLowerCase() === 'youtube' && videoId) {
+      return (
+        <div className="article-body__video">
+          <YouTubeEmbed videoId={videoId} thumbnail={embed.thumbnail_url} title={embed.title} />
+        </div>
+      );
+    }
+    // Non-YouTube providers (e.g. Vimeo) fall back to a plain link rather
+    // than silently dropping the block.
+    return (
+      <p className="article-body__video-fallback">
+        <a href={embed.embed_url} target="_blank" rel="noopener noreferrer">
+          {embed.title || embed.embed_url}
+        </a>
+      </p>
+    );
+  },
+};
+
 export default async function AnalysisDetailPage({ params }) {
-  const data = await fetchFromDato(ANALYSIS_DETAIL_QUERY, {
-    slug: params.slug,
-  });
-  const post = data.analysisPost;
+  const post = await getAnalysisBySlug(params.slug);
 
   if (!post) {
     return (
@@ -49,7 +78,7 @@ export default async function AnalysisDetailPage({ params }) {
     );
   }
 
-  const formattedDate = new Date(post.publishedDate).toLocaleDateString(
+  const formattedDate = new Date(effectivePublishedAt(post)).toLocaleDateString(
     'en-GB',
     { day: 'numeric', month: 'long', year: 'numeric' }
   );
@@ -58,30 +87,33 @@ export default async function AnalysisDetailPage({ params }) {
     <article>
       <section className="hero">
         <div className="hero__media">
-          {post.coverImage ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={coverImageSrc(post.coverImage.url)}
-              alt={post.coverImage.alt || ''}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          {post.data.cover_image?.url ? (
+            <Image
+              src={coverImageSrc(post.data.cover_image.url)}
+              alt={post.data.cover_image.alt || ''}
+              fill
+              sizes="(max-width: 900px) 100vw, 1200px"
+              priority
             />
           ) : (
             <IllustrationPlaceholder />
           )}
         </div>
         <div className="hero__copy">
-          <span className="category-tag">{post.category || 'Analysis'}</span>
-          <h1>{post.title}</h1>
-          <ExcerptMarkdown className="hero__eyebrow">{post.excerpt}</ExcerptMarkdown>
+          <span className="category-tag">{post.data.category || 'Analysis'}</span>
+          <h1>{post.data.title}</h1>
+          <div className="hero__eyebrow">
+            <PrismicRichText field={post.data.excerpt} />
+          </div>
         </div>
       </section>
 
       <div className="container">
         <div className="article-meta">
-          {post.author && (
+          {post.data.author && (
             <div className="article-meta__block">
               <span className="article-meta__label">Author</span>
-              <span className="article-meta__value">{post.author}</span>
+              <span className="article-meta__value">{post.data.author}</span>
             </div>
           )}
           <div className="article-meta__block">
@@ -91,61 +123,7 @@ export default async function AnalysisDetailPage({ params }) {
         </div>
 
         <div className="article-body">
-          <StructuredText
-            data={post.body}
-            renderBlock={({ record }) => {
-              if (record.__typename === 'ImageBlockRecord' && record.asset?.responsiveImage) {
-                const image = record.asset.responsiveImage;
-                // Rewritten through the image proxy so the raw
-                // datocms-assets.com host never reaches rendered HTML -
-                // see lib/imageProxy.js / app/api/image-proxy/route.js.
-                const proxiedImage = {
-                  ...image,
-                  src: proxiedImageUrl(image.src),
-                  srcSet: proxiedSrcSet(image.srcSet),
-                  webpSrcSet: proxiedSrcSet(image.webpSrcSet),
-                };
-                return (
-                  <figure className="article-body__image">
-                    <SRCImage
-                      data={proxiedImage}
-                      imgClassName="article-body__image-img"
-                      sizes="(max-width: 680px) 100vw, 680px"
-                    />
-                    {image.title && <figcaption>{image.title}</figcaption>}
-                  </figure>
-                );
-              }
-              if (record.__typename === 'ExternalVideoRecord' && record.externalVideo) {
-                const video = record.externalVideo;
-                // providerUid is the bare video ID DatoCMS already extracted via
-                // oEmbed when the URL was pasted - extractYouTubeId(url) is only
-                // a fallback in case that's ever missing.
-                const videoId = video.providerUid || extractYouTubeId(video.url);
-                if (video.provider === 'youtube' && videoId) {
-                  return (
-                    <div className="article-body__video">
-                      <YouTubeEmbed
-                        videoId={videoId}
-                        thumbnail={video.thumbnailUrl}
-                        title={video.title}
-                      />
-                    </div>
-                  );
-                }
-                // Non-YouTube providers (e.g. Vimeo) fall back to a plain link
-                // rather than silently dropping the block.
-                return (
-                  <p className="article-body__video-fallback">
-                    <a href={video.url} target="_blank" rel="noopener noreferrer">
-                      {video.title || video.url}
-                    </a>
-                  </p>
-                );
-              }
-              return null;
-            }}
-          />
+          <PrismicRichText field={post.data.body} components={bodyComponents} />
         </div>
       </div>
     </article>

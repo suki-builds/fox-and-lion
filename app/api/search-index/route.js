@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
-import { fetchFromDato } from '../../../lib/datocms';
-import { SEARCH_ANALYSIS_QUERY, SEARCH_NEWS_QUERY } from '../../../lib/queries';
-import { stripMarkdown } from '../../../lib/markdown';
-import { effectivePublishedAt } from '../../../lib/newsDate';
+import { asText } from '@prismicio/client';
+import { getAnalysisList, getNewsList } from '../../../lib/prismic';
+import { effectivePublishedAt } from '../../../lib/publishedDate';
 
 // Powers the site search overlay (components/SearchOverlay.js). Time-based
 // ISR here matches every other page (1hr), and app/api/revalidate/route.js
@@ -18,24 +17,21 @@ import { effectivePublishedAt } from '../../../lib/newsDate';
 export const revalidate = 3600;
 
 export async function GET() {
-  const [analysisData, newsData] = await Promise.all([
-    fetchFromDato(SEARCH_ANALYSIS_QUERY),
-    fetchFromDato(SEARCH_NEWS_QUERY),
-  ]);
+  const [analysisPosts, newsPosts] = await Promise.all([getAnalysisList(), getNewsList()]);
 
-  const analysisItems = analysisData.allAnalysisPosts.map((post) => ({
+  const analysisItems = analysisPosts.map((post) => ({
     type: 'Analysis',
-    title: post.title,
-    excerpt: stripMarkdown(post.excerpt) || '',
-    url: `/analysis/${post.slug}`,
-    date: post.publishedDate,
+    title: post.data.title,
+    excerpt: asText(post.data.excerpt) || '',
+    url: `/analysis/${post.uid}`,
+    date: effectivePublishedAt(post),
   }));
 
-  const newsItems = newsData.allNewsPosts.map((post) => ({
+  const newsItems = newsPosts.map((post) => ({
     type: 'News',
-    title: post.title,
-    excerpt: post.seoTags?.description || '',
-    url: `/news/${post.slug}`,
+    title: post.data.title,
+    excerpt: post.data.seo_description || '',
+    url: `/news/${post.uid}`,
     date: effectivePublishedAt(post),
   }));
 

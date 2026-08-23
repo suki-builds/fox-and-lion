@@ -4,7 +4,7 @@ export const metadata = {
   title: "Contributors' Guidelines — Fox and Lion",
 };
 
-// Static page (not pulled from DatoCMS) since this changes rarely — edit
+// Static page (not pulled from Prismic) since this changes rarely — edit
 // this file directly when the guidelines are updated. Source: Contributors'
 // Guidelines v04.docx.
 export default function SubmissionGuidelinesPage() {

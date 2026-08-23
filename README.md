@@ -1,9 +1,14 @@
 # Fox and Lion — Next.js site
 
 Phase 1 scaffold: core site with two manually-authored content sections
-(Analysis, News) backed by DatoCMS, plus a live jobs board sourced
+(Analysis, News) backed by Prismic, plus a live jobs board sourced
 directly from company ATS APIs (see `lib/ats.js`). No digest integration,
 no auth, no community layer — those come later.
+
+Originally built on DatoCMS; migrated to Prismic (content) + Supabase
+(pitch/contact form submissions) after DatoCMS's free-tier asset bandwidth
+got exhausted in a single day. See the "Migrating from DatoCMS" section
+below if you're the one running that migration.
 
 ## What's already built
 
@@ -11,13 +16,12 @@ no auth, no community layer — those come later.
   every current page together so that when the community layer (Phase 2)
   gets added, you add auth-checking middleware to one new `(community)`
   folder instead of touching these pages.
-- List and detail pages for Analysis and News, pulling from DatoCMS via
-  GraphQL.
+- List and detail pages for Analysis and News, pulling from Prismic.
 - A live `/jobs` board pulling directly from each company's public ATS
   API (Greenhouse, Lever) — see `lib/ats.js` for the company list and
   the caching/exclusion notes.
 - Home, About, and Contact pages (About/Contact are static placeholders —
-  edit the files directly, they don't need to live in DatoCMS since they
+  edit the files directly, they don't need to live in Prismic since they
   change rarely).
 - Placeholder styling in `app/globals.css` — functional, not the final
   visual identity. Treat the heraldic/illustration design work as a
@@ -34,62 +38,120 @@ project folder:
 npm install
 ```
 
-### 2. Set up DatoCMS
+### 2. Set up Prismic
 
-Create a free account at https://www.datocms.com, create a new empty
-project, then build three content models with these **exact** field API
-names (the code queries by these names):
+Create a free repository at https://prismic.io, then build two page types
+with these **exact** API IDs (the code queries by these names — Settings
+> Custom Types / page types in the Prismic dashboard):
 
-**Analysis Post** (model API name: `analysis_post`)
-| Field label | Field API name | Type |
+**Analysis Post** (`analysis_post`)
+| Field label | API ID | Type |
 |---|---|---|
-| Title | `title` | Single line string |
-| Slug | `slug` | Slug (linked to Title) |
-| Excerpt | `excerpt` | Single line string |
-| Author | `author` | Single line string |
-| Cover Image | `cover_image` | Single asset |
-| Body | `body` | Structured text |
-| Published Date | `published_date` | Date |
+| Title | `title` | Text |
+| Excerpt | `excerpt` | Rich Text (bullet lists allowed) |
+| Author | `author` | Text |
+| Category | `category` | Text |
+| Cover Image | `cover_image` | Image |
+| Body | `body` | Rich Text — enable Image + Embed as allowed block types, in addition to the defaults |
+| Published At (override) | `published_at` | Timestamp — optional, see note below |
+| SEO Title | `seo_title` | Text |
+| SEO Description | `seo_description` | Text |
+| SEO Twitter Card | `seo_twitter_card` | Select (`summary`, `summary_large_image`) |
+| SEO No Index | `seo_no_index` | Boolean |
+| SEO Image | `seo_image` | Image |
 
-**News Post** (model API name: `news_post`)
-| Field label | Field API name | Type |
+The UID field is added automatically by Prismic's page type builder —
+that's what the `slug` in every `/analysis/<slug>` URL comes from.
+
+**News Post** (`news_post`)
+| Field label | API ID | Type |
 |---|---|---|
-| Title | `title` | Single line string |
-| Slug | `slug` | Slug (linked to Title) |
-| Source URL | `source_url` | Single line string |
-| Commentary | `commentary` | Structured text |
-| Published Date | `published_date` | Date |
+| Title | `title` | Text |
+| Source URL | `source_url` | Text |
+| Commentary | `commentary` | Rich Text (plain text formatting only — no embedded blocks are used for News) |
+| Published At (override) | `published_at` | Timestamp — optional, see note below |
+| SEO Description | `seo_description` | Text |
+| SEO Twitter Card | `seo_twitter_card` | Select |
+| SEO No Index | `seo_no_index` | Boolean |
+| SEO Image | `seo_image` | Image |
 
-DatoCMS auto-generates GraphQL field names from these — camelCase versions
-of what's above (e.g. `publishedDate`, `coverImage`, `sourceUrl`). If you
-name fields differently than this table, you'll need to update
-`lib/queries.js` to match.
+**About `published_at`:** it's an optional manual override. Leave it blank
+and the site falls back to Prismic's own automatic `first_publication_date`
+system timestamp — set it only when you need to backdate an entry (e.g.
+News commentary written the day after the source article actually broke)
+or force tie-breaking order between same-day posts. See
+`lib/publishedDate.js`.
 
-Once the models exist, go to Settings > API tokens and copy the read-only
-token.
+If you name fields differently than the tables above, update
+`lib/prismic.js` (`getAllByType`/`getByUID` calls) and the field access in
+the page components under `app/(public)/analysis/` and
+`app/(public)/news/` to match.
 
-### 3. Set environment variables
+Once the page types exist, go to **Settings > API & Security** and:
+- If the repository is public (default), you don't need a token.
+- If you set it to private, generate a read-only **Access Token** and put
+  it in `PRISMIC_ACCESS_TOKEN`.
+
+### 3. Set up Supabase
+
+Pitch and contact form submissions are stored in Supabase (not Prismic —
+Prismic doesn't support arbitrary public writes from a live site the way a
+database does). In your Supabase project's SQL editor, run:
+
+```sql
+create table pitch_submissions (
+  id uuid primary key default gen_random_uuid(),
+  first_name text not null,
+  last_name text not null,
+  email text not null,
+  bio text not null,
+  pitch text not null,
+  review_status text not null default 'Received',
+  created_at timestamptz not null default now()
+);
+
+create table contact_messages (
+  id uuid primary key default gen_random_uuid(),
+  first_name text not null,
+  last_name text not null,
+  email text not null,
+  organisation text not null,
+  message text not null,
+  replied boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+alter table pitch_submissions enable row level security;
+alter table contact_messages enable row level security;
+
+create policy "anon insert only" on pitch_submissions
+  for insert to anon with check (true);
+create policy "anon insert only" on contact_messages
+  for insert to anon with check (true);
+```
+
+No select/update/delete policy is created for `anon`, so the public site
+can only insert — read the submissions from the Supabase table editor
+(authenticated as yourself), not through the public API.
+
+### 4. Set environment variables
 
 ```
 cp .env.local.example .env.local
 ```
 
-Paste your DatoCMS token into `DATOCMS_API_TOKEN` in `.env.local`.
+Fill in `NEXT_PUBLIC_PRISMIC_REPOSITORY_NAME` (your repo's subdomain),
+`PRISMIC_ACCESS_TOKEN` (only if the repo is private), and the Supabase
+project URL/anon key.
 
-### 4. Run it locally
+### 5. Run it locally
 
 ```
 npm run dev
 ```
 
 Visit http://localhost:3000. It will look sparse until you've added at
-least one entry to each DatoCMS model.
-
-### 5. Migrate your existing content
-
-Manually copy each existing Analysis article and News item from Wix into
-the matching DatoCMS model. There's no shortcut for this — budget real
-time for it, especially for Analysis if there's a large back-catalogue.
+least one entry to each Prismic page type.
 
 ### 6. Deploy to Vercel
 
@@ -99,12 +161,12 @@ time for it, especially for Analysis if there's a large back-catalogue.
   project settings (Settings > Environment Variables).
 - Deploy. Vercel gives you a `*.vercel.app` preview URL immediately.
 
-### 7. Set up on-demand revalidation (DatoCMS webhooks)
+### 7. Set up on-demand revalidation (Prismic webhooks)
 
 The homepage, `/analysis`, and `/news` are cached for an hour (`revalidate:
 3600`), so by default a newly published article won't appear until that
 hour is up. `/api/revalidate` (see `app/api/revalidate/route.js`) lets
-DatoCMS push an instant refresh instead, the moment you publish.
+Prismic push an instant refresh instead, the moment you publish.
 
 First, generate a secret and set it in both `.env.local` (for local
 testing) and Vercel's project environment variables:
@@ -115,41 +177,58 @@ openssl rand -hex 32
 
 Paste the result into `REVALIDATE_SECRET` in both places.
 
-Then, in DatoCMS, go to **Settings > Webhooks** and create **two**
-webhooks (one per content model — this is what tells `/api/revalidate`
-which pages to refresh, via the `type` query param, so you don't need to
-touch anything if DatoCMS ever changes its payload format):
+Then, in Prismic, go to **Settings > Webhooks** and create **two**
+webhooks (one per page type — this is what tells `/api/revalidate` which
+pages to refresh, via the `type` query param, so you don't need to touch
+anything if Prismic ever changes its webhook payload format):
 
 **Webhook 1 — Analysis**
 - URL: `https://<your-domain>/api/revalidate?type=analysis`
 - Headers: add `X-Revalidate-Secret` set to the `REVALIDATE_SECRET` value
   above
-- Filters: restrict to the **Analysis Post** model only
-- Triggering events: **Update**, **Publish**, **Unpublish**, **Delete**
-  (Create is harmless to include too, but a freshly created, unpublished
-  draft isn't shown on the site, so there's nothing to revalidate yet)
+- Filter/trigger on the **Analysis Post** page type only
 
 **Webhook 2 — News**
 - Same as above, but URL `https://<your-domain>/api/revalidate?type=news`
-  and filtered to the **News Post** model only
+  and filtered to the **News Post** page type only
 
-Use your Vercel `*.vercel.app` URL until the domain cutover below is
-done, then switch both webhook URLs to `https://foxandlion.pub`.
+Use your Vercel `*.vercel.app` URL until you've confirmed everything
+works, then switch both webhook URLs to `https://foxandlion.pub`.
 
-To confirm it's working: publish or edit an entry in DatoCMS, then check
+To confirm it's working: publish or edit an entry in Prismic, then check
 Settings > Webhooks > (the webhook) > delivery log for a `200` response
 with a body like `{"revalidated":true,"type":"analysis","paths":[...]}`,
 and confirm the change shows up on the live site immediately rather than
 after an hour.
 
-### 8. Domain cutover (do this last, once everything is tested)
+## Migrating from DatoCMS
 
-- In Vercel, add `foxandlion.pub` as a custom domain.
-- Update the domain's DNS records (wherever it's registered) to point at
-  Vercel, following the exact records Vercel shows you.
-- Keep the Wix site untouched until DNS has propagated and you've
-  confirmed the new site works, including checking that old URLs people
-  may have bookmarked or linked to still resolve somewhere sensible.
+If Analysis/News content already exists in DatoCMS (this project's
+original CMS), run the one-off `scripts/migrate-dato-to-prismic.mjs`
+script once Prismic's page types (above) exist:
+
+```
+DATOCMS_API_TOKEN=... PRISMIC_WRITE_TOKEN=... NEXT_PUBLIC_PRISMIC_REPOSITORY_NAME=... node scripts/migrate-dato-to-prismic.mjs
+```
+
+- `DATOCMS_API_TOKEN` — DatoCMS's old read-only token (Settings > API
+  tokens), only needed for this one run.
+- `PRISMIC_WRITE_TOKEN` — a write-scoped token from Prismic Settings >
+  API & Security, used only locally for this script, never deployed.
+
+It reads every Analysis and News entry from DatoCMS, converts the
+Structured Text body/commentary and Markdown excerpt to Prismic's Rich
+Text format, uploads cover/body images into Prismic's media library, and
+creates the equivalent Prismic documents as **drafts** — you still need to
+review and publish them in Prismic afterward. It explicitly sets each
+document's `published_at` override from the original DatoCMS publish date,
+so the back-catalogue's chronological order is preserved (Prismic's own
+`first_publication_date` would otherwise reflect the migration date, not
+the article's real one).
+
+Once you've confirmed the migrated content and the rest of this README's
+setup works end-to-end, remove the `DATOCMS_*` environment variables from
+Vercel and this is done with DatoCMS entirely.
 
 ## What's deliberately not in this scaffold
 

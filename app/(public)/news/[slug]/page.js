@@ -1,34 +1,31 @@
-import { StructuredText } from 'react-datocms';
-import { fetchFromDato } from '../../../../lib/datocms';
-import { NEWS_LIST_QUERY, NEWS_DETAIL_QUERY } from '../../../../lib/queries';
+import { PrismicRichText } from '@prismicio/react';
+import { getNewsList, getNewsBySlug } from '../../../../lib/prismic';
 import { buildMetadata } from '../../../../lib/seo';
 import { getPageMeta } from '../../../../lib/ogImage';
 import { resolveSourceName } from '../../../../lib/format';
-import { effectivePublishedAt } from '../../../../lib/newsDate';
+import { effectivePublishedAt } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const data = await fetchFromDato(NEWS_LIST_QUERY);
-  return data.allNewsPosts.map((post) => ({ slug: post.slug }));
+  const posts = await getNewsList();
+  return posts.map((post) => ({ slug: post.uid }));
 }
 
 export async function generateMetadata({ params }) {
-  const data = await fetchFromDato(NEWS_DETAIL_QUERY, { slug: params.slug });
-  const post = data.newsPost;
+  const post = await getNewsBySlug(params.slug);
   if (!post) return { title: 'News — Fox and Lion' };
 
   return buildMetadata({
-    seoTags: post.seoTags,
-    fallbackTitle: `${post.title} — Fox and Lion`,
+    data: post.data,
+    fallbackTitle: `${post.data.title} — Fox and Lion`,
   });
 }
 
 export default async function NewsDetailPage({ params }) {
-  const data = await fetchFromDato(NEWS_DETAIL_QUERY, { slug: params.slug });
-  const post = data.newsPost;
+  const post = await getNewsBySlug(params.slug);
 
   if (!post) {
     return (
@@ -43,10 +40,10 @@ export default async function NewsDetailPage({ params }) {
     'en-GB',
     { day: 'numeric', month: 'long', year: 'numeric' }
   );
-  const meta = post.sourceUrl ? await getPageMeta(post.sourceUrl) : null;
+  const meta = post.data.source_url ? await getPageMeta(post.data.source_url) : null;
   const thumbnail = meta?.image;
-  const sourceName = post.sourceUrl ? resolveSourceName(meta?.siteName, post.sourceUrl) : null;
-  const youtubeId = post.sourceUrl ? extractYouTubeId(post.sourceUrl) : null;
+  const sourceName = post.data.source_url ? resolveSourceName(meta?.siteName, post.data.source_url) : null;
+  const youtubeId = post.data.source_url ? extractYouTubeId(post.data.source_url) : null;
   // YouTube's own watch-page og:image sits far past getPageMeta's 100KB
   // read cap (YouTube front-loads a huge amount of inline JS/config before
   // its <meta> tags), so meta.image comes back empty for these — derive the
@@ -59,25 +56,25 @@ export default async function NewsDetailPage({ params }) {
 
   return (
     <article className="container" style={{ paddingTop: '2.5rem' }}>
-      {post.sourceUrl ? (
+      {post.data.source_url ? (
         <a
-          href={post.sourceUrl}
+          href={post.data.source_url}
           target="_blank"
           rel="noopener noreferrer"
           className="news-detail__title-link"
         >
-          <h1>{post.title}</h1>
+          <h1>{post.data.title}</h1>
         </a>
       ) : (
-        <h1>{post.title}</h1>
+        <h1>{post.data.title}</h1>
       )}
 
       {youtubeId ? (
-        <YouTubeEmbed videoId={youtubeId} thumbnail={youtubeThumbnail} title={post.title} />
+        <YouTubeEmbed videoId={youtubeId} thumbnail={youtubeThumbnail} title={post.data.title} />
       ) : (
         thumbnail && (
           <a
-            href={post.sourceUrl}
+            href={post.data.source_url}
             target="_blank"
             rel="noopener noreferrer"
             className="news-detail__image"
@@ -96,15 +93,15 @@ export default async function NewsDetailPage({ params }) {
         <div className="article-meta__block">
           <span className="article-meta__label">Source</span>
           <span className="article-meta__value">
-            <a href={post.sourceUrl} target="_blank" rel="noopener noreferrer">
-              {sourceName || post.sourceUrl}
+            <a href={post.data.source_url} target="_blank" rel="noopener noreferrer">
+              {sourceName || post.data.source_url}
             </a>
           </span>
         </div>
       </div>
 
       <div className="article-body">
-        <StructuredText data={post.commentary} />
+        <PrismicRichText field={post.data.commentary} />
       </div>
     </article>
   );

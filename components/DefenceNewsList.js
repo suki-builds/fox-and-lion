@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getPageMeta } from '../lib/ogImage';
 import { resolveSourceName } from '../lib/format';
-import { effectivePublishedAt, sortNewsByPublishedAt } from '../lib/newsDate';
+import { effectivePublishedAt, sortByPublishedAt } from '../lib/publishedDate';
 
 const MAX_ITEMS = 8;
 
@@ -18,20 +18,20 @@ function formatDate(date) {
 // linking to Fox and Lion's own internal summary page for that item, not
 // out to the original source article.
 export default async function DefenceNewsList({ posts }) {
-  const items = sortNewsByPublishedAt(posts || []).slice(0, MAX_ITEMS);
+  const items = sortByPublishedAt(posts || []).slice(0, MAX_ITEMS);
 
   if (items.length === 0) {
     return <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>;
   }
 
-  const metas = await Promise.all(items.map((post) => getPageMeta(post.sourceUrl)));
+  const metas = await Promise.all(items.map((post) => getPageMeta(post.data.source_url)));
 
   return (
     <div className="news-list">
       {items.map((post, index) => {
         const meta = metas[index];
-        const sourceName = resolveSourceName(meta.siteName, post.sourceUrl);
-        const href = `/news/${post.slug}`;
+        const sourceName = resolveSourceName(meta.siteName, post.data.source_url);
+        const href = `/news/${post.uid}`;
 
         return (
           <div className="news-list__item" key={post.id}>
@@ -43,7 +43,7 @@ export default async function DefenceNewsList({ posts }) {
             )}
             <div>
               <Link href={href} className="news-list__headline-link">
-                <h3 className="news-list__headline">{post.title}</h3>
+                <h3 className="news-list__headline">{post.data.title}</h3>
               </Link>
               {sourceName && (
                 <Link href={href} className="news-list__source">

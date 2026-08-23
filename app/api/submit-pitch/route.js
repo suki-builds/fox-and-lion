@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createPitchSubmission } from '../../../lib/datocmsCma';
+import { createPitchSubmission } from '../../../lib/formsSupabase';
 
 const REQUIRED_FIELDS = ['firstName', 'lastName', 'email', 'bio', 'pitch'];
 

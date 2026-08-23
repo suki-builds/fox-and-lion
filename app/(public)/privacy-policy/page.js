@@ -2,7 +2,7 @@ export const metadata = {
   title: 'Privacy Policy — Fox and Lion',
 };
 
-// Static page (not pulled from DatoCMS) since this changes rarely — edit
+// Static page (not pulled from Prismic) since this changes rarely — edit
 // this file directly when the policy is updated. Source: Fox_and_Lion_Privacy_Policy.md.
 export default function PrivacyPolicyPage() {
   return (
@@ -79,7 +79,7 @@ export default function PrivacyPolicyPage() {
 
         <h2>4. Who has access to your data</h2>
         <p>
-          Submission data is stored in DatoCMS, our content management platform, and is
+          Submission data is stored in Supabase, our database provider, and is
           accessible only to Fox and Lion&rsquo;s editorial team. We do not sell, rent, or
           share your personal data with third parties for marketing purposes.
         </p>
