@@ -19,9 +19,20 @@ export async function generateMetadata({ params }) {
   const post = await getNewsBySlug(params.slug);
   if (!post) return { title: 'News — Fox and Lion' };
 
+  // News has no cover_image field, so buildMetadata's usual meta_image ->
+  // cover_image fallback has nothing to land on - give it the same
+  // source-article/YouTube thumbnail the page body itself displays,
+  // rather than shipping a social card with no image.
+  const youtubeId = post.data.source_url ? extractYouTubeId(post.data.source_url) : null;
+  const meta = !youtubeId && post.data.source_url ? await getPageMeta(post.data.source_url) : null;
+  const fallbackImage = youtubeId
+    ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
+    : meta?.image || undefined;
+
   return buildMetadata({
     data: post.data,
     fallbackTitle: `${post.data.title} — Fox and Lion`,
+    fallbackImage,
   });
 }
 
