@@ -24,7 +24,7 @@ export default function SiteHeader() {
         <nav className="site-header__nav">
           <Link href="/analysis">Analysis</Link>
           <Link href="/news">News</Link>
-          <Link href="/jobs">Careers</Link>
+          <Link href="/careers">Careers</Link>
         </nav>
         <div className="site-header__actions">
           <button type="button" className="site-header__search" aria-label="Search" onClick={openSearch}>
@@ -52,7 +52,7 @@ export default function SiteHeader() {
           <Link href="/news" onClick={() => setMenuOpen(false)}>
             News
           </Link>
-          <Link href="/jobs" onClick={() => setMenuOpen(false)}>
+          <Link href="/careers" onClick={() => setMenuOpen(false)}>
             Careers
           </Link>
         </nav>

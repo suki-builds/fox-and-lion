@@ -12,8 +12,8 @@ import { effectivePublishedAt } from '../../../lib/publishedDate';
 // Careers is deliberately excluded — at ~2,600+ live roles across the
 // three boards it's far too large for a client-side fuzzy-search payload,
 // and freetext search isn't the right tool for job discovery anyway (the
-// existing company/role/location/workplace filters on /jobs handle that).
-// The search overlay links out to /jobs instead of indexing it.
+// existing company/role/location/workplace filters on /careers handle that).
+// The search overlay links out to /careers instead of indexing it.
 export const revalidate = 3600;
 
 export async function GET() {

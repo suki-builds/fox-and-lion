@@ -153,7 +153,7 @@ export default function JobsBoard({ jobs, companies }) {
         )}
         {visible.map((job) => (
           <Link
-            href={`/jobs/${job.companySlug}/${job.platformId}`}
+            href={`/careers/${job.companySlug}/${job.platformId}`}
             className="job-row"
             key={job.id}
           >

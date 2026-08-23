@@ -906,7 +906,7 @@ a {
   }
 }
 
-/* ---------- Jobs board (/jobs) ---------- */
+/* ---------- Jobs board (/careers) ---------- */
 
 .jobs-board__header {
   margin: 0 0 1.5rem 0;
@@ -995,7 +995,7 @@ a {
   color: var(--color-accent);
 }
 
-/* ---------- Job detail (/jobs/[company]/[id]) ---------- */
+/* ---------- Job detail (/careers/[company]/[id]) ---------- */
 
 .job-detail__back {
   display: inline-block;

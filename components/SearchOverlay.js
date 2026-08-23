@@ -162,7 +162,7 @@ export default function SearchOverlay({ open, onClose }) {
           )}
         </div>
 
-        <Link href="/jobs" className="search-overlay__careers-link" onClick={onClose}>
+        <Link href="/careers" className="search-overlay__careers-link" onClick={onClose}>
           Looking for a job? Browse Careers &rarr;
         </Link>
       </div>

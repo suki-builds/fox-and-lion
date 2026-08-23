@@ -17,7 +17,7 @@ below if you're the one running that migration.
   gets added, you add auth-checking middleware to one new `(community)`
   folder instead of touching these pages.
 - List and detail pages for Analysis and News, pulling from Prismic.
-- A live `/jobs` board pulling directly from each company's public ATS
+- A live `/careers` board pulling directly from each company's public ATS
   API (Greenhouse, Lever) — see `lib/ats.js` for the company list and
   the caching/exclusion notes.
 - Home, About, and Contact pages (About/Contact are static placeholders —

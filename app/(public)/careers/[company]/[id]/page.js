@@ -12,7 +12,7 @@ export default async function JobDetailPage({ params }) {
   if (!job) {
     return (
       <div className="container">
-        <Link href="/jobs" className="job-detail__back">
+        <Link href="/careers" className="job-detail__back">
           &larr; All careers
         </Link>
         <div className="job-detail__not-found">
@@ -33,7 +33,7 @@ export default async function JobDetailPage({ params }) {
 
   return (
     <div className="container">
-      <Link href="/jobs" className="job-detail__back">
+      <Link href="/careers" className="job-detail__back">
         &larr; All careers
       </Link>
 

@@ -20,6 +20,22 @@ const nextConfig = {
     // no reason to ever re-validate a Prismic asset against its origin.
     minimumCacheTTL: 31536000,
   },
+  // Careers moved from /jobs to /careers - permanent redirect so existing
+  // backlinks/bookmarks/search results don't 404.
+  async redirects() {
+    return [
+      {
+        source: '/jobs',
+        destination: '/careers',
+        permanent: true,
+      },
+      {
+        source: '/jobs/:path*',
+        destination: '/careers/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
