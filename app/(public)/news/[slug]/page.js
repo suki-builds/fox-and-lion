@@ -7,6 +7,7 @@ import { effectivePublishedAt } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
+import VoteButtons from '../../../../components/VoteButtons';
 
 export const revalidate = 3600;
 
@@ -109,6 +110,9 @@ export default async function NewsDetailPage({ params }) {
               {sourceName || post.data.source_url}
             </a>
           </span>
+        </div>
+        <div className="article-meta__block">
+          <VoteButtons postUid={post.uid} />
         </div>
       </div>
 
