@@ -28,7 +28,7 @@ export default function PostCard({
   coverImageAlt,
   coverRatio = false,
   compact = false,
-  voteWidget,
+  engagement,
 }) {
   const formattedDate = date
     ? new Date(date).toLocaleDateString('en-GB', {
@@ -71,8 +71,8 @@ export default function PostCard({
           )}
           {formattedDate && <span className="post-card__date">{formattedDate}</span>}
         </div>
+        {engagement}
       </div>
-      {voteWidget && <div className="post-card__votes">{voteWidget}</div>}
     </Link>
   );
 }

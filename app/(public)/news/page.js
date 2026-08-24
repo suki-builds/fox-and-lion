@@ -3,7 +3,7 @@ import { getPageMeta } from '../../../lib/ogImage';
 import { resolveSourceName } from '../../../lib/format';
 import { effectivePublishedAt, sortByPublishedAt } from '../../../lib/publishedDate';
 import PostCard from '../../../components/PostCard';
-import VoteButtons from '../../../components/VoteButtons';
+import PostEngagement from '../../../components/PostEngagement';
 
 export const revalidate = 3600;
 
@@ -35,7 +35,7 @@ export default async function NewsListPage() {
             sourceName={resolveSourceName(metas[index]?.siteName, post.data.source_url)}
             coverImageUrl={metas[index]?.image}
             compact
-            voteWidget={<VoteButtons postUid={post.uid} />}
+            engagement={<PostEngagement postUid={post.uid} />}
           />
         ))}
       </div>

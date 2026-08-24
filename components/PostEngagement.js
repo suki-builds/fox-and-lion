@@ -4,15 +4,16 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../lib/supabase/client';
 
-// Self-contained: fetches the public score and (if signed in) the
-// visitor's own vote itself, on mount. Simple and reusable, at the cost
-// of one small query per instance - on a long News list that's a query
-// per card rather than one batched call for the whole page. Fine at this
-// site's scale; worth revisiting (batch server-side) if the News list
+// Self-contained: fetches this post's public stats (score + views) and, if
+// signed in, the visitor's own vote, on mount. Simple and reusable, at the
+// cost of one small query per instance - on a long News list that's a
+// query per card rather than one batched call for the whole page. Fine at
+// this site's scale; worth revisiting (batch server-side) if the News list
 // grows a lot.
-export default function VoteButtons({ postUid }) {
+export default function PostEngagement({ postUid }) {
   const router = useRouter();
   const [score, setScore] = useState(null);
+  const [views, setViews] = useState(null);
   const [myVote, setMyVote] = useState(0);
   const [pending, setPending] = useState(false);
 
@@ -21,12 +22,13 @@ export default function VoteButtons({ postUid }) {
     const supabase = createClient();
 
     async function load() {
-      const [{ data: totals }, { data: { session } }] = await Promise.all([
-        supabase.rpc('get_news_post_vote_totals', { uids: [postUid] }),
+      const [{ data: stats }, { data: { session } }] = await Promise.all([
+        supabase.rpc('get_news_post_stats', { uids: [postUid] }),
         supabase.auth.getSession(),
       ]);
       if (!active) return;
-      setScore(totals?.[0]?.score ?? 0);
+      setScore(stats?.[0]?.score ?? 0);
+      setViews(stats?.[0]?.views ?? 0);
 
       if (session) {
         const { data: myRow } = await supabase
@@ -39,10 +41,13 @@ export default function VoteButtons({ postUid }) {
       }
     }
 
-    // Fails soft (score stays at 0) if the migration in
-    // supabase/migrations/0001_news_post_votes.sql hasn't been applied yet.
+    // Fails soft (stats stay at 0) if the migrations in supabase/migrations
+    // haven't been applied yet.
     load().catch(() => {
-      if (active) setScore((s) => s ?? 0);
+      if (active) {
+        setScore((s) => s ?? 0);
+        setViews((v) => v ?? 0);
+      }
     });
 
     return () => {
@@ -95,29 +100,36 @@ export default function VoteButtons({ postUid }) {
     }
   }
 
+  const voteLabel = score === null ? '–' : `${score} vote${score === 1 ? '' : 's'}`;
+  const viewLabel = views === null ? '–' : `${views} view${views === 1 ? '' : 's'}`;
+
   return (
-    <div className="vote-buttons" onClick={(event) => event.stopPropagation()}>
-      <button
-        type="button"
-        className={`vote-buttons__arrow vote-buttons__arrow--up${myVote === 1 ? ' is-active' : ''}`}
-        aria-label="Upvote"
-        aria-pressed={myVote === 1}
-        disabled={pending}
-        onClick={(event) => handleVote(event, 1)}
-      >
-        &#9650;
-      </button>
-      <span className="vote-buttons__score">{score === null ? '–' : score}</span>
-      <button
-        type="button"
-        className={`vote-buttons__arrow vote-buttons__arrow--down${myVote === -1 ? ' is-active' : ''}`}
-        aria-label="Downvote"
-        aria-pressed={myVote === -1}
-        disabled={pending}
-        onClick={(event) => handleVote(event, -1)}
-      >
-        &#9660;
-      </button>
+    <div className="post-engagement" onClick={(event) => event.stopPropagation()}>
+      <div className="post-engagement__votes">
+        <button
+          type="button"
+          className={`post-engagement__arrow post-engagement__arrow--up${myVote === 1 ? ' is-active' : ''}`}
+          aria-label="Upvote"
+          aria-pressed={myVote === 1}
+          disabled={pending}
+          onClick={(event) => handleVote(event, 1)}
+        >
+          &#9650;
+        </button>
+        <button
+          type="button"
+          className={`post-engagement__arrow post-engagement__arrow--down${myVote === -1 ? ' is-active' : ''}`}
+          aria-label="Downvote"
+          aria-pressed={myVote === -1}
+          disabled={pending}
+          onClick={(event) => handleVote(event, -1)}
+        >
+          &#9660;
+        </button>
+      </div>
+      <span className="post-engagement__stats">
+        {voteLabel} &middot; {viewLabel}
+      </span>
     </div>
   );
 }
