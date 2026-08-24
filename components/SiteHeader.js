@@ -50,7 +50,15 @@ export default function SiteHeader() {
           {user ? (
             <Link href="/account" className="site-header__avatar-link" aria-label="Account">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={avatarUrl} alt="" className="site-header__avatar" />
+              {/* referrerPolicy is required - Google's photo CDN
+                  (lh3.googleusercontent.com) can reject the request based
+                  on the page's Referer header without it. */}
+              <img
+                src={avatarUrl}
+                alt=""
+                className="site-header__avatar"
+                referrerPolicy="no-referrer"
+              />
             </Link>
           ) : (
             <Link href="/sign-in" className="site-header__sign-in">

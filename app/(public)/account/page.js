@@ -28,12 +28,16 @@ export default async function AccountPage() {
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginTop: '1.5rem' }}>
         {avatarUrl && (
           // eslint-disable-next-line @next/next/no-img-element
+          // referrerPolicy is required - Google's photo CDN
+          // (lh3.googleusercontent.com) can reject the request based on
+          // the page's Referer header without it.
           <img
             src={avatarUrl}
             alt=""
             width={64}
             height={64}
             style={{ borderRadius: '50%' }}
+            referrerPolicy="no-referrer"
           />
         )}
         <div>
