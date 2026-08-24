@@ -7,7 +7,11 @@ import { createClient } from '../../../lib/supabase/server';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = searchParams.get('next') || '/';
+  // Defaults to /account rather than / - the only sign-in entry point
+  // right now is GoogleSignInButton, which doesn't pass its own `next`
+  // (see that file for why: keeping redirectTo query-string-free so it
+  // exact-matches Supabase's Redirect URLs allowlist entry).
+  const next = searchParams.get('next') || '/account';
 
   if (code) {
     const supabase = createClient();

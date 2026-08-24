@@ -8,7 +8,11 @@ export default function GoogleSignInButton() {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/account`,
+        // No query string here - Supabase's Redirect URLs allowlist matches
+        // the full requested URL, and an allowlisted bare
+        // ".../auth/callback" entry won't match one with a "?next=..."
+        // appended. The callback defaults to /account on its own instead.
+        redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
   }
