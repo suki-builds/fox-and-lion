@@ -620,10 +620,27 @@ a {
   color: var(--color-danger);
 }
 
-.post-engagement__stats {
+.post-engagement__score {
   font-family: var(--mono-stack);
-  font-size: 0.74rem;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  min-width: 1.2em;
+  text-align: center;
+}
+
+.post-engagement__views {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--mono-stack);
+  font-size: 0.8rem;
   color: var(--color-text-muted);
+}
+
+.post-engagement__views-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
 }
 
 .post-card__byline-name {

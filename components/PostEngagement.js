@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../lib/supabase/client';
+import EyeIcon from './EyeIcon';
 
 // Self-contained: fetches this post's public stats (score + views) and, if
 // signed in, the visitor's own vote, on mount. Simple and reusable, at the
@@ -100,9 +101,6 @@ export default function PostEngagement({ postUid }) {
     }
   }
 
-  const voteLabel = score === null ? '–' : `${score} vote${score === 1 ? '' : 's'}`;
-  const viewLabel = views === null ? '–' : `${views} view${views === 1 ? '' : 's'}`;
-
   return (
     <div className="post-engagement" onClick={(event) => event.stopPropagation()}>
       <div className="post-engagement__votes">
@@ -116,6 +114,7 @@ export default function PostEngagement({ postUid }) {
         >
           &#9650;
         </button>
+        <span className="post-engagement__score">{score === null ? '–' : score}</span>
         <button
           type="button"
           className={`post-engagement__arrow post-engagement__arrow--down${myVote === -1 ? ' is-active' : ''}`}
@@ -127,8 +126,9 @@ export default function PostEngagement({ postUid }) {
           &#9660;
         </button>
       </div>
-      <span className="post-engagement__stats">
-        {voteLabel} &middot; {viewLabel}
+      <span className="post-engagement__views" aria-label={`${views ?? 0} views`}>
+        <EyeIcon className="post-engagement__views-icon" />
+        {views === null ? '–' : views}
       </span>
     </div>
   );
