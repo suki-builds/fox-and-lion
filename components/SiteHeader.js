@@ -1,18 +1,35 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import SearchOverlay from './SearchOverlay';
 import SearchIcon from './SearchIcon';
+import { createClient } from '../lib/supabase/client';
 
 export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
   function openSearch() {
     setMenuOpen(false);
     setSearchOpen(true);
   }
+
+  // Client-side, not read in a Server Component - most pages on this site
+  // rely on ISR (revalidate = 3600); reading auth cookies anywhere in the
+  // server render tree would force every page dynamic just to show a
+  // header avatar. Costs a brief signed-out flash on load instead.
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
 
   return (
     <header className="site-header">
@@ -30,6 +47,16 @@ export default function SiteHeader() {
           <button type="button" className="site-header__search" aria-label="Search" onClick={openSearch}>
             <SearchIcon className="site-header__search-icon" />
           </button>
+          {user ? (
+            <Link href="/account" className="site-header__avatar-link" aria-label="Account">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={avatarUrl} alt="" className="site-header__avatar" />
+            </Link>
+          ) : (
+            <Link href="/sign-in" className="site-header__sign-in">
+              Sign In
+            </Link>
+          )}
         </div>
         <button
           type="button"
@@ -60,6 +87,15 @@ export default function SiteHeader() {
           <button type="button" className="site-header__search" aria-label="Search" onClick={openSearch}>
             <SearchIcon className="site-header__search-icon" /> Search
           </button>
+          {user ? (
+            <Link href="/account" className="site-header__sign-in" onClick={() => setMenuOpen(false)}>
+              Account
+            </Link>
+          ) : (
+            <Link href="/sign-in" className="site-header__sign-in" onClick={() => setMenuOpen(false)}>
+              Sign In
+            </Link>
+          )}
         </div>
       </div>
 

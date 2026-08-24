@@ -138,6 +138,31 @@ a {
   display: block;
 }
 
+.site-header__sign-in {
+  color: var(--color-text-body);
+  text-decoration: none;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+.site-header__sign-in:hover {
+  color: var(--color-text);
+}
+
+.site-header__avatar-link {
+  display: block;
+  line-height: 0;
+}
+
+.site-header__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: block;
+  object-fit: cover;
+}
+
 .site-header__menu-toggle {
   display: none;
   flex-direction: column;
