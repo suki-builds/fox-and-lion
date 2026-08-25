@@ -2,6 +2,7 @@ import { Fraunces, IBM_Plex_Mono, Source_Sans_3 } from 'next/font/google';
 import './globals.css';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
+import AdBanner from '../components/AdBanner';
 import { Analytics } from '@vercel/analytics/next';
 
 // Serif for headlines — Fraunces has the slightly formal, engraved weight
@@ -48,6 +49,7 @@ export default function RootLayout({ children }) {
     >
       <body>
         <SiteHeader />
+        <AdBanner />
         <main>{children}</main>
         <SiteFooter />
         <Analytics />
