@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 export const metadata = {
-  title: "Contributors' Guidelines — Fox and Lion",
+  title: 'Submissions Guidelines — Fox and Lion',
 };
 
 // Static page (not pulled from Prismic) since this changes rarely — edit
@@ -10,7 +10,7 @@ export const metadata = {
 export default function SubmissionGuidelinesPage() {
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
-      <h1>Contributors&rsquo; Guidelines</h1>
+      <h1>Submissions Guidelines</h1>
 
       <div className="article-body">
         <p>

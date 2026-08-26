@@ -87,7 +87,7 @@ export default function AboutPage() {
         <p>
           A full account of how to pitch, and what is expected of a submission may be
           found in our{' '}
-          <Link href="/submission-guidelines">Contributors&rsquo; Guidelines</Link>.
+          <Link href="/submission-guidelines">Submissions Guidelines</Link>.
         </p>
 
         <h2>Join the Team</h2>
