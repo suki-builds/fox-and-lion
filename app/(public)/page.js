@@ -52,7 +52,7 @@ export default async function HomePage() {
             )}
           </Link>
           <div className="hero__copy">
-            <p className="hero__label">Analysis</p>
+            <p className="hero__label">{featured.data.category || 'Analysis'}</p>
             <Link href={`/analysis/${featured.uid}`} className="hero__title-link">
               <h1>{featured.data.title}</h1>
             </Link>
