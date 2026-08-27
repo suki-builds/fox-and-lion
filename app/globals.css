@@ -365,6 +365,14 @@ a {
   justify-content: center;
 }
 
+@media (max-width: 760px) {
+  /* Tighter gap between the hero image and the text block below it - only
+     the top is reduced, so the sides/bottom keep their usual padding. */
+  .hero__copy {
+    padding-top: 2rem;
+  }
+}
+
 .hero__title-link {
   display: block;
   color: inherit;
@@ -1782,10 +1790,27 @@ a {
 
 .ad-banner {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
   max-width: 728px;
   margin: 0.5rem auto;
   padding: 0 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .ad-banner {
+    /* Tighter gap to the hero below, on desktop specifically. */
+    margin-bottom: 0.25rem;
+  }
+}
+
+.ad-banner__label {
+  font-family: var(--mono-stack);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
 
 .ad-banner__img {

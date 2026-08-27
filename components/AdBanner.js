@@ -5,6 +5,7 @@ const AD_DESTINATION_URL = 'https://maryleboneshipyards.com/';
 export default function AdBanner({ className }) {
   return (
     <div className={`ad-banner${className ? ` ${className}` : ''}`}>
+      <span className="ad-banner__label">Advertisement</span>
       <a
         href={AD_DESTINATION_URL}
         target="_blank"
