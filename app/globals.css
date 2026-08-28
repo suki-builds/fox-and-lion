@@ -821,6 +821,23 @@ a {
   background: var(--color-accent-hover);
 }
 
+.load-more-button {
+  font-family: var(--mono-stack);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-bg);
+  background: var(--color-accent);
+  border: none;
+  cursor: pointer;
+  padding: 0.65rem 1.4rem;
+  border-radius: 4px;
+}
+
+.load-more-button:hover {
+  background: var(--color-accent-hover);
+}
+
 .job-row {
   display: flex;
   align-items: center;
