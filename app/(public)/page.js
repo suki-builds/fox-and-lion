@@ -33,6 +33,7 @@ export default async function HomePage() {
         year: 'numeric',
       })
     : null;
+  const featuredCategory = featured ? featured.data.category || 'Analysis' : null;
 
   return (
     <>
@@ -52,7 +53,7 @@ export default async function HomePage() {
             )}
           </Link>
           <div className="hero__copy">
-            <p className="hero__label">{featured.data.category || 'Analysis'}</p>
+            <p className="hero__label">{featuredCategory}</p>
             <Link href={`/analysis/${featured.uid}`} className="hero__title-link">
               <h1>{featured.data.title}</h1>
             </Link>
@@ -63,7 +64,7 @@ export default async function HomePage() {
             </div>
             <div className="hero__cta">
               <Link href={`/analysis/${featured.uid}`} className="eyebrow-link">
-                Read the full analysis &rarr;
+                Read the full {featuredCategory.toLowerCase()} &rarr;
               </Link>
             </div>
           </div>
