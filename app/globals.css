@@ -643,6 +643,21 @@ a {
   flex-shrink: 0;
 }
 
+.post-engagement__comments {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--mono-stack);
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.post-engagement__comments-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
 .post-card__byline-name {
   font-family: var(--body-stack);
   font-weight: 600;

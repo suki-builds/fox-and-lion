@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../lib/supabase/client';
 import EyeIcon from './EyeIcon';
+import CommentIcon from './CommentIcon';
 
 // Self-contained: fetches this post's public stats (score + views) and, if
 // signed in, the visitor's own vote, on mount. Simple and reusable, at the
@@ -15,6 +16,7 @@ export default function PostEngagement({ postUid }) {
   const router = useRouter();
   const [score, setScore] = useState(null);
   const [views, setViews] = useState(null);
+  const [comments, setComments] = useState(null);
   const [myVote, setMyVote] = useState(0);
   const [pending, setPending] = useState(false);
 
@@ -30,6 +32,7 @@ export default function PostEngagement({ postUid }) {
       if (!active) return;
       setScore(stats?.[0]?.score ?? 0);
       setViews(stats?.[0]?.views ?? 0);
+      setComments(stats?.[0]?.comments ?? 0);
 
       if (session) {
         const { data: myRow } = await supabase
@@ -48,6 +51,7 @@ export default function PostEngagement({ postUid }) {
       if (active) {
         setScore((s) => s ?? 0);
         setViews((v) => v ?? 0);
+        setComments((c) => c ?? 0);
       }
     });
 
@@ -129,6 +133,10 @@ export default function PostEngagement({ postUid }) {
       <span className="post-engagement__views" aria-label={`${views ?? 0} views`}>
         <EyeIcon className="post-engagement__views-icon" />
         {views === null ? '–' : views}
+      </span>
+      <span className="post-engagement__comments" aria-label={`${comments ?? 0} comments`}>
+        <CommentIcon className="post-engagement__comments-icon" />
+        {comments === null ? '–' : comments}
       </span>
     </div>
   );

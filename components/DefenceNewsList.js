@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getPageMeta } from '../lib/ogImage';
 import { resolveSourceName } from '../lib/format';
 import { effectivePublishedAt, sortByPublishedAt } from '../lib/publishedDate';
+import PostEngagement from './PostEngagement';
 
 const MAX_ITEMS = 8;
 
@@ -51,6 +52,7 @@ export default async function DefenceNewsList({ posts }) {
                 </Link>
               )}
               <span className="news-list__time">{formatDate(effectivePublishedAt(post))}</span>
+              <PostEngagement postUid={post.uid} />
             </div>
           </div>
         );
