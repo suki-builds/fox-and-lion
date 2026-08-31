@@ -2244,3 +2244,32 @@ a {
   opacity: 0.6;
   cursor: default;
 }
+
+.moderation-queue__ban-duration {
+  font-family: var(--mono-stack);
+  font-size: 0.75rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  padding: 0.4rem 0.5rem;
+}
+
+.moderation-queue__ban {
+  font-family: var(--mono-stack);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: #7a1f24;
+  border: none;
+  cursor: pointer;
+  padding: 0.45rem 0.9rem;
+  border-radius: 4px;
+}
+
+.moderation-queue__ban-duration:disabled,
+.moderation-queue__ban:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
