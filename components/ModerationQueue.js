@@ -41,7 +41,7 @@ export default function ModerationQueue({ initialReports }) {
     const supabase = createClient();
     supabase
       .from('profiles')
-      .select('user_id, display_name')
+      .select('user_id, username')
       .in('user_id', userIds)
       .then(({ data }) => {
         setProfiles(Object.fromEntries((data || []).map((p) => [p.user_id, p])));
@@ -125,7 +125,7 @@ export default function ModerationQueue({ initialReports }) {
 
             <p className="moderation-queue__comment">
               <span className="moderation-queue__author">
-                {author?.display_name || 'Unknown user'}:
+                {author?.username || 'Unknown user'}:
               </span>{' '}
               {!comment ? (
                 <em>[comment deleted]</em>

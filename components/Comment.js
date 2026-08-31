@@ -69,7 +69,7 @@ export default function Comment({
           <div className="comment__meta">
             {!isRemoved && (
               <span className="comment__author">
-                {profile?.display_name || 'Fox and Lion reader'}
+                {profile?.username || 'Fox and Lion reader'}
               </span>
             )}
             <span className="comment__timestamp">{formatTimestamp(comment.created_at)}</span>

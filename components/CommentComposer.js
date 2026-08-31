@@ -65,13 +65,7 @@ export default function CommentComposer({
           .single();
         if (insertError) throw insertError;
         setBody('');
-        onSubmitted?.({
-          ...data,
-          profile: {
-            display_name: session.user.user_metadata?.full_name || session.user.user_metadata?.name,
-            avatar_url: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture,
-          },
-        });
+        onSubmitted?.(data);
       }
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');

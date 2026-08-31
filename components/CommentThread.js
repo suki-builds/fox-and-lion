@@ -31,6 +31,7 @@ export default function CommentThread({ postUid }) {
   const [comments, setComments] = useState(null); // null = still loading
   const [profiles, setProfiles] = useState({});
   const [user, setUser] = useState(null);
+  const [myProfile, setMyProfile] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -58,15 +59,26 @@ export default function CommentThread({ postUid }) {
       if (userIds.length > 0) {
         const { data: profileRows } = await supabase
           .from('profiles')
-          .select('user_id, display_name, avatar_url')
+          .select('user_id, username, avatar_url')
           .in('user_id', userIds);
         profileMap = Object.fromEntries((profileRows || []).map((p) => [p.user_id, p]));
+      }
+
+      let myProfileRow = null;
+      if (userData?.user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('username, avatar_url')
+          .eq('user_id', userData.user.id)
+          .maybeSingle();
+        myProfileRow = data;
       }
 
       if (!active) return;
       setComments(rows || []);
       setProfiles(profileMap);
       setUser(userData?.user ?? null);
+      setMyProfile(myProfileRow);
     }
 
     load().catch(() => {
@@ -85,12 +97,14 @@ export default function CommentThread({ postUid }) {
 
   const tree = useMemo(() => buildTree(comments || []), [comments]);
 
+  // The composer no longer builds a profile itself - usernames aren't part
+  // of Google's OAuth metadata, so this just uses the current user's own
+  // profile (fetched once above) directly.
   function addComment(row) {
-    const { profile, ...rest } = row;
-    if (profile) {
-      setProfiles((prev) => ({ ...prev, [rest.user_id]: profile }));
+    if (myProfile) {
+      setProfiles((prev) => ({ ...prev, [row.user_id]: myProfile }));
     }
-    setComments((prev) => [...(prev || []), rest]);
+    setComments((prev) => [...(prev || []), row]);
   }
 
   function handleEdited(updated) {

@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '../../../lib/supabase/server';
 import SignOutButton from '../../../components/SignOutButton';
+import UsernameForm from '../../../components/UsernameForm';
 
 export const metadata = {
   title: 'Account — Fox and Lion',
@@ -21,6 +22,12 @@ export default async function AccountPage() {
 
   const name = user.user_metadata?.full_name || user.user_metadata?.name;
   const avatarUrl = user.user_metadata?.avatar_url || user.user_metadata?.picture;
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('user_id', user.id)
+    .maybeSingle();
 
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
@@ -45,6 +52,10 @@ export default async function AccountPage() {
           <p style={{ margin: 0, color: 'var(--color-text-body)' }}>{user.email}</p>
         </div>
       </div>
+      <div style={{ marginTop: '2rem', maxWidth: '420px' }}>
+        <UsernameForm initialUsername={profile?.username ?? ''} />
+      </div>
+
       <div style={{ marginTop: '2rem' }}>
         <SignOutButton />
       </div>

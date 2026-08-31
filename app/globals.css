@@ -2251,6 +2251,80 @@ a {
   cursor: default;
 }
 
+/* ---------- Username form ---------- */
+
+.username-form__label {
+  display: block;
+  font-family: var(--mono-stack);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.username-form__row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.username-form__input {
+  flex: 1;
+  min-width: 0;
+  background: var(--color-panel);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.55rem 0.75rem;
+}
+
+.username-form__input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.username-form__submit {
+  font-family: var(--mono-stack);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-bg);
+  background: var(--color-accent);
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+}
+
+.username-form__submit:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.username-form__submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.username-form__help {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+.username-form__error {
+  margin: 0.4rem 0 0 0;
+  font-size: 0.8rem;
+  color: var(--color-danger);
+}
+
+.username-form__saved {
+  margin: 0.4rem 0 0 0;
+  font-size: 0.8rem;
+  color: var(--color-accent);
+}
+
 /* ---------- Moderation queue ---------- */
 
 .moderation-queue {
