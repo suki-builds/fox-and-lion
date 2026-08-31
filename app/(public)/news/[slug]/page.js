@@ -9,6 +9,7 @@ import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
 import PostEngagement from '../../../../components/PostEngagement';
 import ViewTracker from '../../../../components/ViewTracker';
+import CommentThread from '../../../../components/CommentThread';
 
 export const revalidate = 3600;
 
@@ -121,6 +122,8 @@ export default async function NewsDetailPage({ params }) {
       <div className="article-body">
         <PrismicRichText field={post.data.commentary} components={sharedRichTextComponents} />
       </div>
+
+      <CommentThread postUid={post.uid} />
     </article>
   );
 }
