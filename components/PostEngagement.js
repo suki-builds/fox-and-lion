@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../lib/supabase/client';
-import EyeIcon from './EyeIcon';
+import BarChartIcon from './BarChartIcon';
 import CommentIcon from './CommentIcon';
 
 // Self-contained: fetches this post's public stats (score + views) and, if
@@ -131,7 +131,7 @@ export default function PostEngagement({ postUid }) {
         </button>
       </div>
       <span className="post-engagement__views" aria-label={`${views ?? 0} views`}>
-        <EyeIcon className="post-engagement__views-icon" />
+        <BarChartIcon className="post-engagement__views-icon" />
         {views === null ? '–' : views}
       </span>
       <span className="post-engagement__comments" aria-label={`${comments ?? 0} comments`}>
