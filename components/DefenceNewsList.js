@@ -4,7 +4,7 @@ import { resolveSourceName } from '../lib/format';
 import { effectivePublishedAt, sortByPublishedAt } from '../lib/publishedDate';
 import PostEngagement from './PostEngagement';
 
-const MAX_ITEMS = 8;
+const MAX_ITEMS = 4;
 
 function formatDate(date) {
   if (!date) return null;
