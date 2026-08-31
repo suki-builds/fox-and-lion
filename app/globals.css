@@ -666,13 +666,13 @@ a {
   align-items: center;
   gap: 0.3rem;
   font-family: var(--mono-stack);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--color-text-muted);
 }
 
 .post-engagement__views-icon {
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
   flex-shrink: 0;
 }
 
@@ -681,13 +681,13 @@ a {
   align-items: center;
   gap: 0.3rem;
   font-family: var(--mono-stack);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: var(--color-text-muted);
 }
 
 .post-engagement__comments-icon {
-  width: 15px;
-  height: 15px;
+  width: 17px;
+  height: 17px;
   flex-shrink: 0;
 }
 
