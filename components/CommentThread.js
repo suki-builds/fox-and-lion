@@ -101,10 +101,17 @@ export default function CommentThread({ postUid }) {
     );
   }
 
+  // Only ever called from a comment's own Delete button (see Comment.js) -
+  // moderator removal happens entirely on the separate /moderation
+  // dashboard, which doesn't touch this component's state - so it's safe
+  // to hardcode the same removed_reason the delete_own_comment RPC sets
+  // server-side, matching what a refetch would show anyway.
   function handleRemoved(commentId) {
     setComments((prev) =>
       (prev || []).map((c) =>
-        c.id === commentId ? { ...c, removed_at: new Date().toISOString() } : c
+        c.id === commentId
+          ? { ...c, removed_at: new Date().toISOString(), removed_reason: 'deleted by author' }
+          : c
       )
     );
   }
