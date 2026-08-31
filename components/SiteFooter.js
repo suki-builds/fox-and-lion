@@ -16,7 +16,7 @@ export default function SiteFooter() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo-wordmark.png" alt="Fox and Lion" className="site-footer__logo-img" />
           <p className="site-footer__copy">
-            &copy; {new Date().getFullYear()} Fox and Lion Ltd. All rights reserved.
+            &copy; {new Date().getFullYear()} Fox and Lion. All rights reserved.
           </p>
         </div>
         <nav className="site-footer__nav">
