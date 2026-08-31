@@ -2,8 +2,9 @@
 
 import { createClient } from '../lib/supabase/client';
 
-export default function GoogleSignInButton() {
+export default function GoogleSignInButton({ disabled = false }) {
   async function handleSignIn() {
+    if (disabled) return;
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -14,7 +15,12 @@ export default function GoogleSignInButton() {
   }
 
   return (
-    <button type="button" className="submission-form__submit" onClick={handleSignIn}>
+    <button
+      type="button"
+      className="submission-form__submit"
+      onClick={handleSignIn}
+      disabled={disabled}
+    >
       Sign in with Google
     </button>
   );
