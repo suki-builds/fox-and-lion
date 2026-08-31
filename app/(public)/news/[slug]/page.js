@@ -7,6 +7,9 @@ import { effectivePublishedAt } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
+import PostEngagement from '../../../../components/PostEngagement';
+import ViewTracker from '../../../../components/ViewTracker';
+import CommentThread from '../../../../components/CommentThread';
 
 export const revalidate = 3600;
 
@@ -110,11 +113,17 @@ export default async function NewsDetailPage({ params }) {
             </a>
           </span>
         </div>
+        <div className="article-meta__block">
+          <PostEngagement postUid={post.uid} />
+        </div>
       </div>
+      <ViewTracker postUid={post.uid} />
 
       <div className="article-body">
         <PrismicRichText field={post.data.commentary} components={sharedRichTextComponents} />
       </div>
+
+      <CommentThread postUid={post.uid} />
     </article>
   );
 }

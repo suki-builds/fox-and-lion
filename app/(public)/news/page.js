@@ -19,6 +19,7 @@ export default async function NewsListPage() {
 
   const items = posts.map((post, index) => ({
     id: post.id,
+    uid: post.uid,
     href: `/news/${post.uid}`,
     date: effectivePublishedAt(post),
     title: post.data.title,

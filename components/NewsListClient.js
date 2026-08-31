@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import PostCard from './PostCard';
+import PostEngagement from './PostEngagement';
 
 const PAGE_SIZE = 20;
 
@@ -30,6 +31,7 @@ export default function NewsListClient({ posts }) {
             sourceName={post.sourceName}
             coverImageUrl={post.coverImageUrl}
             compact
+            engagement={<PostEngagement postUid={post.uid} />}
           />
         ))}
       </div>

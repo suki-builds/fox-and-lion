@@ -28,6 +28,7 @@ export default function PostCard({
   coverImageAlt,
   coverRatio = false,
   compact = false,
+  engagement,
 }) {
   const formattedDate = date
     ? new Date(date).toLocaleDateString('en-GB', {
@@ -70,6 +71,7 @@ export default function PostCard({
           )}
           {formattedDate && <span className="post-card__date">{formattedDate}</span>}
         </div>
+        {engagement}
       </div>
     </Link>
   );

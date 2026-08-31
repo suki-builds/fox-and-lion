@@ -1,4 +1,4 @@
-import GoogleSignInButton from '../../../components/GoogleSignInButton';
+import SignInForm from '../../../components/SignInForm';
 
 export const metadata = {
   title: 'Sign In — Fox and Lion',
@@ -14,7 +14,7 @@ export default function SignInPage() {
         Sign in with your Google account.
       </p>
       <div style={{ marginTop: '1.5rem' }}>
-        <GoogleSignInButton />
+        <SignInForm />
       </div>
     </div>
   );

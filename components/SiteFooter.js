@@ -25,6 +25,7 @@ export default function SiteFooter() {
           <Link href="/submission-portal">Submit a Pitch</Link>
           <Link href="/contact">Contact</Link>
           <Link href="/privacy-policy">Privacy Policy</Link>
+          <Link href="/terms">Terms &amp; Conditions</Link>
         </nav>
         <div className="site-footer__socials">
           {SOCIAL_LINKS.map(({ href, label, Icon }) => (
