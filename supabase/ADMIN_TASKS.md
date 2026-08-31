@@ -60,3 +60,9 @@ select count(*) from news_post_views where post_uid = 'the-post-slug';
 ```
 
 then add or remove the difference using the recipes above.
+
+For seeding every existing post at once (e.g. giving the archive a
+realistic-looking baseline before organic traffic arrives), see
+`supabase/seed_view_counts.sql` - a one-time script, not meant to be run
+more than once (it's self-guarding against that, but it also won't include
+any post created after it was generated).
