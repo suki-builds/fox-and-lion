@@ -23,10 +23,14 @@ import * as prismic from '@prismicio/client';
 const DATOCMS_TOKEN = process.env.DATOCMS_API_TOKEN;
 const PRISMIC_WRITE_TOKEN = process.env.PRISMIC_WRITE_TOKEN;
 const PRISMIC_REPO = process.env.NEXT_PUBLIC_PRISMIC_REPOSITORY_NAME;
+// Needed alongside PRISMIC_WRITE_TOKEN because the repo is private -
+// createWriteClient's internal read calls (e.g. resolving the master ref
+// before writing) fail with "Invalid access token" without it.
+const PRISMIC_ACCESS_TOKEN = process.env.PRISMIC_ACCESS_TOKEN;
 
 if (!DATOCMS_TOKEN || !PRISMIC_WRITE_TOKEN || !PRISMIC_REPO) {
   console.error(
-    'Missing env vars. Required: DATOCMS_API_TOKEN, PRISMIC_WRITE_TOKEN, NEXT_PUBLIC_PRISMIC_REPOSITORY_NAME'
+    'Missing env vars. Required: DATOCMS_API_TOKEN, PRISMIC_WRITE_TOKEN, NEXT_PUBLIC_PRISMIC_REPOSITORY_NAME (plus PRISMIC_ACCESS_TOKEN if the repo is private)'
   );
   process.exit(1);
 }
@@ -163,8 +167,12 @@ const HEADING_TYPE = { 1: 'heading1', 2: 'heading2', 3: 'heading3', 4: 'heading4
 
 // Converts a dast root's children to a flat Prismic Rich Text array.
 // `blocks` is the structured text field's own `blocks` array (embedded
-// records referenced by dast `block` nodes' `item` id).
-function dastToPrismicRichText(dast, blocks, docTitle) {
+// records referenced by dast `block` nodes' `item` id). `migration` is
+// needed here (not just for cover images) because a rich text image node
+// in the Migration API must reference an uploaded asset via
+// `migration.createAsset()` - a bare `url` field fails validation
+// ("data.body.N.id: The value must be a string").
+function dastToPrismicRichText(dast, blocks, docTitle, migration) {
   if (!dast) return [];
   const result = [];
 
@@ -177,10 +185,10 @@ function dastToPrismicRichText(dast, blocks, docTitle) {
     if (record.__typename === 'ImageBlockRecord' && record.asset) {
       result.push({
         type: 'image',
-        url: record.asset.url,
-        alt: record.asset.alt || '',
-        copyright: record.asset.title || null,
-        dimensions: { width: record.asset.width, height: record.asset.height },
+        id: migration.createAsset(record.asset.url, `${docTitle}-body-image-${itemId}`, {
+          alt: record.asset.alt || '',
+          credits: record.asset.title || undefined,
+        }),
       });
     } else if (record.__typename === 'ExternalVideoRecord' && record.externalVideo) {
       const video = record.externalVideo;
@@ -304,12 +312,21 @@ function markdownToPrismicRichText(markdown, docTitle) {
 
 // --- Prismic write side -------------------------------------------------
 
+// Prismic's Timestamp field rejects the standard `.toISOString()` output
+// ("2026-06-26T00:00:00.000Z") - it requires "+0000" instead of "Z" and no
+// milliseconds ("2026-06-26T00:00:00+0000").
+function toPrismicTimestamp(dateInput) {
+  if (!dateInput) return null;
+  return new Date(dateInput).toISOString().replace(/\.\d{3}Z$/, '+0000');
+}
+
 const writeClient = prismic.createWriteClient(PRISMIC_REPO, {
   writeToken: PRISMIC_WRITE_TOKEN,
+  accessToken: PRISMIC_ACCESS_TOKEN,
 });
 
 async function migrateAnalysis(migration, post) {
-  const bodyRichText = dastToPrismicRichText(JSON.parse(post.body.value).document, post.body.blocks, post.title);
+  const bodyRichText = dastToPrismicRichText(post.body.value.document, post.body.blocks, post.title, migration);
   const excerptRichText = markdownToPrismicRichText(post.excerpt, post.title);
 
   const coverImage = post.coverImage
@@ -331,7 +348,7 @@ async function migrateAnalysis(migration, post) {
         // See README's "Migrating from DatoCMS" note: this must be set
         // explicitly, or Prismic's own first_publication_date (the
         // migration run date) would silently reorder the back-catalogue.
-        published_at: post.publishedDate ? new Date(post.publishedDate).toISOString() : null,
+        published_at: toPrismicTimestamp(post.publishedDate),
       },
     },
     post.title
@@ -340,9 +357,10 @@ async function migrateAnalysis(migration, post) {
 
 async function migrateNews(migration, post) {
   const commentaryRichText = dastToPrismicRichText(
-    JSON.parse(post.commentary.value).document,
+    post.commentary.value.document,
     [],
-    post.title
+    post.title,
+    migration
   );
   const effectivePublishedAt = post.publishedAt ?? post._firstPublishedAt;
 
@@ -355,14 +373,36 @@ async function migrateNews(migration, post) {
         title: post.title,
         source_url: post.sourceUrl || '',
         commentary: commentaryRichText,
-        published_at: effectivePublishedAt ? new Date(effectivePublishedAt).toISOString() : null,
+        published_at: toPrismicTimestamp(effectivePublishedAt),
       },
     },
     post.title
   );
 }
 
+// Some of the back-catalogue has already been hand-copied into Prismic
+// directly (ahead of running this script), so a DatoCMS post is skipped
+// if it matches an existing Prismic document either by UID or by title -
+// Prismic truncates long slugs to a UID length limit, so a title match
+// catches cases a slug match alone would miss. Without this, re-running
+// the migration would create duplicate documents for anything already
+// migrated by hand.
+async function fetchExistingUidsAndTitles(readClient, type) {
+  const docs = await readClient.getAllByType(type);
+  return {
+    uids: new Set(docs.map((d) => d.uid)),
+    titles: new Set(docs.map((d) => d.data.title?.toLowerCase().trim())),
+  };
+}
+
 async function main() {
+  console.log('Checking for content already migrated by hand...');
+  const readClient = prismic.createClient(PRISMIC_REPO, { accessToken: PRISMIC_ACCESS_TOKEN });
+  const [existingAnalysis, existingNews] = await Promise.all([
+    fetchExistingUidsAndTitles(readClient, 'analysis_post'),
+    fetchExistingUidsAndTitles(readClient, 'news_post'),
+  ]);
+
   console.log('Fetching from DatoCMS...');
   const [{ allAnalysisPosts }, { allNewsPosts }] = await Promise.all([
     fetchFromDato(ANALYSIS_QUERY),
@@ -371,13 +411,25 @@ async function main() {
   console.log(`Found ${allAnalysisPosts.length} Analysis posts, ${allNewsPosts.length} News posts.`);
 
   const migration = prismic.createMigration();
+  let skipped = 0;
 
   for (const post of allAnalysisPosts) {
+    if (existingAnalysis.uids.has(post.slug) || existingAnalysis.titles.has(post.title.toLowerCase().trim())) {
+      console.log(`  skipping (already in Prismic): ${post.slug}`);
+      skipped += 1;
+      continue;
+    }
     await migrateAnalysis(migration, post);
   }
   for (const post of allNewsPosts) {
+    if (existingNews.uids.has(post.slug) || existingNews.titles.has(post.title.toLowerCase().trim())) {
+      console.log(`  skipping (already in Prismic): ${post.slug}`);
+      skipped += 1;
+      continue;
+    }
     await migrateNews(migration, post);
   }
+  console.log(`Skipped ${skipped} post(s) already present in Prismic.`);
 
   console.log('Uploading assets and creating documents in Prismic (this can take a while)...');
   await writeClient.migrate(migration, {
