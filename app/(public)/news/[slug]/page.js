@@ -7,6 +7,7 @@ import { effectivePublishedAt } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
+import ShareButton from '../../../../components/ShareButton';
 import PostEngagement from '../../../../components/PostEngagement';
 import ViewTracker from '../../../../components/ViewTracker';
 import CommentThread from '../../../../components/CommentThread';
@@ -122,6 +123,8 @@ export default async function NewsDetailPage({ params }) {
       <div className="article-body">
         <PrismicRichText field={post.data.commentary} components={sharedRichTextComponents} />
       </div>
+
+      <ShareButton title={post.data.title} />
 
       <CommentThread postUid={post.uid} />
     </article>

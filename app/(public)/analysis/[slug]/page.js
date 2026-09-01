@@ -9,6 +9,7 @@ import { coverImageSrc } from '../../../../lib/prismicImage';
 import { effectivePublishedAt } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
 import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
+import ShareButton from '../../../../components/ShareButton';
 
 export const revalidate = 3600;
 
@@ -127,6 +128,8 @@ export default async function AnalysisDetailPage({ params }) {
         <div className="article-body">
           <PrismicRichText field={post.data.body} components={bodyComponents} />
         </div>
+
+        <ShareButton title={post.data.title} />
       </div>
     </article>
   );
