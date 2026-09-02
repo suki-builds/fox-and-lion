@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 
-const REQUIRED_KEYS = ['firstName', 'lastName', 'email', 'resumeUrl'];
+const REQUIRED_TEXT_KEYS = ['firstName', 'lastName', 'email'];
+const MAX_RESUME_BYTES = 5 * 1024 * 1024;
 
 export default function JobApplicationForm({ careersPostUid, jobTitle, companyName }) {
   const [fields, setFields] = useState({
@@ -10,27 +11,46 @@ export default function JobApplicationForm({ careersPostUid, jobTitle, companyNa
     lastName: '',
     email: '',
     linkedinUrl: '',
-    resumeUrl: '',
     coverNote: '',
   });
+  const [resumeFile, setResumeFile] = useState(null);
+  const [fileError, setFileError] = useState('');
   // 'idle' | 'submitting' | 'success' | 'error'
   const [status, setStatus] = useState('idle');
 
-  const requiredFilled = REQUIRED_KEYS.every((key) => fields[key].trim() !== '');
+  const requiredFilled =
+    REQUIRED_TEXT_KEYS.every((key) => fields[key].trim() !== '') && resumeFile !== null;
 
   function updateField(name) {
     return (event) => setFields((prev) => ({ ...prev, [name]: event.target.value }));
+  }
+
+  function updateResumeFile(event) {
+    const file = event.target.files?.[0] || null;
+    if (file && file.size > MAX_RESUME_BYTES) {
+      setFileError('File is too large — max 5MB.');
+      setResumeFile(null);
+      event.target.value = '';
+      return;
+    }
+    setFileError('');
+    setResumeFile(file);
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
     setStatus('submitting');
     try {
-      const res = await fetch('/api/submit-application', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ careersPostUid, jobTitle, companyName, ...fields }),
-      });
+      const body = new FormData();
+      body.append('careersPostUid', careersPostUid);
+      body.append('jobTitle', jobTitle);
+      body.append('companyName', companyName);
+      Object.entries(fields).forEach(([key, value]) => body.append(key, value));
+      body.append('resume', resumeFile);
+
+      // No Content-Type header here — the browser sets the multipart
+      // boundary itself; setting it manually breaks the upload.
+      const res = await fetch('/api/submit-application', { method: 'POST', body });
       if (!res.ok) throw new Error('Submission failed');
       setStatus('success');
     } catch {
@@ -93,21 +113,18 @@ export default function JobApplicationForm({ careersPostUid, jobTitle, companyNa
         </div>
 
         <div className="submission-form__field">
-          <label htmlFor="resumeUrl">
-            Resume / CV Link <span className="submission-form__required">*</span>
+          <label htmlFor="resumeFile">
+            Resume / CV <span className="submission-form__required">*</span>
           </label>
           <input
-            id="resumeUrl"
-            type="url"
+            id="resumeFile"
+            type="file"
             required
-            placeholder="https://"
-            value={fields.resumeUrl}
-            onChange={updateField('resumeUrl')}
+            accept=".pdf,.doc,.docx"
+            onChange={updateResumeFile}
           />
-          <p className="submission-form__help">
-            A link to your CV/résumé &mdash; Google Drive, Dropbox, or a personal site all
-            work, as long as it&rsquo;s viewable without requesting access.
-          </p>
+          <p className="submission-form__help">PDF or Word document, up to 5MB.</p>
+          {fileError && <p className="submission-form__status-note is-error">{fileError}</p>}
         </div>
 
         <div className="submission-form__field">

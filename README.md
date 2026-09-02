@@ -155,7 +155,9 @@ create table contact_messages (
 -- Applications submitted through a manually-posted careers_post's /apply
 -- page (see app/(public)/careers/[company]/[id]/apply/page.js). Not used
 -- for the ATS-fed Greenhouse/Lever roles - those keep applying through
--- their origin platform.
+-- their origin platform. resume_path holds a path within the private
+-- "resumes" Storage bucket set up below, not a URL - open it from the
+-- Supabase dashboard's Storage browser.
 create table job_applications (
   id uuid primary key default gen_random_uuid(),
   careers_post_uid text not null,
@@ -165,7 +167,7 @@ create table job_applications (
   last_name text not null,
   email text not null,
   linkedin_url text,
-  resume_url text not null,
+  resume_path text not null,
   cover_note text,
   reviewed boolean not null default false,
   created_at timestamptz not null default now()
@@ -186,6 +188,30 @@ create policy "anon insert only" on job_applications
 No select/update/delete policy is created for `anon`, so the public site
 can only insert — read the submissions from the Supabase table editor
 (authenticated as yourself), not through the public API.
+
+Résumés/CVs are uploaded to a private Storage bucket rather than stored as
+a link the applicant pastes in — set that up too, in the same SQL editor:
+
+```sql
+-- Private bucket for résumé/CV uploads from the job application form
+-- (see lib/formsSupabase.js, uploadResume). public=false means files
+-- can only be read via the dashboard's own privileged access (Storage
+-- tab), never through the app's anon key - the policy below only grants
+-- anon permission to upload, not to read, list, or download.
+insert into storage.buckets (id, name, public)
+values ('resumes', 'resumes', false);
+
+create policy "anon insert only - resumes"
+  on storage.objects
+  for insert
+  to anon
+  with check (bucket_id = 'resumes');
+```
+
+To view a submitted résumé: open the `job_applications` row in the Table
+Editor for the path (it's named `<applicant>-<timestamp>.<ext>` for easy
+recognition), then find that file under **Storage > resumes** in the
+dashboard sidebar.
 
 ### 4. Set environment variables
 

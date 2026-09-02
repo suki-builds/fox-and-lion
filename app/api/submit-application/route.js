@@ -1,25 +1,34 @@
 import { NextResponse } from 'next/server';
-import { createJobApplication } from '../../../lib/formsSupabase';
+import { createJobApplication, uploadResume } from '../../../lib/formsSupabase';
 
-const REQUIRED_FIELDS = [
+const REQUIRED_TEXT_FIELDS = [
   'careersPostUid',
   'jobTitle',
   'companyName',
   'firstName',
   'lastName',
   'email',
-  'resumeUrl',
 ];
 
+const MAX_RESUME_BYTES = 5 * 1024 * 1024;
+const ALLOWED_RESUME_EXTENSIONS = ['pdf', 'doc', 'docx'];
+
 export async function POST(request) {
-  let body;
+  let formData;
   try {
-    body = await request.json();
+    formData = await request.formData();
   } catch {
     return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
   }
 
-  const missing = REQUIRED_FIELDS.filter((field) => !body?.[field]?.trim());
+  const fields = Object.fromEntries(
+    REQUIRED_TEXT_FIELDS.concat(['linkedinUrl', 'coverNote']).map((key) => [
+      key,
+      formData.get(key)?.toString().trim() || '',
+    ])
+  );
+
+  const missing = REQUIRED_TEXT_FIELDS.filter((field) => !fields[field]);
   if (missing.length > 0) {
     return NextResponse.json(
       { error: `Missing required field(s): ${missing.join(', ')}.` },
@@ -27,18 +36,27 @@ export async function POST(request) {
     );
   }
 
+  const resumeFile = formData.get('resume');
+  if (!(resumeFile instanceof File) || resumeFile.size === 0) {
+    return NextResponse.json({ error: 'A resume/CV file is required.' }, { status: 400 });
+  }
+  if (resumeFile.size > MAX_RESUME_BYTES) {
+    return NextResponse.json({ error: 'Resume file is too large (max 5MB).' }, { status: 400 });
+  }
+  const extension = resumeFile.name.split('.').pop()?.toLowerCase();
+  if (!extension || !ALLOWED_RESUME_EXTENSIONS.includes(extension)) {
+    return NextResponse.json(
+      { error: 'Resume must be a PDF or Word document (.pdf, .doc, .docx).' },
+      { status: 400 }
+    );
+  }
+
   try {
-    await createJobApplication({
-      careersPostUid: body.careersPostUid.trim(),
-      jobTitle: body.jobTitle.trim(),
-      companyName: body.companyName.trim(),
-      firstName: body.firstName.trim(),
-      lastName: body.lastName.trim(),
-      email: body.email.trim(),
-      linkedinUrl: body.linkedinUrl?.trim(),
-      resumeUrl: body.resumeUrl.trim(),
-      coverNote: body.coverNote?.trim(),
+    const resumePath = await uploadResume(resumeFile, {
+      firstName: fields.firstName,
+      lastName: fields.lastName,
     });
+    await createJobApplication({ ...fields, resumePath });
     return NextResponse.json({ ok: true });
   } catch (err) {
     // Logged server-side for diagnosis; the client only ever sees a
