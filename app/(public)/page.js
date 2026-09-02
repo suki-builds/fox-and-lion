@@ -20,7 +20,14 @@ export default async function HomePage() {
       return [];
     }),
   ]);
-  const latestJobs = jobs.slice(0, 5);
+  // Featured jobs (capped at 3, same as /careers) always claim a slot in
+  // the homepage teaser rather than only appearing if they happen to be
+  // among the newest overall — backfilled with the next-newest jobs up to
+  // 5 total.
+  const featuredJobs = jobs.filter((job) => job.featured).slice(0, 3);
+  const featuredIds = new Set(featuredJobs.map((job) => job.id));
+  const otherJobs = jobs.filter((job) => !featuredIds.has(job.id));
+  const latestJobs = [...featuredJobs, ...otherJobs].slice(0, 5);
 
   const sortedAnalysis = sortByPublishedAt(analysisPosts);
   const featured = sortedAnalysis[0];

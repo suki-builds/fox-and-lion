@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getJobDetail } from '../../../../../lib/ats';
+import { getJobDetail, getCompanyBySlug } from '../../../../../lib/ats';
 
 export async function generateMetadata({ params }) {
   const job = await getJobDetail(params.company, params.id);
@@ -8,6 +8,9 @@ export async function generateMetadata({ params }) {
 
 export default async function JobDetailPage({ params }) {
   const job = await getJobDetail(params.company, params.id);
+  // Manually-posted (careers_post) jobs route to our own intake form;
+  // ATS-sourced jobs keep applying through their origin platform.
+  const isManualJob = !getCompanyBySlug(params.company);
 
   if (!job) {
     return (
@@ -47,9 +50,15 @@ export default async function JobDetailPage({ params }) {
           {job.employmentType && <span>{job.employmentType}</span>}
           {formattedDate && <span>Posted {formattedDate}</span>}
         </div>
-        <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="job-detail__apply">
-          Apply Now &#8599;
-        </a>
+        {isManualJob ? (
+          <Link href={`/careers/${params.company}/${params.id}/apply`} className="job-detail__apply">
+            Apply Now &#8599;
+          </Link>
+        ) : (
+          <a href={job.applyUrl} target="_blank" rel="noopener noreferrer" className="job-detail__apply">
+            Apply Now &#8599;
+          </a>
+        )}
       </div>
 
       <div

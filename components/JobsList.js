@@ -25,10 +25,15 @@ export default function JobsList({ jobs }) {
       </div>
       {jobs.length === 0 && <p style={{ padding: '1.5rem 0' }}>No open roles right now.</p>}
       {jobs.map((job) => (
-        <Link href={`/careers/${job.companySlug}/${job.platformId}`} className="job-row" key={job.id}>
+        <Link
+          href={`/careers/${job.companySlug}/${job.platformId}`}
+          className={`job-row${job.featured ? ' job-row--featured' : ''}`}
+          key={job.id}
+        >
           <CompanyLogo name={job.company} domain={job.companyDomain} className="job-row__avatar" />
           <div className="job-row__main">
             <div className="job-row__title-line">
+              {job.featured && <span className="featured-jobs__badge">Featured</span>}
               <span className="job-row__title">{job.title}</span>
               {job.roleType !== 'Other' && <span className="job-row__tag">{job.roleType}</span>}
             </div>

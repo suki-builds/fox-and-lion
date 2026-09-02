@@ -1027,6 +1027,15 @@ a {
   letter-spacing: 0.05em;
 }
 
+.job-row--featured {
+  background: var(--color-accent-soft);
+  border-radius: 6px;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  margin-left: -0.75rem;
+  margin-right: -0.75rem;
+}
+
 @media (max-width: 640px) {
   .job-row {
     flex-wrap: wrap;
@@ -1035,6 +1044,83 @@ a {
     align-items: flex-start;
     text-align: left;
   }
+}
+
+/* ---------- Featured jobs (/careers) ---------- */
+
+.featured-jobs {
+  margin-bottom: 2rem;
+}
+
+.featured-jobs__heading {
+  font-family: var(--mono-stack);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin: 0 0 0.9rem 0;
+}
+
+.featured-jobs__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.featured-jobs__card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--color-accent);
+  background: var(--color-accent-soft);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.featured-jobs__card:hover {
+  border-color: var(--color-accent-hover);
+}
+
+.featured-jobs__badge {
+  align-self: flex-start;
+  font-family: var(--mono-stack);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-bg);
+  background: var(--color-accent);
+  padding: 0.2rem 0.55rem;
+  border-radius: 3px;
+}
+
+.featured-jobs__title-line {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.featured-jobs__title {
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.featured-jobs__company {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-top: 0.25rem;
+}
+
+.featured-jobs__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-family: var(--mono-stack);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
 }
 
 /* ---------- Jobs board (/careers) ---------- */
@@ -1598,6 +1684,7 @@ a {
 
 .submission-form__field input[type='text'],
 .submission-form__field input[type='email'],
+.submission-form__field input[type='url'],
 .submission-form__field textarea {
   width: 100%;
   background: var(--color-panel);

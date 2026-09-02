@@ -1,0 +1,124 @@
+{
+  "format": "page",
+  "id": "careers_post",
+  "json": {
+    "Main": {
+      "uid": {
+        "config": {
+          "label": "UID"
+        },
+        "type": "UID"
+      },
+      "title": {
+        "config": {
+          "label": "Title",
+          "placeholder": "e.g. Senior Software Engineer",
+          "useAsTitle": true
+        },
+        "type": "Text"
+      },
+      "company_name": {
+        "config": {
+          "label": "Company Name",
+          "placeholder": "Fox and Lion"
+        },
+        "type": "Text"
+      },
+      "location": {
+        "config": {
+          "label": "Location",
+          "placeholder": "e.g. London, United Kingdom"
+        },
+        "type": "Text"
+      },
+      "workplace_type": {
+        "config": {
+          "label": "Workplace Type",
+          "options": [
+            "Remote",
+            "Hybrid",
+            "Onsite"
+          ],
+          "placeholder": ""
+        },
+        "type": "Select"
+      },
+      "role_type": {
+        "config": {
+          "label": "Role Type",
+          "options": [
+            "Engineering",
+            "Research",
+            "Product",
+            "Design",
+            "Program & Operations",
+            "People & Talent",
+            "Sales & Business Development",
+            "Finance & Accounting",
+            "Legal & Policy",
+            "Administrative",
+            "Other"
+          ],
+          "placeholder": ""
+        },
+        "type": "Select"
+      },
+      "employment_type": {
+        "config": {
+          "label": "Employment Type",
+          "options": [
+            "Full-time",
+            "Part-time",
+            "Contract",
+            "Internship"
+          ],
+          "placeholder": ""
+        },
+        "type": "Select"
+      },
+      "department": {
+        "config": {
+          "label": "Department",
+          "placeholder": ""
+        },
+        "type": "Text"
+      },
+      "apply_url": {
+        "config": {
+          "label": "Apply URL",
+          "placeholder": "https://",
+          "select": "web"
+        },
+        "type": "Link"
+      },
+      "description": {
+        "config": {
+          "allowTargetBlank": true,
+          "label": "Description",
+          "multi": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl",
+          "placeholder": ""
+        },
+        "type": "StructuredText"
+      },
+      "posted_at": {
+        "config": {
+          "label": "Posted At",
+          "placeholder": "Leave blank to use this document's publish date"
+        },
+        "type": "Timestamp"
+      },
+      "featured": {
+        "config": {
+          "default_value": false,
+          "label": "Featured",
+          "placeholder_false": "false",
+          "placeholder_true": "true"
+        },
+        "type": "Boolean"
+      }
+    }
+  },
+  "label": "Careers Post",
+  "repeatable": true,
+  "status": true
+}

@@ -40,7 +40,7 @@ npm install
 
 ### 2. Set up Prismic
 
-Create a free repository at https://prismic.io, then build two page types
+Create a free repository at https://prismic.io, then build three page types
 with these **exact** API IDs (the code queries by these names — Settings
 > Custom Types / page types in the Prismic dashboard):
 
@@ -74,6 +74,37 @@ that's what the `slug` in every `/analysis/<slug>` URL comes from.
 | SEO Twitter Card | `seo_twitter_card` | Select |
 | SEO No Index | `seo_no_index` | Boolean |
 | SEO Image | `seo_image` | Image |
+
+**Careers Post** (`careers_post`) — for manually-added roles that sit
+alongside the live Greenhouse/Lever feed on `/careers` (see `lib/ats.js`,
+`normalizeManualJob`/`getManualJobDetail`). Not required for the ATS feed
+itself to work — only add this if you want to post a role Fox and Lion
+(or another company not on Greenhouse/Lever) doesn't already have on an
+ATS board.
+| Field label | API ID | Type |
+|---|---|---|
+| Title | `title` | Text |
+| Company Name | `company_name` | Text |
+| Location | `location` | Text — e.g. "London, United Kingdom" or "Remote" |
+| Workplace Type | `workplace_type` | Select — options must be exactly `Remote`, `Hybrid`, `Onsite` |
+| Role Type | `role_type` | Select — options must be exactly `Engineering`, `Research`, `Product`, `Design`, `Program & Operations`, `People & Talent`, `Sales & Business Development`, `Finance & Accounting`, `Legal & Policy`, `Administrative`, `Other` |
+| Employment Type | `employment_type` | Select — options must be exactly `Full-time`, `Part-time`, `Contract`, `Internship` |
+| Department | `department` | Text — optional |
+| Apply URL | `apply_url` | Link (restrict to Web/External if the field offers that option) |
+| Description | `description` | Rich Text |
+| Posted At | `posted_at` | Timestamp — optional, leave blank to use the document's publish date |
+| Featured | `featured` | Boolean — checking this pins the job in the "Featured Jobs" card at the top of `/careers` |
+
+The Select option strings above must match **exactly** (case, spacing, the
+`&`) — that's what lets a manual posting filter correctly alongside
+Greenhouse/Lever jobs in the existing Company/Role/Country/Workplace
+filters on `/careers`. See `customtypes/careers_post/index.json` for the
+full field reference.
+
+`description`'s `heading5`/`heading6` blocks are repurposed exactly as in
+`lib/richTextComponents.js` — `heading5` renders as a plain `<hr>` divider
+and `heading6` as a caption `<p>`, not as actual headings (see the
+`CAREERS_POST_HTML_SERIALIZER` map in `lib/ats.js`).
 
 **About `published_at`:** it's an optional manual override. Leave it blank
 and the site falls back to Prismic's own automatic `first_publication_date`
@@ -121,12 +152,34 @@ create table contact_messages (
   created_at timestamptz not null default now()
 );
 
+-- Applications submitted through a manually-posted careers_post's /apply
+-- page (see app/(public)/careers/[company]/[id]/apply/page.js). Not used
+-- for the ATS-fed Greenhouse/Lever roles - those keep applying through
+-- their origin platform.
+create table job_applications (
+  id uuid primary key default gen_random_uuid(),
+  careers_post_uid text not null,
+  job_title text not null,
+  company_name text not null,
+  first_name text not null,
+  last_name text not null,
+  email text not null,
+  linkedin_url text,
+  resume_url text not null,
+  cover_note text,
+  reviewed boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
 alter table pitch_submissions enable row level security;
 alter table contact_messages enable row level security;
+alter table job_applications enable row level security;
 
 create policy "anon insert only" on pitch_submissions
   for insert to anon with check (true);
 create policy "anon insert only" on contact_messages
+  for insert to anon with check (true);
+create policy "anon insert only" on job_applications
   for insert to anon with check (true);
 ```
 

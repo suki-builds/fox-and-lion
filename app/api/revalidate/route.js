@@ -1,4 +1,4 @@
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
 
 // On-demand ISR revalidation, triggered by a single Prismic webhook
@@ -7,10 +7,10 @@ import { NextResponse } from 'next/server';
 //
 // Unlike DatoCMS, Prismic doesn't support scoping a webhook to a specific
 // page type, and its secret is delivered as a `secret` field in the JSON
-// body rather than a custom header. So this revalidates both Analysis and
-// News every time, regardless of which one actually changed - harmless
-// (revalidatePath is cheap) and correct, just slightly broader than the
-// old per-type design DatoCMS allowed.
+// body rather than a custom header. So this revalidates Analysis, News,
+// and Careers every time, regardless of which one actually changed -
+// harmless (revalidatePath is cheap) and correct, just slightly broader
+// than the old per-type design DatoCMS allowed.
 //
 // Prismic's `documents` field is an array of page IDs, not full documents,
 // so there's no uid available here without a follow-up API call (which
@@ -28,13 +28,30 @@ export async function POST(request) {
     return NextResponse.json({ revalidated: false, message: 'Invalid or missing secret' }, { status: 401 });
   }
 
-  const paths = ['/', '/analysis', '/analysis/[slug]', '/news', '/news/[slug]', '/api/search-index'];
+  const paths = [
+    '/',
+    '/analysis',
+    '/analysis/[slug]',
+    '/news',
+    '/news/[slug]',
+    '/careers',
+    '/careers/[company]/[id]',
+    '/api/search-index',
+  ];
   revalidatePath('/');
   revalidatePath('/analysis');
   revalidatePath('/analysis/[slug]', 'page');
   revalidatePath('/news');
   revalidatePath('/news/[slug]', 'page');
+  revalidatePath('/careers');
+  revalidatePath('/careers/[company]/[id]', 'page');
   revalidatePath('/api/search-index');
+  // getAllJobs() in lib/ats.js is an unstable_cache entry, not a plain
+  // fetch tied to this route — revalidatePath('/careers') alone won't
+  // reliably bust it. revalidateTag is what actually forces it to refetch
+  // (picking up a newly published/edited job_posting) instead of waiting
+  // out its own 1-hour revalidate window.
+  revalidateTag('fox-and-lion-jobs');
 
   return NextResponse.json({ revalidated: true, paths });
 }
