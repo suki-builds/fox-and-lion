@@ -576,8 +576,14 @@ a {
   color: inherit;
 }
 
-.post-card:hover h2 {
-  color: var(--color-accent);
+/* (hover: hover) excludes touch — without it, tapping a card on a phone
+   leaves the title "stuck" orange until you tap something else, since
+   touch has no real pointer-leave event to clear :hover the way a mouse
+   does. */
+@media (hover: hover) {
+  .post-card:hover h2 {
+    color: var(--color-accent);
+  }
 }
 
 .post-card__content {
@@ -636,8 +642,13 @@ a {
   transition: color 0.15s ease;
 }
 
-.post-engagement__arrow:hover:not(:disabled) {
-  color: var(--color-text);
+/* (hover: hover) excludes touch - without it, a stuck :hover after a tap
+   has higher specificity than .is-active below and visually masks the
+   orange "voted" state even though the vote registered correctly. */
+@media (hover: hover) {
+  .post-engagement__arrow:hover:not(:disabled) {
+    color: var(--color-text);
+  }
 }
 
 .post-engagement__arrow:disabled {
