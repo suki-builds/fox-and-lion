@@ -108,8 +108,10 @@ a {
   transition: color 0.15s ease;
 }
 
-.site-header__nav a:hover {
-  color: var(--color-text);
+@media (hover: hover) {
+  .site-header__nav a:hover {
+    color: var(--color-text);
+  }
 }
 
 .site-header__actions {
@@ -128,8 +130,10 @@ a {
   line-height: 1;
 }
 
-.site-header__search:hover {
-  color: var(--color-text);
+@media (hover: hover) {
+  .site-header__search:hover {
+    color: var(--color-text);
+  }
 }
 
 .site-header__search-icon {
@@ -146,8 +150,10 @@ a {
   transition: color 0.15s ease;
 }
 
-.site-header__sign-in:hover {
-  color: var(--color-text);
+@media (hover: hover) {
+  .site-header__sign-in:hover {
+    color: var(--color-text);
+  }
 }
 
 .site-header__avatar-link {
@@ -315,8 +321,10 @@ a {
   text-decoration: none;
 }
 
-.site-footer__nav a:hover {
-  color: var(--color-text);
+@media (hover: hover) {
+  .site-footer__nav a:hover {
+    color: var(--color-text);
+  }
 }
 
 .site-footer__socials {
@@ -331,8 +339,10 @@ a {
   transition: color 0.15s ease;
 }
 
-.site-footer__social-link:hover {
-  color: var(--color-accent);
+@media (hover: hover) {
+  .site-footer__social-link:hover {
+    color: var(--color-accent);
+  }
 }
 
 .site-footer__social-icon {
@@ -379,8 +389,10 @@ a {
   transition: opacity 0.15s ease;
 }
 
-.hero__media:hover img {
-  opacity: 0.85;
+@media (hover: hover) {
+  .hero__media:hover img {
+    opacity: 0.85;
+  }
 }
 
 .hero__copy {
@@ -404,8 +416,10 @@ a {
   text-decoration: none;
 }
 
-.hero__title-link:hover h1 {
-  color: var(--color-accent);
+@media (hover: hover) {
+  .hero__title-link:hover h1 {
+    color: var(--color-accent);
+  }
 }
 
 .hero__label {
@@ -471,8 +485,10 @@ a {
   text-decoration: none;
 }
 
-.hero__cta-secondary:hover {
-  color: var(--color-text-body);
+@media (hover: hover) {
+  .hero__cta-secondary:hover {
+    color: var(--color-text-body);
+  }
 }
 
 /* legacy alias kept for the eyebrow used on article-detail heroes */
@@ -853,8 +869,10 @@ a {
   color: inherit;
 }
 
-.news-list__headline-link:hover .news-list__headline {
-  color: var(--color-accent);
+@media (hover: hover) {
+  .news-list__headline-link:hover .news-list__headline {
+    color: var(--color-accent);
+  }
 }
 
 .news-list__headline {
@@ -873,9 +891,11 @@ a {
   text-decoration: none;
 }
 
-.news-list__source:hover {
-  color: var(--color-accent-hover);
-  text-decoration: underline;
+@media (hover: hover) {
+  .news-list__source:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+  }
 }
 
 .news-list__time {
@@ -934,8 +954,10 @@ a {
   margin-left: auto;
 }
 
-.section-cta:hover {
-  background: var(--color-accent-hover);
+@media (hover: hover) {
+  .section-cta:hover {
+    background: var(--color-accent-hover);
+  }
 }
 
 .load-more-button {
@@ -951,8 +973,10 @@ a {
   border-radius: 4px;
 }
 
-.load-more-button:hover {
-  background: var(--color-accent-hover);
+@media (hover: hover) {
+  .load-more-button:hover {
+    background: var(--color-accent-hover);
+  }
 }
 
 .job-row {
@@ -1091,8 +1115,10 @@ a {
   transition: border-color 0.15s ease;
 }
 
-.featured-jobs__card:hover {
-  border-color: var(--color-accent-hover);
+@media (hover: hover) {
+  .featured-jobs__card:hover {
+    border-color: var(--color-accent-hover);
+  }
 }
 
 .featured-jobs__badge {
@@ -1218,9 +1244,11 @@ a {
   cursor: pointer;
 }
 
-.jobs-board__load-more:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+@media (hover: hover) {
+  .jobs-board__load-more:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
 }
 
 /* ---------- Job detail (/careers/[company]/[id]) ---------- */
@@ -1236,8 +1264,10 @@ a {
   margin: 2rem 0 1.5rem 0;
 }
 
-.job-detail__back:hover {
-  color: var(--color-accent);
+@media (hover: hover) {
+  .job-detail__back:hover {
+    color: var(--color-accent);
+  }
 }
 
 .job-detail__header {
@@ -1288,8 +1318,10 @@ a {
   border-radius: 4px;
 }
 
-.job-detail__apply:hover {
-  background: var(--color-accent-hover);
+@media (hover: hover) {
+  .job-detail__apply:hover {
+    background: var(--color-accent-hover);
+  }
 }
 
 .job-detail__body {
@@ -1338,8 +1370,10 @@ a {
   text-decoration: none;
 }
 
-.news-detail__title-link:hover h1 {
-  color: var(--color-accent);
+@media (hover: hover) {
+  .news-detail__title-link:hover h1 {
+    color: var(--color-accent);
+  }
 }
 
 .news-detail__image {
@@ -1356,8 +1390,10 @@ a {
   transition: opacity 0.15s ease;
 }
 
-.news-detail__image:hover img {
-  opacity: 0.85;
+@media (hover: hover) {
+  .news-detail__image:hover img {
+    opacity: 0.85;
+  }
 }
 
 .youtube-embed {
@@ -1406,8 +1442,10 @@ a {
   transition: background 0.15s ease;
 }
 
-.youtube-embed--thumb:hover .youtube-embed__play {
-  background: var(--color-accent);
+@media (hover: hover) {
+  .youtube-embed--thumb:hover .youtube-embed__play {
+    background: var(--color-accent);
+  }
 }
 
 .youtube-embed__play svg {
@@ -1416,8 +1454,10 @@ a {
   fill: var(--color-text);
 }
 
-.youtube-embed--thumb:hover .youtube-embed__play svg {
-  fill: #1a1206;
+@media (hover: hover) {
+  .youtube-embed--thumb:hover .youtube-embed__play svg {
+    fill: #1a1206;
+  }
 }
 
 .article-meta {
@@ -1569,9 +1609,11 @@ a {
   transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-.share-button:hover {
-  color: var(--color-accent);
-  border-color: var(--color-accent);
+@media (hover: hover) {
+  .share-button:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
 }
 
 .share-button__icon {
@@ -1628,8 +1670,10 @@ a {
   text-decoration: none;
 }
 
-.submission-sidebar__link:hover {
-  color: var(--color-accent-hover);
+@media (hover: hover) {
+  .submission-sidebar__link:hover {
+    color: var(--color-accent-hover);
+  }
 }
 
 .submission-form__section {
@@ -1729,9 +1773,11 @@ a {
   cursor: pointer;
 }
 
-.submission-form__field input[type='file']::file-selector-button:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+@media (hover: hover) {
+  .submission-form__field input[type='file']::file-selector-button:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
 }
 
 .submission-form__field textarea {
@@ -1817,8 +1863,10 @@ a {
   cursor: pointer;
 }
 
-.submission-form__submit:hover:not(:disabled) {
-  background: var(--color-accent-hover);
+@media (hover: hover) {
+  .submission-form__submit:hover:not(:disabled) {
+    background: var(--color-accent-hover);
+  }
 }
 
 .submission-form__submit:disabled {
@@ -1939,8 +1987,10 @@ a {
   flex-shrink: 0;
 }
 
-.search-overlay__close:hover {
-  color: var(--color-text);
+@media (hover: hover) {
+  .search-overlay__close:hover {
+    color: var(--color-text);
+  }
 }
 
 .search-overlay__results {
@@ -1962,8 +2012,10 @@ a {
   border-top: 1px solid var(--color-border);
 }
 
-.search-overlay__careers-link:hover {
-  color: var(--color-accent-hover);
+@media (hover: hover) {
+  .search-overlay__careers-link:hover {
+    color: var(--color-accent-hover);
+  }
 }
 
 .search-overlay__status {
@@ -1989,8 +2041,10 @@ a {
   border-radius: 6px;
 }
 
-.search-result:hover {
-  background: var(--color-panel-hover);
+@media (hover: hover) {
+  .search-result:hover {
+    background: var(--color-panel-hover);
+  }
 }
 
 .search-result__head {
@@ -2221,8 +2275,10 @@ a {
   transition: color 0.15s ease;
 }
 
-.comment__action:hover:not(:disabled) {
-  color: var(--color-accent);
+@media (hover: hover) {
+  .comment__action:hover:not(:disabled) {
+    color: var(--color-accent);
+  }
 }
 
 .comment__action:disabled {
@@ -2304,8 +2360,10 @@ a {
   border-radius: 4px;
 }
 
-.comment-composer__submit:hover:not(:disabled) {
-  background: var(--color-accent-hover);
+@media (hover: hover) {
+  .comment-composer__submit:hover:not(:disabled) {
+    background: var(--color-accent-hover);
+  }
 }
 
 .comment-composer__submit:disabled {
@@ -2451,8 +2509,10 @@ a {
   border-radius: 4px;
 }
 
-.username-form__submit:hover:not(:disabled) {
-  background: var(--color-accent-hover);
+@media (hover: hover) {
+  .username-form__submit:hover:not(:disabled) {
+    background: var(--color-accent-hover);
+  }
 }
 
 .username-form__submit:disabled {
