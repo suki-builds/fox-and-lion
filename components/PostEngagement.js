@@ -6,6 +6,19 @@ import { createClient } from '../lib/supabase/client';
 import BarChartIcon from './BarChartIcon';
 import CommentIcon from './CommentIcon';
 
+// Below 1000, show the exact count - it's short enough to read at a
+// glance and precision doesn't hurt. At 1000+, switch to compact notation
+// (1k, 1.5k, 15k) since View counts can run into the tens of thousands
+// and exact digits stop being meaningful past that point. The screen
+// reader label (aria-label, set where this is used) keeps the exact
+// number regardless.
+function formatCompactNumber(n) {
+  if (n < 1000) return String(n);
+  return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 })
+    .format(n)
+    .toLowerCase();
+}
+
 // Self-contained: fetches this post's public stats (score + views) and, if
 // signed in, the visitor's own vote, on mount. Simple and reusable, at the
 // cost of one small query per instance - on a long News list that's a
@@ -134,7 +147,7 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
       </div>
       <span className="post-engagement__views" aria-label={`${views ?? 0} views`}>
         <BarChartIcon className="post-engagement__views-icon" />
-        {views === null ? '–' : views}
+        {views === null ? '–' : formatCompactNumber(views)}
       </span>
       <span className="post-engagement__comments" aria-label={`${comments ?? 0} comments`}>
         <CommentIcon className="post-engagement__comments-icon" />
