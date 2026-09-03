@@ -63,6 +63,9 @@ then add or remove the difference using the recipes above.
 
 For seeding every existing post at once (e.g. giving the archive a
 realistic-looking baseline before organic traffic arrives), see
-`supabase/seed_view_counts.sql` - a one-time script, not meant to be run
-more than once (it's self-guarding against that, but it also won't include
-any post created after it was generated).
+`supabase/seed_view_counts.sql` (News) and `supabase/seed_analysis_view_counts.sql`
+(Analysis) - one-time scripts, not meant to be run more than once (both are
+self-guarding against that, but neither will include a post created after
+it was generated). Both key on `post_type` (see
+`supabase/migrations/0015_analysis_post_engagement.sql`), so re-running the
+News one won't touch Analysis counts or vice versa.
