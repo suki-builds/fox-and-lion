@@ -31,7 +31,7 @@ export default function NewsListClient({ posts }) {
             sourceName={post.sourceName}
             coverImageUrl={post.coverImageUrl}
             compact
-            engagement={<PostEngagement postUid={post.uid} />}
+            engagement={<PostEngagement postUid={post.uid} archived={post.archived} />}
           />
         ))}
       </div>

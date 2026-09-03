@@ -308,6 +308,31 @@ Once you've confirmed the migrated content and the rest of this README's
 setup works end-to-end, remove the `DATOCMS_*` environment variables from
 Vercel and this is done with DatoCMS entirely.
 
+## Known limitations
+
+- **News archiving is UI-only, not enforced by Supabase.** Posts older
+  than `ARCHIVE_AFTER_DAYS` (currently 7 — see `lib/publishedDate.js`)
+  stop showing an active vote/reply UI: the upvote/downvote buttons render
+  disabled (transparent, border only) and the comment composer/Reply
+  buttons are replaced with a "closed" notice, on every page that shows a
+  News post (homepage, `/news`, `/news/[slug]`). Everything already
+  posted stays fully visible either way.
+
+  This is deliberately a frontend gate, not a database one:
+  `news_post_votes`/`news_post_comments`' RLS policies (see
+  `supabase/migrations/0001_news_post_votes.sql` and
+  `0004_news_comments.sql`) have no way to know a post's Prismic-sourced
+  publish date, unlike the comment depth cap and flood guard in the same
+  migrations, which are enforced server-side because they guard against
+  real abuse (a griefer scripting requests directly against the API).
+  Voting/commenting on an archived post past the UI gate isn't that kind
+  of risk — worst case, one stale post gets one more vote or comment via
+  a hand-crafted API call. If that stops being an acceptable risk, the fix
+  is a small table mirroring each post's `published_at` into Supabase
+  (populated via the Prismic revalidate webhook) so the RLS policies/RPCs
+  can check post age themselves, but that's more machinery than this
+  currently warrants.
+
 ## What's deliberately not in this scaffold
 
 - **No digest / GitHub Actions integration.** Removed from scope —

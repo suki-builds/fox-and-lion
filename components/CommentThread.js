@@ -27,7 +27,7 @@ function buildTree(rows) {
 // Component - same ISR-preserving reasoning as SiteHeader/PostEngagement).
 // Fails soft to an empty list if the migrations in supabase/migrations
 // haven't been applied yet, rather than breaking the page for everyone.
-export default function CommentThread({ postUid }) {
+export default function CommentThread({ postUid, archived = false }) {
   const [comments, setComments] = useState(null); // null = still loading
   const [profiles, setProfiles] = useState({});
   const [user, setUser] = useState(null);
@@ -146,7 +146,11 @@ export default function CommentThread({ postUid }) {
         </p>
       </div>
 
-      {user ? (
+      {archived ? (
+        <p className="comment-thread__sign-in-prompt">
+          This post is archived — comments are closed, but the discussion below is still here to read.
+        </p>
+      ) : user ? (
         <CommentComposer postUid={postUid} onSubmitted={addComment} submitLabel="Comment" />
       ) : (
         <p className="comment-thread__sign-in-prompt">
@@ -165,6 +169,7 @@ export default function CommentThread({ postUid }) {
               profiles={profiles}
               currentUserId={user?.id}
               postUid={postUid}
+              archived={archived}
               onReplyPosted={addComment}
               onEdited={handleEdited}
               onRemoved={handleRemoved}

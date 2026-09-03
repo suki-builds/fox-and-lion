@@ -3,7 +3,7 @@ import { getNewsList, getNewsBySlug } from '../../../../lib/prismic';
 import { buildMetadata } from '../../../../lib/seo';
 import { getPageMeta } from '../../../../lib/ogImage';
 import { resolveSourceName } from '../../../../lib/format';
-import { effectivePublishedAt } from '../../../../lib/publishedDate';
+import { effectivePublishedAt, isArchived } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
@@ -56,6 +56,7 @@ export default async function NewsDetailPage({ params }) {
     'en-GB',
     { day: 'numeric', month: 'long', year: 'numeric' }
   );
+  const archived = isArchived(post);
   const meta = post.data.source_url ? await getPageMeta(post.data.source_url) : null;
   const thumbnail = meta?.image;
   const sourceName = post.data.source_url ? resolveSourceName(meta?.siteName, post.data.source_url) : null;
@@ -115,7 +116,7 @@ export default async function NewsDetailPage({ params }) {
           </span>
         </div>
         <div className="article-meta__block">
-          <PostEngagement postUid={post.uid} />
+          <PostEngagement postUid={post.uid} archived={archived} />
         </div>
       </div>
       <ViewTracker postUid={post.uid} />
@@ -126,7 +127,7 @@ export default async function NewsDetailPage({ params }) {
 
       <ShareButton title={post.data.title} />
 
-      <CommentThread postUid={post.uid} />
+      <CommentThread postUid={post.uid} archived={archived} />
     </article>
   );
 }

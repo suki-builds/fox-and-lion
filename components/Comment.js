@@ -30,6 +30,7 @@ export default function Comment({
   profiles,
   currentUserId,
   postUid,
+  archived = false,
   onReplyPosted,
   onEdited,
   onRemoved,
@@ -42,7 +43,10 @@ export default function Comment({
   const profile = profiles[comment.user_id];
   const isOwn = currentUserId && currentUserId === comment.user_id;
   const isRemoved = Boolean(comment.removed_at);
-  const canReply = comment.depth < MAX_DEPTH;
+  // No new replies once a post is archived - editing/deleting/reporting an
+  // existing comment is still allowed, since that's cleanup of your own
+  // content rather than new engagement with an archived thread.
+  const canReply = comment.depth < MAX_DEPTH && !archived;
 
   async function handleDelete() {
     if (removing || !window.confirm('Delete this comment?')) return;
@@ -167,6 +171,7 @@ export default function Comment({
               profiles={profiles}
               currentUserId={currentUserId}
               postUid={postUid}
+              archived={archived}
               onReplyPosted={onReplyPosted}
               onEdited={onEdited}
               onRemoved={onRemoved}

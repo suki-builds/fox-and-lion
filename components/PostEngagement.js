@@ -12,7 +12,7 @@ import CommentIcon from './CommentIcon';
 // query per card rather than one batched call for the whole page. Fine at
 // this site's scale; worth revisiting (batch server-side) if the News list
 // grows a lot.
-export default function PostEngagement({ postUid }) {
+export default function PostEngagement({ postUid, archived = false }) {
   const router = useRouter();
   const [score, setScore] = useState(null);
   const [views, setViews] = useState(null);
@@ -63,7 +63,7 @@ export default function PostEngagement({ postUid }) {
   async function handleVote(event, direction) {
     event.preventDefault();
     event.stopPropagation();
-    if (pending) return;
+    if (pending || archived) return;
 
     const supabase = createClient();
     const {
@@ -110,10 +110,10 @@ export default function PostEngagement({ postUid }) {
       <div className="post-engagement__votes">
         <button
           type="button"
-          className={`post-engagement__arrow post-engagement__arrow--up${myVote === 1 ? ' is-active' : ''}`}
-          aria-label="Upvote"
+          className={`post-engagement__arrow post-engagement__arrow--up${myVote === 1 ? ' is-active' : ''}${archived ? ' is-archived' : ''}`}
+          aria-label={archived ? 'Upvoting is closed for this archived post' : 'Upvote'}
           aria-pressed={myVote === 1}
-          disabled={pending}
+          disabled={pending || archived}
           onClick={(event) => handleVote(event, 1)}
         >
           &#9650;
@@ -121,10 +121,10 @@ export default function PostEngagement({ postUid }) {
         <span className="post-engagement__score">{score === null ? '–' : score}</span>
         <button
           type="button"
-          className={`post-engagement__arrow post-engagement__arrow--down${myVote === -1 ? ' is-active' : ''}`}
-          aria-label="Downvote"
+          className={`post-engagement__arrow post-engagement__arrow--down${myVote === -1 ? ' is-active' : ''}${archived ? ' is-archived' : ''}`}
+          aria-label={archived ? 'Downvoting is closed for this archived post' : 'Downvote'}
           aria-pressed={myVote === -1}
-          disabled={pending}
+          disabled={pending || archived}
           onClick={(event) => handleVote(event, -1)}
         >
           &#9660;
