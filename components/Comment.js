@@ -30,6 +30,7 @@ export default function Comment({
   profiles,
   currentUserId,
   postUid,
+  postType = 'news',
   archived = false,
   onReplyPosted,
   onEdited,
@@ -89,6 +90,7 @@ export default function Comment({
           ) : editing ? (
             <CommentComposer
               postUid={postUid}
+              postType={postType}
               commentId={comment.id}
               initialBody={comment.body}
               submitLabel="Save"
@@ -144,6 +146,7 @@ export default function Comment({
           {replying && (
             <CommentComposer
               postUid={postUid}
+              postType={postType}
               parentId={comment.id}
               placeholder="Write a reply…"
               submitLabel="Reply"
@@ -171,6 +174,7 @@ export default function Comment({
               profiles={profiles}
               currentUserId={currentUserId}
               postUid={postUid}
+              postType={postType}
               archived={archived}
               onReplyPosted={onReplyPosted}
               onEdited={onEdited}

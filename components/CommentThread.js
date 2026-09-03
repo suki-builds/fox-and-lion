@@ -27,7 +27,7 @@ function buildTree(rows) {
 // Component - same ISR-preserving reasoning as SiteHeader/PostEngagement).
 // Fails soft to an empty list if the migrations in supabase/migrations
 // haven't been applied yet, rather than breaking the page for everyone.
-export default function CommentThread({ postUid, archived = false }) {
+export default function CommentThread({ postUid, postType = 'news', archived = false }) {
   const [comments, setComments] = useState(null); // null = still loading
   const [profiles, setProfiles] = useState({});
   const [user, setUser] = useState(null);
@@ -42,6 +42,7 @@ export default function CommentThread({ postUid, archived = false }) {
         supabase
           .from('news_post_comments')
           .select('*')
+          .eq('post_type', postType)
           .eq('post_uid', postUid)
           .order('created_at', { ascending: true }),
         supabase.auth.getUser(),
@@ -93,7 +94,7 @@ export default function CommentThread({ postUid, archived = false }) {
       active = false;
       listener.subscription.unsubscribe();
     };
-  }, [postUid]);
+  }, [postUid, postType]);
 
   const tree = useMemo(() => buildTree(comments || []), [comments]);
 
@@ -151,7 +152,12 @@ export default function CommentThread({ postUid, archived = false }) {
           This post is archived — comments are closed, but the discussion below is still here to read.
         </p>
       ) : user ? (
-        <CommentComposer postUid={postUid} onSubmitted={addComment} submitLabel="Comment" />
+        <CommentComposer
+          postUid={postUid}
+          postType={postType}
+          onSubmitted={addComment}
+          submitLabel="Comment"
+        />
       ) : (
         <p className="comment-thread__sign-in-prompt">
           <Link href="/sign-in">Sign in</Link> to join the discussion.
@@ -169,6 +175,7 @@ export default function CommentThread({ postUid, archived = false }) {
               profiles={profiles}
               currentUserId={user?.id}
               postUid={postUid}
+              postType={postType}
               archived={archived}
               onReplyPosted={addComment}
               onEdited={handleEdited}

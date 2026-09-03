@@ -6,10 +6,13 @@ import { buildMetadata } from '../../../../lib/seo';
 import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 import { coverImageSrc } from '../../../../lib/prismicImage';
-import { effectivePublishedAt } from '../../../../lib/publishedDate';
+import { effectivePublishedAt, isArchived } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
 import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
 import ShareButton from '../../../../components/ShareButton';
+import PostEngagement from '../../../../components/PostEngagement';
+import ViewTracker from '../../../../components/ViewTracker';
+import CommentThread from '../../../../components/CommentThread';
 
 export const revalidate = 3600;
 
@@ -81,6 +84,8 @@ export default async function AnalysisDetailPage({ params }) {
     );
   }
 
+  const archived = isArchived(post, 'analysis');
+
   const formattedDate = new Date(effectivePublishedAt(post)).toLocaleDateString(
     'en-GB',
     { day: 'numeric', month: 'long', year: 'numeric' }
@@ -123,13 +128,19 @@ export default async function AnalysisDetailPage({ params }) {
             <span className="article-meta__label">Date</span>
             <span className="article-meta__value">{formattedDate}</span>
           </div>
+          <div className="article-meta__block">
+            <PostEngagement postUid={post.uid} postType="analysis" archived={archived} />
+          </div>
         </div>
+        <ViewTracker postUid={post.uid} postType="analysis" />
 
         <div className="article-body">
           <PrismicRichText field={post.data.body} components={bodyComponents} />
         </div>
 
         <ShareButton title={post.data.title} />
+
+        <CommentThread postUid={post.uid} postType="analysis" archived={archived} />
       </div>
     </article>
   );

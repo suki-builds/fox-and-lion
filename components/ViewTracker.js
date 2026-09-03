@@ -11,11 +11,13 @@ import { getOrCreateVisitorId } from '../lib/visitorId';
 // PostgREST issue meant anon's direct table grant on news_post_views wasn't
 // actually being honoured). As of 0013_count_every_view.sql this is a raw
 // page-view counter, not a unique-visitor counter - there's no dedup.
-export default function ViewTracker({ postUid }) {
+export default function ViewTracker({ postUid, postType = 'news' }) {
   useEffect(() => {
     const supabase = createClient();
-    supabase.rpc('record_view', { uid: postUid, visitor: getOrCreateVisitorId() }).then(() => {});
-  }, [postUid]);
+    supabase
+      .rpc('record_view', { ptype: postType, uid: postUid, visitor: getOrCreateVisitorId() })
+      .then(() => {});
+  }, [postUid, postType]);
 
   return null;
 }

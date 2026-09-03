@@ -310,13 +310,16 @@ Vercel and this is done with DatoCMS entirely.
 
 ## Known limitations
 
-- **News archiving is UI-only, not enforced by Supabase.** Posts older
-  than `ARCHIVE_AFTER_DAYS` (currently 7 — see `lib/publishedDate.js`)
-  stop showing an active vote/reply UI: the upvote/downvote buttons render
-  disabled (transparent, border only) and the comment composer/Reply
-  buttons are replaced with a "closed" notice, on every page that shows a
-  News post (homepage, `/news`, `/news/[slug]`). Everything already
-  posted stays fully visible either way.
+- **Archiving is UI-only, not enforced by Supabase.** Posts older than
+  `ARCHIVE_AFTER_DAYS[postType]` (currently 7 days for News, 30 for
+  Analysis — see `lib/publishedDate.js`) stop showing an active vote/reply
+  UI: the upvote/downvote buttons render disabled (transparent, border
+  only) and the comment composer/Reply buttons are replaced with a
+  "closed" notice, on every page that shows that post (homepage, list
+  page, and its own detail page, for both content types). Everything
+  already posted stays fully visible either way. Analysis gets a longer
+  window since it's longer-form content worth discussing for longer than
+  a News clip.
 
   This is deliberately a frontend gate, not a database one:
   `news_post_votes`/`news_post_comments`' RLS policies (see

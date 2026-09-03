@@ -29,7 +29,7 @@ export default async function ModerationPage() {
 
   const { data: reports } = await supabase
     .from('news_comment_reports')
-    .select('*, news_post_comments(id, post_uid, body, user_id, removed_at)')
+    .select('*, news_post_comments(id, post_uid, post_type, body, user_id, removed_at)')
     .eq('status', 'open')
     .order('created_at', { ascending: true });
 

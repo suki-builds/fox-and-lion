@@ -13,6 +13,7 @@ const MAX_LENGTH = 2000;
 // than letting them type into a form that will just fail against RLS.
 export default function CommentComposer({
   postUid,
+  postType = 'news',
   parentId = null,
   commentId = null,
   initialBody = '',
@@ -57,6 +58,7 @@ export default function CommentComposer({
           .from('news_post_comments')
           .insert({
             post_uid: postUid,
+            post_type: postType,
             parent_id: parentId,
             user_id: session.user.id,
             body: trimmed,

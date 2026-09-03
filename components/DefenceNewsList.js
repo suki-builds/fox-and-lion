@@ -52,7 +52,7 @@ export default async function DefenceNewsList({ posts }) {
                 </Link>
               )}
               <span className="news-list__time">{formatDate(effectivePublishedAt(post))}</span>
-              <PostEngagement postUid={post.uid} archived={isArchived(post)} />
+              <PostEngagement postUid={post.uid} postType="news" archived={isArchived(post)} />
             </div>
           </div>
         );

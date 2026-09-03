@@ -116,10 +116,10 @@ export default async function NewsDetailPage({ params }) {
           </span>
         </div>
         <div className="article-meta__block">
-          <PostEngagement postUid={post.uid} archived={archived} />
+          <PostEngagement postUid={post.uid} postType="news" archived={archived} />
         </div>
       </div>
-      <ViewTracker postUid={post.uid} />
+      <ViewTracker postUid={post.uid} postType="news" />
 
       <div className="article-body">
         <PrismicRichText field={post.data.commentary} components={sharedRichTextComponents} />
@@ -127,7 +127,7 @@ export default async function NewsDetailPage({ params }) {
 
       <ShareButton title={post.data.title} />
 
-      <CommentThread postUid={post.uid} archived={archived} />
+      <CommentThread postUid={post.uid} postType="news" archived={archived} />
     </article>
   );
 }

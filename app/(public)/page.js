@@ -3,11 +3,12 @@ import Image from 'next/image';
 import { getAnalysisList, getNewsList } from '../../lib/prismic';
 import { getAllJobs } from '../../lib/ats';
 import PostCard from '../../components/PostCard';
+import PostEngagement from '../../components/PostEngagement';
 import IllustrationPlaceholder from '../../components/IllustrationPlaceholder';
 import DefenceNewsList from '../../components/DefenceNewsList';
 import JobsList from '../../components/JobsList';
 import { coverImageSrc } from '../../lib/prismicImage';
-import { effectivePublishedAt, sortByPublishedAt } from '../../lib/publishedDate';
+import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../../lib/publishedDate';
 
 export const revalidate = 3600;
 
@@ -108,6 +109,13 @@ export default async function HomePage() {
               coverImageUrl={coverImageSrc(post.data.cover_image?.url)}
               coverImageAlt={post.data.cover_image?.alt}
               coverRatio
+              engagement={
+                <PostEngagement
+                  postUid={post.uid}
+                  postType="analysis"
+                  archived={isArchived(post, 'analysis')}
+                />
+              }
             />
           ))}
         </div>

@@ -24,7 +24,7 @@ export default async function NewsListPage() {
       uid: post.uid,
       href: `/news/${post.uid}`,
       date,
-      archived: isOlderThanDays(date, ARCHIVE_AFTER_DAYS),
+      archived: isOlderThanDays(date, ARCHIVE_AFTER_DAYS.news),
       title: post.data.title,
       sourceUrl: post.data.source_url,
       sourceName: resolveSourceName(metas[index]?.siteName, post.data.source_url),

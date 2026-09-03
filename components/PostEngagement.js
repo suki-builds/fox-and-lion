@@ -12,7 +12,7 @@ import CommentIcon from './CommentIcon';
 // query per card rather than one batched call for the whole page. Fine at
 // this site's scale; worth revisiting (batch server-side) if the News list
 // grows a lot.
-export default function PostEngagement({ postUid, archived = false }) {
+export default function PostEngagement({ postUid, postType = 'news', archived = false }) {
   const router = useRouter();
   const [score, setScore] = useState(null);
   const [views, setViews] = useState(null);
@@ -26,7 +26,7 @@ export default function PostEngagement({ postUid, archived = false }) {
 
     async function load() {
       const [{ data: stats }, { data: { session } }] = await Promise.all([
-        supabase.rpc('get_news_post_stats', { uids: [postUid] }),
+        supabase.rpc('get_news_post_stats', { ptype: postType, uids: [postUid] }),
         supabase.auth.getSession(),
       ]);
       if (!active) return;
@@ -38,6 +38,7 @@ export default function PostEngagement({ postUid, archived = false }) {
         const { data: myRow } = await supabase
           .from('news_post_votes')
           .select('value')
+          .eq('post_type', postType)
           .eq('post_uid', postUid)
           .eq('user_id', session.user.id)
           .maybeSingle();
@@ -58,7 +59,7 @@ export default function PostEngagement({ postUid, archived = false }) {
     return () => {
       active = false;
     };
-  }, [postUid]);
+  }, [postUid, postType]);
 
   async function handleVote(event, direction) {
     event.preventDefault();
@@ -87,14 +88,15 @@ export default function PostEngagement({ postUid, archived = false }) {
         await supabase
           .from('news_post_votes')
           .delete()
+          .eq('post_type', postType)
           .eq('post_uid', postUid)
           .eq('user_id', session.user.id);
       } else {
         await supabase
           .from('news_post_votes')
           .upsert(
-            { post_uid: postUid, user_id: session.user.id, value: nextVote },
-            { onConflict: 'post_uid,user_id' }
+            { post_type: postType, post_uid: postUid, user_id: session.user.id, value: nextVote },
+            { onConflict: 'post_type,post_uid,user_id' }
           );
       }
     } catch {
