@@ -118,7 +118,7 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
           disabled={pending || archived}
           onClick={(event) => handleVote(event, 1)}
         >
-          &#9650;
+          {archived ? '△' : '▲'}
         </button>
         <span className="post-engagement__score">{score === null ? '–' : score}</span>
         <button
@@ -129,7 +129,7 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
           disabled={pending || archived}
           onClick={(event) => handleVote(event, -1)}
         >
-          &#9660;
+          {archived ? '▽' : '▼'}
         </button>
       </div>
       <span className="post-engagement__views" aria-label={`${views ?? 0} views`}>

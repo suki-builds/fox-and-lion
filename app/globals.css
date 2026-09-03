@@ -683,17 +683,13 @@ a {
 /* Archived posts (older than lib/publishedDate.js's ARCHIVE_AFTER_DAYS) -
    comes after .is-active above so it wins on equal specificity, overriding
    a previously-active vote's accent color with the same neutral "closed"
-   look every archived arrow gets. */
+   look every archived arrow gets. PostEngagement swaps in the hollow
+   triangle glyphs (△▽) for archived posts instead of the solid ones
+   (▲▼) - transparent fill, outline only - so this just needs to tint
+   that outline a muted color, not fake a border box around a hidden
+   glyph. */
 .post-engagement__arrow.is-archived {
-  color: transparent;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 3px;
-  width: 1.5rem;
-  height: 1.5rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
+  color: var(--color-border-strong);
 }
 
 .post-engagement__score {
