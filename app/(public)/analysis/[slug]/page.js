@@ -138,7 +138,7 @@ export default async function AnalysisDetailPage({ params }) {
           <PrismicRichText field={post.data.body} components={bodyComponents} />
         </div>
 
-        <ShareButton title={post.data.title} />
+        <ShareButton />
 
         <CommentThread postUid={post.uid} postType="analysis" archived={archived} />
       </div>

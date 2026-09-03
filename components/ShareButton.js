@@ -30,14 +30,22 @@ function ShareIcon(props) {
 // desktop browsers now too); falls back to copying the URL to the
 // clipboard - reads location.href at click time rather than needing the
 // canonical URL passed down as a prop from the server component above it.
-export default function ShareButton({ title }) {
+//
+// Deliberately shares { url } alone, with no title/text - WebKit's
+// navigator.share() treats a URL passed together with a separate title as
+// two distinct share items (text + link) rather than one enrichable link,
+// which skips iOS's automatic rich-preview fetch (real og:image + title)
+// entirely and falls back to a generic icon. Sharing the URL alone lets
+// iOS fetch and build that preview itself, exactly like pasting a link
+// into Messages already did correctly.
+export default function ShareButton() {
   const [copied, setCopied] = useState(false);
 
   async function handleShare() {
     const url = window.location.href;
     if (navigator.share) {
       try {
-        await navigator.share({ title, url });
+        await navigator.share({ url });
       } catch {
         // User dismissed the share sheet - nothing to do.
       }

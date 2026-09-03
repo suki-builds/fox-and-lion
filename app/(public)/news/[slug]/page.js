@@ -125,7 +125,7 @@ export default async function NewsDetailPage({ params }) {
         <PrismicRichText field={post.data.commentary} components={sharedRichTextComponents} />
       </div>
 
-      <ShareButton title={post.data.title} />
+      <ShareButton />
 
       <CommentThread postUid={post.uid} postType="news" archived={archived} />
     </article>
