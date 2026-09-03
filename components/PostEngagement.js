@@ -7,16 +7,17 @@ import BarChartIcon from './BarChartIcon';
 import CommentIcon from './CommentIcon';
 
 // Below 1000, show the exact count - it's short enough to read at a
-// glance and precision doesn't hurt. At 1000+, switch to compact notation
-// (1k, 1.5k, 15k) since View counts can run into the tens of thousands
-// and exact digits stop being meaningful past that point. The screen
-// reader label (aria-label, set where this is used) keeps the exact
-// number regardless.
+// glance and precision doesn't hurt. At 1000+, switch to compact notation:
+// one decimal place below 10 in the current unit (1k, 3.4k, 9.7k), none
+// at 10 or above (11k, 50k) - same rule again once it rolls over into
+// millions (1.5m, 9.7m, then 11m, 50m). The screen reader label
+// (aria-label, set where this is used) keeps the exact number regardless.
 function formatCompactNumber(n) {
   if (n < 1000) return String(n);
-  return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 })
-    .format(n)
-    .toLowerCase();
+  const [divisor, unit] = n < 1_000_000 ? [1_000, 'k'] : [1_000_000, 'm'];
+  const value = n / divisor;
+  const digits = value < 10 ? 1 : 0;
+  return `${value.toFixed(digits).replace(/\.0$/, '')}${unit}`;
 }
 
 // Self-contained: fetches this post's public stats (score + views) and, if
