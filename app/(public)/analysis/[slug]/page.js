@@ -131,6 +131,9 @@ export default async function AnalysisDetailPage({ params }) {
           <div className="article-meta__block">
             <PostEngagement postUid={post.uid} postType="analysis" archived={archived} />
           </div>
+          <div className="article-meta__block">
+            <ShareButton postUid={post.uid} postType="analysis" compact />
+          </div>
         </div>
         <ViewTracker postUid={post.uid} postType="analysis" />
 
@@ -138,7 +141,7 @@ export default async function AnalysisDetailPage({ params }) {
           <PrismicRichText field={post.data.body} components={bodyComponents} />
         </div>
 
-        <ShareButton />
+        <ShareButton postUid={post.uid} postType="analysis" />
 
         <CommentThread postUid={post.uid} postType="analysis" archived={archived} />
       </div>

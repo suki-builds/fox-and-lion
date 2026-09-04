@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '../lib/supabase/client';
 import BarChartIcon from './BarChartIcon';
 import CommentIcon from './CommentIcon';
+import ShareIcon from './ShareIcon';
 
 // Below 1000, show the exact count - it's short enough to read at a
 // glance and precision doesn't hurt. At 1000+, switch to compact notation:
@@ -31,6 +32,7 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
   const [score, setScore] = useState(null);
   const [views, setViews] = useState(null);
   const [comments, setComments] = useState(null);
+  const [shares, setShares] = useState(null);
   const [myVote, setMyVote] = useState(0);
   const [pending, setPending] = useState(false);
 
@@ -47,6 +49,7 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
       setScore(stats?.[0]?.score ?? 0);
       setViews(stats?.[0]?.views ?? 0);
       setComments(stats?.[0]?.comments ?? 0);
+      setShares(stats?.[0]?.shares ?? 0);
 
       if (session) {
         const { data: myRow } = await supabase
@@ -67,6 +70,7 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
         setScore((s) => s ?? 0);
         setViews((v) => v ?? 0);
         setComments((c) => c ?? 0);
+        setShares((s) => s ?? 0);
       }
     });
 
@@ -153,6 +157,10 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
       <span className="post-engagement__comments" aria-label={`${comments ?? 0} comments`}>
         <CommentIcon className="post-engagement__comments-icon" />
         {comments === null ? '–' : comments}
+      </span>
+      <span className="post-engagement__shares" aria-label={`${shares ?? 0} shares`}>
+        <ShareIcon className="post-engagement__shares-icon" />
+        {shares === null ? '–' : formatCompactNumber(shares)}
       </span>
     </div>
   );

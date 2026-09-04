@@ -730,6 +730,21 @@ a {
   flex-shrink: 0;
 }
 
+.post-engagement__shares {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--mono-stack);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.post-engagement__shares-icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+}
+
 .post-card__byline-name {
   font-family: var(--body-stack);
   font-weight: 600;
@@ -1631,6 +1646,20 @@ a {
 .share-button__icon {
   width: 16px;
   height: 16px;
+}
+
+/* Sits inline next to the vote/view/comment bar (article-meta__block), not
+   below the article body - no top margin, tighter padding/type than the
+   full-size button. */
+.share-button--compact {
+  margin: 0;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.7rem;
+}
+
+.share-button--compact .share-button__icon {
+  width: 14px;
+  height: 14px;
 }
 
 /* ---------- Submission form ---------- */
