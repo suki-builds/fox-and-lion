@@ -168,6 +168,7 @@ create table job_applications (
   email text not null,
   linkedin_url text,
   resume_path text not null,
+  attachment_paths text[] not null default '{}',
   cover_note text,
   reviewed boolean not null default false,
   created_at timestamptz not null default now()
@@ -208,10 +209,38 @@ create policy "anon insert only - resumes"
   with check (bucket_id = 'resumes');
 ```
 
-To view a submitted résumé: open the `job_applications` row in the Table
-Editor for the path (it's named `<applicant>-<timestamp>.<ext>` for easy
-recognition), then find that file under **Storage > resumes** in the
-dashboard sidebar.
+Applicants can also attach up to 5 supplementary files (portfolio samples,
+references, certificates, etc., 20MB combined) alongside their CV. These go
+in a second private bucket, kept separate from `resumes` since they're
+optional and cover a wider range of file types:
+
+```sql
+-- Private bucket for optional supplementary files from the job application
+-- form (see lib/formsSupabase.js, uploadAdditionalFiles). Same privacy
+-- model as "resumes" above - anon can only insert, never read/list/download.
+insert into storage.buckets (id, name, public)
+values ('application-attachments', 'application-attachments', false);
+
+create policy "anon insert only - application-attachments"
+  on storage.objects
+  for insert
+  to anon
+  with check (bucket_id = 'application-attachments');
+```
+
+If `job_applications` already exists from before this feature, add the new
+column too:
+
+```sql
+alter table job_applications
+  add column if not exists attachment_paths text[] not null default '{}';
+```
+
+To view a submitted résumé or its attachments: open the `job_applications`
+row in the Table Editor for the paths (the résumé is named
+`<applicant>-<timestamp>.<ext>`; attachments sit in a matching folder named
+the same way), then find them under **Storage > resumes** or
+**Storage > application-attachments** in the dashboard sidebar.
 
 ### 4. Set environment variables
 

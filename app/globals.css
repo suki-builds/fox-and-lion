@@ -1808,6 +1808,44 @@ a {
   margin: 0.5rem 0 0 0;
 }
 
+.submission-form__file-list {
+  list-style: none;
+  margin: 0.6rem 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.submission-form__file-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  background: var(--color-panel);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+}
+
+.submission-form__file-remove {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.2rem;
+}
+
+@media (hover: hover) {
+  .submission-form__file-remove:hover {
+    color: var(--color-accent);
+  }
+}
+
 .submission-form__pitch-footer {
   display: flex;
   align-items: flex-start;

@@ -4,6 +4,13 @@ import { useState } from 'react';
 
 const REQUIRED_TEXT_KEYS = ['firstName', 'lastName', 'email'];
 const MAX_RESUME_BYTES = 5 * 1024 * 1024;
+const MAX_ADDITIONAL_FILES = 5;
+const MAX_ADDITIONAL_TOTAL_BYTES = 20 * 1024 * 1024;
+
+function formatFileSize(bytes) {
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))}KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
+}
 
 export default function JobApplicationForm({ careersPostUid, jobTitle, companyName }) {
   const [fields, setFields] = useState({
@@ -15,6 +22,8 @@ export default function JobApplicationForm({ careersPostUid, jobTitle, companyNa
   });
   const [resumeFile, setResumeFile] = useState(null);
   const [fileError, setFileError] = useState('');
+  const [additionalFiles, setAdditionalFiles] = useState([]);
+  const [additionalFilesError, setAdditionalFilesError] = useState('');
   // 'idle' | 'submitting' | 'success' | 'error'
   const [status, setStatus] = useState('idle');
 
@@ -37,6 +46,32 @@ export default function JobApplicationForm({ careersPostUid, jobTitle, companyNa
     setResumeFile(file);
   }
 
+  // A fresh selection here replaces the whole set (that's how a native
+  // multi-file input behaves - it doesn't merge with what was picked last
+  // time), so it's validated as a whole batch rather than incrementally.
+  function updateAdditionalFiles(event) {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+    if (files.length > MAX_ADDITIONAL_FILES) {
+      setAdditionalFilesError(`You can attach up to ${MAX_ADDITIONAL_FILES} additional files.`);
+      event.target.value = '';
+      return;
+    }
+    const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
+    if (totalBytes > MAX_ADDITIONAL_TOTAL_BYTES) {
+      setAdditionalFilesError('Additional files must total 20MB or less.');
+      event.target.value = '';
+      return;
+    }
+    setAdditionalFilesError('');
+    setAdditionalFiles(files);
+    event.target.value = '';
+  }
+
+  function removeAdditionalFile(index) {
+    setAdditionalFiles((prev) => prev.filter((_, i) => i !== index));
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     setStatus('submitting');
@@ -47,6 +82,7 @@ export default function JobApplicationForm({ careersPostUid, jobTitle, companyNa
       body.append('companyName', companyName);
       Object.entries(fields).forEach(([key, value]) => body.append(key, value));
       body.append('resume', resumeFile);
+      additionalFiles.forEach((file) => body.append('additionalFiles', file));
 
       // No Content-Type header here — the browser sets the multipart
       // boundary itself; setting it manually breaks the upload.
@@ -125,6 +161,43 @@ export default function JobApplicationForm({ careersPostUid, jobTitle, companyNa
           />
           <p className="submission-form__help">PDF or Word document, up to 5MB.</p>
           {fileError && <p className="submission-form__status-note is-error">{fileError}</p>}
+        </div>
+
+        <div className="submission-form__field">
+          <label htmlFor="additionalFiles">Additional Files</label>
+          <input
+            id="additionalFiles"
+            type="file"
+            multiple
+            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.txt"
+            onChange={updateAdditionalFiles}
+          />
+          <p className="submission-form__help">
+            Optional — portfolio samples, references, certificates, etc. Up to 5 files, 20MB
+            total.
+          </p>
+          {additionalFilesError && (
+            <p className="submission-form__status-note is-error">{additionalFilesError}</p>
+          )}
+          {additionalFiles.length > 0 && (
+            <ul className="submission-form__file-list">
+              {additionalFiles.map((file, index) => (
+                <li key={`${file.name}-${index}`} className="submission-form__file-list-item">
+                  <span>
+                    {file.name} ({formatFileSize(file.size)})
+                  </span>
+                  <button
+                    type="button"
+                    className="submission-form__file-remove"
+                    onClick={() => removeAdditionalFile(index)}
+                    aria-label={`Remove ${file.name}`}
+                  >
+                    ×
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <div className="submission-form__field">
