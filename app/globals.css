@@ -376,11 +376,10 @@ a {
      had no definite height at all, so the image rendered at its raw
      upload ratio instead of being constrained. align-self keeps grid from
      re-stretching this back to the text column's height when the text is
-     long; "start" (not center) so a long headline's leftover row height
-     collects below the image instead of pushing it away from the banner
-     ad/header above with an empty gap. */
+     long; centered (not start) so any leftover row height splits evenly
+     above and below the image instead of all collecting at the bottom. */
   aspect-ratio: 1200 / 630;
-  align-self: start;
+  align-self: center;
   overflow: hidden;
   display: block;
   position: relative;
@@ -2181,8 +2180,8 @@ a {
 
 @media (min-width: 640px) {
   .ad-banner {
-    /* Tighter gap to the hero below, on desktop specifically. */
-    margin-bottom: 0.25rem;
+    /* Flush against the hero below, on desktop specifically. */
+    margin-bottom: 0;
   }
 }
 
