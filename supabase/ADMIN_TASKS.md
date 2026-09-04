@@ -26,19 +26,29 @@ Bans are otherwise only issued from the moderation queue UI (`/moderation`).
 update profiles set banned_until = null where user_id = '<their auth.users id>';
 ```
 
-## Manually adjust a News post's view count
+## Manually adjust a News or Analysis post's view count
 
 View counts come from `count(*)` over `news_post_views` rows for that
-`post_uid` (one row per unique visitor). To bump a post's count, insert
-synthetic rows with random visitor ids - the table doesn't care whether a
-row came from a real cookie or not:
+`(post_type, post_uid)` pair (one row per unique visitor) - see
+`supabase/migrations/0015_analysis_post_engagement.sql` for why post_type
+is part of the key. Always include `post_type` explicitly: it defaults to
+`'news'`, so a query that omits it will silently add News views to what
+you meant as an Analysis post's count (or vice versa).
+
+To bump a single post's count, insert synthetic rows with random visitor
+ids - the table doesn't care whether a row came from a real cookie or not:
 
 ```sql
--- Add 25 views to a post
-insert into news_post_views (post_uid, visitor_id)
-select 'the-post-slug', gen_random_uuid()::text
+-- Add 25 views to an Analysis post
+insert into news_post_views (post_type, post_uid, visitor_id)
+select 'analysis', 'the-post-slug', gen_random_uuid()::text
 from generate_series(1, 25);
 ```
+
+For setting (or topping up to) an exact target count across several posts
+at once - News and Analysis mixed freely - fill in
+`supabase/set_view_counts.sql` and run it; it's a reusable template, not a
+one-time script.
 
 To reduce a count instead, delete some rows (order doesn't matter, since
 individual rows aren't meaningful - only the count is):
@@ -48,18 +58,17 @@ individual rows aren't meaningful - only the count is):
 delete from news_post_views
 where id in (
   select id from news_post_views
-  where post_uid = 'the-post-slug'
+  where post_type = 'analysis' and post_uid = 'the-post-slug'
   limit 10
 );
 ```
 
-To set an exact count, check the current total first:
+To check the current total for one post:
 
 ```sql
-select count(*) from news_post_views where post_uid = 'the-post-slug';
+select count(*) from news_post_views
+where post_type = 'analysis' and post_uid = 'the-post-slug';
 ```
-
-then add or remove the difference using the recipes above.
 
 For seeding every existing post at once (e.g. giving the archive a
 realistic-looking baseline before organic traffic arrives), see
