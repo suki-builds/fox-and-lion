@@ -1,5 +1,42 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { NextResponse } from 'next/server';
+import { getPrismicClient } from '../../../lib/prismic';
+
+const DETAIL_PATH_BY_TYPE = {
+  analysis_post: (uid) => `/analysis/${uid}`,
+  news_post: (uid) => `/news/${uid}`,
+};
+
+// revalidatePath only marks a page stale - the regenerated HTML isn't
+// actually served until the next real request hits that exact URL. That's
+// fine for "/" and the list pages (high traffic, get hit again within
+// seconds), but a single News/Analysis post can go unvisited for a long
+// time after an edit, leaving it stuck showing the old content (e.g. a
+// swapped cover image) indefinitely. This resolves the webhook's raw
+// document IDs to their UID/type and fetches each changed post's own page
+// directly, forcing it to regenerate immediately instead of waiting on
+// organic traffic. Best-effort: any lookup/fetch failure here is logged and
+// swallowed, never blocks the 200 response the Prismic webhook is waiting on.
+async function warmChangedDetailPages(documentIds, origin) {
+  if (!Array.isArray(documentIds) || documentIds.length === 0) return;
+  const client = getPrismicClient();
+  await Promise.all(
+    documentIds.map(async (id) => {
+      try {
+        const doc = await client.getByID(id);
+        const buildPath = DETAIL_PATH_BY_TYPE[doc.type];
+        if (!buildPath) return;
+        await fetch(`${origin}${buildPath(doc.uid)}`, { cache: 'no-store' });
+      } catch (err) {
+        // err.message only - the Prismic client attaches its full request
+        // URL (including the access_token query param) to some of its own
+        // errors, and logging the whole object would leak that token into
+        // Vercel's log stream.
+        console.error(`Failed to warm page for changed document ${id}:`, err.message);
+      }
+    })
+  );
+}
 
 // On-demand ISR revalidation, triggered by a single Prismic webhook
 // (Settings > Webhooks) pointed at this route — see README.md for exact
@@ -13,9 +50,10 @@ import { NextResponse } from 'next/server';
 // than the old per-type design DatoCMS allowed.
 //
 // Prismic's `documents` field is an array of page IDs, not full documents,
-// so there's no uid available here without a follow-up API call (which
-// this deliberately doesn't make) - every path below is revalidated by
-// pattern rather than by specific slug.
+// so every path below is revalidated by pattern rather than by specific
+// slug - warmChangedDetailPages above is what makes the follow-up API call
+// to resolve those IDs, for the specific case (News/Analysis posts) where
+// pattern-only revalidation isn't enough on its own.
 export async function POST(request) {
   let body = null;
   try {
@@ -52,6 +90,8 @@ export async function POST(request) {
   // (picking up a newly published/edited job_posting) instead of waiting
   // out its own 1-hour revalidate window.
   revalidateTag('fox-and-lion-jobs');
+
+  await warmChangedDetailPages(body?.documents, new URL(request.url).origin);
 
   return NextResponse.json({ revalidated: true, paths });
 }
