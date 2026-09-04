@@ -107,11 +107,11 @@ export default function ContactForm() {
             value={fields.message}
             onChange={updateField('message')}
           />
-          <div className="submission-form__pitch-footer" style={{ justifyContent: 'flex-end' }}>
+          <div className="submission-form__field-footer">
             <span
               className={`submission-form__counter${!withinLimit ? ' is-over' : ''}`}
             >
-              {messageLength} / {MAX_MESSAGE_LENGTH} characters
+              {messageLength} / {MAX_MESSAGE_LENGTH.toLocaleString()} characters
             </span>
           </div>
         </div>

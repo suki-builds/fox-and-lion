@@ -19,6 +19,8 @@ const ALLOWED_ADDITIONAL_EXTENSIONS = [
   'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'jpg', 'jpeg', 'png', 'zip', 'txt',
 ];
 
+const MAX_COVER_NOTE_LENGTH = 1000;
+
 // Old binary Office formats (.doc/.xls/.ppt) all share the OLE Compound
 // File signature; the modern XML formats (.docx/.xlsx/.pptx) are just zip
 // archives, same as .zip itself.
@@ -78,6 +80,13 @@ export async function POST(request) {
   if (missing.length > 0) {
     return NextResponse.json(
       { error: `Missing required field(s): ${missing.join(', ')}.` },
+      { status: 400 }
+    );
+  }
+
+  if (fields.coverNote.length > MAX_COVER_NOTE_LENGTH) {
+    return NextResponse.json(
+      { error: `Cover note exceeds ${MAX_COVER_NOTE_LENGTH} characters.` },
       { status: 400 }
     );
   }

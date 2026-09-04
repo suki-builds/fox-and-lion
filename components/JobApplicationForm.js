@@ -6,6 +6,7 @@ const REQUIRED_TEXT_KEYS = ['firstName', 'lastName', 'email'];
 const MAX_RESUME_BYTES = 5 * 1024 * 1024;
 const MAX_ADDITIONAL_FILES = 5;
 const MAX_ADDITIONAL_TOTAL_BYTES = 20 * 1024 * 1024;
+const MAX_COVER_NOTE_CHARS = 1000;
 
 function formatFileSize(bytes) {
   if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))}KB`;
@@ -205,9 +206,19 @@ export default function JobApplicationForm({ careersPostUid, jobTitle, companyNa
           <textarea
             id="coverNote"
             rows={6}
+            maxLength={MAX_COVER_NOTE_CHARS}
             value={fields.coverNote}
             onChange={updateField('coverNote')}
           />
+          <div className="submission-form__field-footer">
+            <span
+              className={`submission-form__counter${
+                fields.coverNote.length > MAX_COVER_NOTE_CHARS ? ' is-over' : ''
+              }`}
+            >
+              {fields.coverNote.length} / {MAX_COVER_NOTE_CHARS.toLocaleString()} characters
+            </span>
+          </div>
         </div>
       </section>
 

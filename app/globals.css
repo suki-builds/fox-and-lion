@@ -1846,15 +1846,14 @@ a {
   }
 }
 
-.submission-form__pitch-footer {
+.submission-form__field-footer {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
   gap: 1rem;
   margin-top: 0.5rem;
 }
 
-.submission-form__pitch-footer .submission-form__help {
+.submission-form__field-footer .submission-form__help {
   margin: 0;
 }
 
@@ -1864,6 +1863,7 @@ a {
   color: var(--color-text-muted);
   white-space: nowrap;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .submission-form__counter.is-over {

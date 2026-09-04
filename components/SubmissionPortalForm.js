@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-const MAX_PITCH_WORDS = 200;
+const MAX_CHARS = 1000;
 
 const GUIDELINE_CHECKS = [
   {
@@ -36,11 +36,6 @@ const GUIDELINE_CHECKS = [
   },
 ];
 
-function countWords(text) {
-  const trimmed = text.trim();
-  return trimmed === '' ? 0 : trimmed.split(/\s+/).length;
-}
-
 export default function SubmissionPortalForm() {
   const [fields, setFields] = useState({
     firstName: '',
@@ -55,7 +50,6 @@ export default function SubmissionPortalForm() {
   // 'idle' | 'submitting' | 'success' | 'error'
   const [status, setStatus] = useState('idle');
 
-  const wordCount = countWords(fields.pitch);
   const allChecked = GUIDELINE_CHECKS.every((item) => checks[item.id]);
 
   function updateField(name) {
@@ -139,14 +133,24 @@ export default function SubmissionPortalForm() {
             id="bio"
             rows={4}
             required
+            maxLength={MAX_CHARS}
             value={fields.bio}
             onChange={updateField('bio')}
           />
-          <p className="submission-form__help">
-            In two to three sentences, set out your current role and employer, together
-            with the military, government, academic, professional, or other lived
-            experience that qualifies you to write on your proposed subject.
-          </p>
+          <div className="submission-form__field-footer">
+            <p className="submission-form__help">
+              In two to three sentences, set out your current role and employer, together
+              with the military, government, academic, professional, or other lived
+              experience that qualifies you to write on your proposed subject.
+            </p>
+            <span
+              className={`submission-form__counter${
+                fields.bio.length > MAX_CHARS ? ' is-over' : ''
+              }`}
+            >
+              {fields.bio.length} / {MAX_CHARS.toLocaleString()} characters
+            </span>
+          </div>
         </div>
       </section>
 
@@ -167,19 +171,20 @@ export default function SubmissionPortalForm() {
             id="pitch"
             rows={8}
             required
+            maxLength={MAX_CHARS}
             value={fields.pitch}
             onChange={updateField('pitch')}
           />
-          <div className="submission-form__pitch-footer">
+          <div className="submission-form__field-footer">
             <p className="submission-form__help">
               Set out your main argument and why it matters to our readers now.
             </p>
             <span
               className={`submission-form__counter${
-                wordCount > MAX_PITCH_WORDS ? ' is-over' : ''
+                fields.pitch.length > MAX_CHARS ? ' is-over' : ''
               }`}
             >
-              {wordCount} / {MAX_PITCH_WORDS} words
+              {fields.pitch.length} / {MAX_CHARS.toLocaleString()} characters
             </span>
           </div>
         </div>

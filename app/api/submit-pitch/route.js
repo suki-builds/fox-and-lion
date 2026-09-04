@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createPitchSubmission } from '../../../lib/formsSupabase';
 
 const REQUIRED_FIELDS = ['firstName', 'lastName', 'email', 'bio', 'pitch'];
+const MAX_FIELD_LENGTH = 1000;
 
 export async function POST(request) {
   let body;
@@ -15,6 +16,14 @@ export async function POST(request) {
   if (missing.length > 0) {
     return NextResponse.json(
       { error: `Missing required field(s): ${missing.join(', ')}.` },
+      { status: 400 }
+    );
+  }
+
+  const tooLong = ['bio', 'pitch'].filter((field) => body[field].trim().length > MAX_FIELD_LENGTH);
+  if (tooLong.length > 0) {
+    return NextResponse.json(
+      { error: `Field(s) exceed ${MAX_FIELD_LENGTH} characters: ${tooLong.join(', ')}.` },
       { status: 400 }
     );
   }
