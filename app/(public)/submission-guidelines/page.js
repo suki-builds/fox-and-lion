@@ -78,7 +78,8 @@ export default function SubmissionGuidelinesPage() {
           judgement on the pitch itself.
         </p>
         <p>
-          Should a pitch be accepted and a full submission requested, review and editing
+          Should a pitch be accepted and a full submission requested, a draft between 800 
+          and 1,500 words should be submitted. Review and editing
           may take anywhere from a day to over a week. Being asked for a full submission
           is not equivalent to acceptance for publication; we review thoroughly, at times
           with the assistance of outside subject-matter readers, and do occasionally
