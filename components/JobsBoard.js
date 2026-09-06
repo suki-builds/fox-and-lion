@@ -1,10 +1,19 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import CompanyLogo from './CompanyLogo';
 
 const PAGE_SIZE = 30;
+
+// Query param names, kept short since they end up in the visible URL.
+const FILTER_PARAMS = {
+  company: 'company',
+  roleType: 'role',
+  country: 'country',
+  workplaceType: 'workplace',
+};
 
 function formatDate(iso) {
   if (!iso) return null;
@@ -15,11 +24,24 @@ function formatDate(iso) {
   });
 }
 
+// Filters live in the URL's query string, not local state - a plain
+// useState reset to its defaults every time this component remounted,
+// which happens whenever a visitor filters, clicks into a job, then
+// presses the browser's back button (a fresh navigation back to /careers,
+// not the same component instance). Query params survive that because
+// they're part of the page's own history entry: router.replace() below
+// updates the current entry as filters change, so going back from the job
+// detail page returns to exactly that URL, filters included. Shareable
+// filtered links are a free side effect of the same fix.
 export default function JobsBoard({ jobs, companies }) {
-  const [company, setCompany] = useState('all');
-  const [roleType, setRoleType] = useState('all');
-  const [country, setCountry] = useState('all');
-  const [workplaceType, setWorkplaceType] = useState('all');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const company = searchParams.get(FILTER_PARAMS.company) || 'all';
+  const roleType = searchParams.get(FILTER_PARAMS.roleType) || 'all';
+  const country = searchParams.get(FILTER_PARAMS.country) || 'all';
+  const workplaceType = searchParams.get(FILTER_PARAMS.workplaceType) || 'all';
   // No UI control for this anymore (sort dropdown hidden) - always newest.
   const sort = 'newest';
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -64,9 +86,17 @@ export default function JobsBoard({ jobs, companies }) {
 
   const visible = filtered.slice(0, visibleCount);
 
-  function withPagingReset(setter) {
+  function updateFilter(paramName) {
     return (event) => {
-      setter(event.target.value);
+      const value = event.target.value;
+      const params = new URLSearchParams(searchParams.toString());
+      if (value === 'all') {
+        params.delete(paramName);
+      } else {
+        params.set(paramName, value);
+      }
+      const query = params.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
       setVisibleCount(PAGE_SIZE);
     };
   }
@@ -80,7 +110,7 @@ export default function JobsBoard({ jobs, companies }) {
             id="filter-company"
             className="jobs-board__select"
             value={company}
-            onChange={withPagingReset(setCompany)}
+            onChange={updateFilter(FILTER_PARAMS.company)}
           >
             <option value="all">All companies</option>
             {companies.map((c) => (
@@ -97,7 +127,7 @@ export default function JobsBoard({ jobs, companies }) {
             id="filter-role"
             className="jobs-board__select"
             value={roleType}
-            onChange={withPagingReset(setRoleType)}
+            onChange={updateFilter(FILTER_PARAMS.roleType)}
           >
             <option value="all">All role types</option>
             {roleTypes.map((r) => (
@@ -114,7 +144,7 @@ export default function JobsBoard({ jobs, companies }) {
             id="filter-country"
             className="jobs-board__select"
             value={country}
-            onChange={withPagingReset(setCountry)}
+            onChange={updateFilter(FILTER_PARAMS.country)}
           >
             <option value="all">All countries</option>
             {countries.map((c) => (
@@ -131,7 +161,7 @@ export default function JobsBoard({ jobs, companies }) {
             id="filter-workplace"
             className="jobs-board__select"
             value={workplaceType}
-            onChange={withPagingReset(setWorkplaceType)}
+            onChange={updateFilter(FILTER_PARAMS.workplaceType)}
           >
             <option value="all">All workplace types</option>
             {workplaceTypes.map((w) => (

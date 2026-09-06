@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { getAllJobs } from '../../../lib/ats';
 import JobsBoard from '../../../components/JobsBoard';
 import FeaturedJobs from '../../../components/FeaturedJobs';
@@ -34,7 +35,12 @@ export default async function JobsPage() {
         <h1>Defence Tech Careers</h1>
       </div>
       <FeaturedJobs jobs={featuredJobs} />
-      <JobsBoard jobs={jobs} companies={companies} />
+      {/* JobsBoard reads/writes its filters via useSearchParams(), which
+          requires a Suspense boundary so that dynamic read doesn't bail
+          the whole (otherwise static/ISR) page out of static rendering. */}
+      <Suspense fallback={null}>
+        <JobsBoard jobs={jobs} companies={companies} />
+      </Suspense>
     </div>
   );
 }
