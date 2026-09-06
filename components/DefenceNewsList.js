@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getPageMeta } from '../lib/ogImage';
 import { resolveSourceName } from '../lib/format';
 import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../lib/publishedDate';
+import { getBatchedPostStats } from '../lib/postStats';
 import PostEngagement from './PostEngagement';
 
 const MAX_ITEMS = 4;
@@ -25,7 +26,10 @@ export default async function DefenceNewsList({ posts }) {
     return <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>;
   }
 
-  const metas = await Promise.all(items.map((post) => getPageMeta(post.data.source_url)));
+  const [metas, stats] = await Promise.all([
+    Promise.all(items.map((post) => getPageMeta(post.data.source_url))),
+    getBatchedPostStats('news', items.map((post) => post.uid)),
+  ]);
 
   return (
     <div className="news-list">
@@ -52,7 +56,12 @@ export default async function DefenceNewsList({ posts }) {
                 </Link>
               )}
               <span className="news-list__time">{formatDate(effectivePublishedAt(post))}</span>
-              <PostEngagement postUid={post.uid} postType="news" archived={isArchived(post)} />
+              <PostEngagement
+                postUid={post.uid}
+                postType="news"
+                archived={isArchived(post)}
+                stats={stats[post.uid]}
+              />
             </div>
           </div>
         );

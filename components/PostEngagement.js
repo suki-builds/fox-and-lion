@@ -21,22 +21,26 @@ function formatCompactNumber(n) {
   return `${value.toFixed(digits).replace(/\.0$/, '')}${unit}`;
 }
 
-// Self-contained: fetches this post's public stats (score + views) and, if
-// signed in, the visitor's own vote, on mount. Simple and reusable, at the
-// cost of one small query per instance - on a long News list that's a
-// query per card rather than one batched call for the whole page. Fine at
-// this site's scale; worth revisiting (batch server-side) if the News list
-// grows a lot.
-export default function PostEngagement({ postUid, postType = 'news', archived = false }) {
+// `stats`, when provided, is a pre-fetched { score, views, comments,
+// shares, myVote } object - see lib/postStats.js's getBatchedPostStats(),
+// which every list page now calls once for all its cards. That's what
+// keeps this self-contained-fetch fallback below from turning into an N+1
+// query pattern on a long list: it only actually runs when a caller hasn't
+// already done the batched fetch (currently just the News/Analysis detail
+// pages, where there's only ever one instance anyway, so a single query is
+// already as cheap as it gets).
+export default function PostEngagement({ postUid, postType = 'news', archived = false, stats: providedStats }) {
   const router = useRouter();
-  const [score, setScore] = useState(null);
-  const [views, setViews] = useState(null);
-  const [comments, setComments] = useState(null);
-  const [shares, setShares] = useState(null);
-  const [myVote, setMyVote] = useState(0);
+  const [score, setScore] = useState(providedStats ? providedStats.score : null);
+  const [views, setViews] = useState(providedStats ? providedStats.views : null);
+  const [comments, setComments] = useState(providedStats ? providedStats.comments : null);
+  const [shares, setShares] = useState(providedStats ? providedStats.shares : null);
+  const [myVote, setMyVote] = useState(providedStats ? providedStats.myVote : 0);
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
+    if (providedStats) return;
+
     let active = true;
     const supabase = createClient();
 
@@ -77,7 +81,7 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
     return () => {
       active = false;
     };
-  }, [postUid, postType]);
+  }, [postUid, postType, providedStats]);
 
   async function handleVote(event, direction) {
     event.preventDefault();

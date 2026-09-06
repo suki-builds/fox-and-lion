@@ -2,7 +2,8 @@ import { getNewsList } from '../../../lib/prismic';
 import { getPageMeta } from '../../../lib/ogImage';
 import { resolveSourceName } from '../../../lib/format';
 import { effectivePublishedAt, sortByPublishedAt, isOlderThanDays, ARCHIVE_AFTER_DAYS } from '../../../lib/publishedDate';
-import NewsListClient from '../../../components/NewsListClient';
+import { getBatchedPostStats } from '../../../lib/postStats';
+import NewsListClient, { PAGE_SIZE } from '../../../components/NewsListClient';
 
 export const revalidate = 3600;
 
@@ -13,12 +14,24 @@ export const metadata = {
 export default async function NewsListPage() {
   const posts = sortByPublishedAt(await getNewsList());
 
-  // Same cached og:image fetch DefenceNewsList uses on the homepage — News
-  // posts don't have their own cover image field, only a source_url.
-  const metas = await Promise.all(posts.map((post) => getPageMeta(post.data.source_url)));
+  // Thumbnails are the expensive part (a live fetch to each source
+  // article) - only scrape them for the posts actually shown on first
+  // load. The rest are fetched lazily as "Load more" reveals them (see
+  // NewsListClient/app/api/news-thumbnails/route.js), instead of every
+  // post ever published paying that cost on every page regeneration.
+  // Stats (votes/views/comments/shares), by contrast, are a single cheap
+  // indexed query regardless of how many posts there are, so those are
+  // still batched for the full list up front.
+  const [metas, stats] = await Promise.all([
+    Promise.all(
+      posts.slice(0, PAGE_SIZE).map((post) => getPageMeta(post.data.source_url))
+    ),
+    getBatchedPostStats('news', posts.map((post) => post.uid)),
+  ]);
 
   const items = posts.map((post, index) => {
     const date = effectivePublishedAt(post);
+    const meta = metas[index];
     return {
       id: post.id,
       uid: post.uid,
@@ -27,8 +40,9 @@ export default async function NewsListPage() {
       archived: isOlderThanDays(date, ARCHIVE_AFTER_DAYS.news),
       title: post.data.title,
       sourceUrl: post.data.source_url,
-      sourceName: resolveSourceName(metas[index]?.siteName, post.data.source_url),
-      coverImageUrl: metas[index]?.image,
+      sourceName: meta ? resolveSourceName(meta.siteName, post.data.source_url) : null,
+      coverImageUrl: meta?.image,
+      stats: stats[post.uid],
     };
   });
 

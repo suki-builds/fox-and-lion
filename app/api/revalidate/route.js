@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { getPrismicClient } from '../../../lib/prismic';
 
@@ -84,12 +84,11 @@ export async function POST(request) {
   revalidatePath('/careers');
   revalidatePath('/careers/[company]/[id]', 'page');
   revalidatePath('/api/search-index');
-  // getAllJobs() in lib/ats.js is an unstable_cache entry, not a plain
-  // fetch tied to this route — revalidatePath('/careers') alone won't
-  // reliably bust it. revalidateTag is what actually forces it to refetch
-  // (picking up a newly published/edited job_posting) instead of waiting
-  // out its own 1-hour revalidate window.
-  revalidateTag('fox-and-lion-jobs');
+  // getAllJobs() in lib/ats.js reads manual postings live from Prismic on
+  // every call (no cache of its own to bust) and ATS-sourced jobs from the
+  // ats_jobs Supabase table (kept fresh by the separate cron-triggered
+  // app/api/sync-jobs route, not by this webhook) - so revalidatePath('/careers')
+  // above is already sufficient here.
 
   await warmChangedDetailPages(body?.documents, new URL(request.url).origin);
 

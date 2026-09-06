@@ -3,6 +3,7 @@ import PostCard from '../../../components/PostCard';
 import PostEngagement from '../../../components/PostEngagement';
 import { coverImageSrc } from '../../../lib/prismicImage';
 import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../../../lib/publishedDate';
+import { getBatchedPostStats } from '../../../lib/postStats';
 
 export const revalidate = 3600;
 
@@ -12,6 +13,7 @@ export const metadata = {
 
 export default async function AnalysisListPage() {
   const posts = sortByPublishedAt(await getAnalysisList());
+  const stats = await getBatchedPostStats('analysis', posts.map((post) => post.uid));
 
   return (
     <div className="container" style={{ paddingTop: '2.5rem' }}>
@@ -36,6 +38,7 @@ export default async function AnalysisListPage() {
                 postUid={post.uid}
                 postType="analysis"
                 archived={isArchived(post, 'analysis')}
+                stats={stats[post.uid]}
               />
             }
           />

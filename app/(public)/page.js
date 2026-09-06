@@ -9,6 +9,7 @@ import DefenceNewsList from '../../components/DefenceNewsList';
 import JobsList from '../../components/JobsList';
 import { coverImageSrc } from '../../lib/prismicImage';
 import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../../lib/publishedDate';
+import { getBatchedPostStats } from '../../lib/postStats';
 
 export const revalidate = 3600;
 
@@ -33,6 +34,7 @@ export default async function HomePage() {
   const sortedAnalysis = sortByPublishedAt(analysisPosts);
   const featured = sortedAnalysis[0];
   const recentAnalysis = sortedAnalysis.slice(1, 5);
+  const recentAnalysisStats = await getBatchedPostStats('analysis', recentAnalysis.map((post) => post.uid));
 
   const featuredDate = featured
     ? new Date(effectivePublishedAt(featured)).toLocaleDateString('en-GB', {
@@ -114,6 +116,7 @@ export default async function HomePage() {
                   postUid={post.uid}
                   postType="analysis"
                   archived={isArchived(post, 'analysis')}
+                  stats={recentAnalysisStats[post.uid]}
                 />
               }
             />

@@ -2,9 +2,11 @@ import { getAllJobs } from '../../../lib/ats';
 import JobsBoard from '../../../components/JobsBoard';
 import FeaturedJobs from '../../../components/FeaturedJobs';
 
-// getAllJobs() is itself cached (see lib/ats.js) — this just needs to
-// match that window so the rendered page and the underlying data refresh
-// together.
+// getAllJobs() itself has no cache of its own - manual postings read live
+// from Prismic, ATS-sourced jobs read live from the ats_jobs Supabase table
+// (populated once a day by the cron-triggered app/api/sync-jobs route, not
+// by this page). This revalidate window just governs how often the page
+// itself regenerates; a Prismic publish busts it sooner via revalidatePath.
 export const revalidate = 3600;
 
 export const metadata = {
