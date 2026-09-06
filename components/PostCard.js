@@ -26,7 +26,7 @@ export default function PostCard({
   showMedia = true,
   coverImageUrl,
   coverImageAlt,
-  coverRatio = false,
+  coverImageAspectRatio,
   compact = false,
   engagement,
 }) {
@@ -50,7 +50,8 @@ export default function PostCard({
         <PostCardMedia
           src={coverImageUrl}
           alt={coverImageAlt}
-          className={coverRatio ? 'post-card__media--cover-ratio' : undefined}
+          className={coverImageAspectRatio ? 'post-card__media--cover-ratio' : undefined}
+          aspectRatio={coverImageAspectRatio}
         />
       )}
       <div className="post-card__content">

@@ -17,16 +17,20 @@ const PRISMIC_IMAGE_HOST = 'https://images.prismic.io/';
 // through next/image - each unique cropped variant is then fetched from
 // Prismic's origin once total (cached at Vercel's edge) rather than once
 // per site visitor. See the bandwidth note in the migration plan.
-export default function PostCardMedia({ src, alt, className }) {
+export default function PostCardMedia({ src, alt, className, aspectRatio }) {
   const [failed, setFailed] = useState(false);
 
   if (!src || failed) return null;
 
   const wrapperClassName = `post-card__media${className ? ` ${className}` : ''}`;
+  // Only meaningful alongside the cover-ratio className - the default
+  // fixed-box thumbnail (News's scraped og:images) ignores this and keeps
+  // its CSS-defined width/height crop.
+  const wrapperStyle = aspectRatio ? { aspectRatio } : undefined;
 
   if (src.startsWith(PRISMIC_IMAGE_HOST)) {
     return (
-      <div className={wrapperClassName}>
+      <div className={wrapperClassName} style={wrapperStyle}>
         <Image
           src={src}
           alt={alt || ''}
@@ -39,7 +43,7 @@ export default function PostCardMedia({ src, alt, className }) {
   }
 
   return (
-    <div className={wrapperClassName}>
+    <div className={wrapperClassName} style={wrapperStyle}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={src} alt={alt || ''} onError={() => setFailed(true)} />
     </div>

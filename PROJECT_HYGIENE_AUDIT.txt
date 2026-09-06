@@ -104,6 +104,58 @@ UNTRACKED, HARMLESS
   happens.
 
 ================================================================
+MISSED BY THIS AUDIT: ISR/static rendering regression (found post-audit)
+================================================================
+
+After this audit ran, a since-fixed bug shipped and burned real Vercel
+Fluid Active CPU: getBatchedPostStats() and getAllJobs() (added later, for
+the careers/ATS and news-stats work) called the cookie-based Supabase
+server client (lib/supabase/server.ts, built on @supabase/ssr's
+createServerClient). Calling cookies() anywhere in a Server Component's
+render path forces Next.js to opt that whole page out of static/ISR
+rendering - so "/", "/news", "/analysis" and "/careers" silently went from
+hourly-regenerated (○/●) to fully dynamic, rendered-on-every-request (ƒ),
+multiplying Supabase + compute cost by every page view. Fixed by adding
+lib/supabase/public.ts (a plain, cookie-free anon-key client) and routing
+those reads through it instead.
+
+Why this audit didn't catch it, and what would:
+
+- Timing: the audit is a snapshot. The offending code was added after this
+  pass ran; nothing short of rerunning the audit against the new commits
+  would have seen it.
+- It's not a defect an audit like this checks for. Nothing threw, no data
+  was wrong - the only symptom is a Next.js build-output annotation
+  (○ Static / ● SSG vs ƒ Dynamic next to each route) and, weeks later, a
+  billing line item. This audit's scope was dead code, config drift, and
+  dependency mismatches, not rendering-strategy regressions - that needs
+  framework-specific knowledge and an actual `next build`, not a source
+  read.
+- The cause was several import-hops from the symptom: page.js -> lib/ats.js
+  / lib/postStats.js -> lib/supabase/server.ts. A diff-by-diff or
+  file-by-file review doesn't naturally trace "does anything this Server
+  Component transitively imports call a dynamic API," especially when the
+  call site looks unrelated to caching.
+- It's invisible in `next dev` - only `next build`'s route table (or
+  .next/prerender-manifest.json) shows static vs dynamic, and cost impact
+  only shows up in production traffic.
+
+Ideas for next time (not yet implemented):
+
+- A CI check that runs `next build` and fails/warns if a route's
+  rendering type (○/●/ƒ) drifts from an expected list - would have caught
+  this the moment it landed instead of via a billing alert weeks later.
+- An import-boundary lint rule (e.g. eslint-plugin-boundaries or a small
+  custom rule) forbidding anything reachable from a static/ISR page from
+  importing lib/supabase/server.ts - only lib/supabase/public.ts allowed
+  there.
+- Explicitly scope future audits to check for this: grep for
+  cookies()/headers() usage in anything imported by a Server Component
+  under app/, and confirm via `next build` output that no route
+  unexpectedly shows ƒ where it previously showed ○/●. Generic audits
+  won't do this unless asked.
+
+================================================================
 CHECKED AND CLEAN
 ================================================================
 

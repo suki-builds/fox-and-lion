@@ -7,7 +7,7 @@ import PostEngagement from '../../components/PostEngagement';
 import IllustrationPlaceholder from '../../components/IllustrationPlaceholder';
 import DefenceNewsList from '../../components/DefenceNewsList';
 import JobsList from '../../components/JobsList';
-import { coverImageSrc } from '../../lib/prismicImage';
+import { coverImageSrc, imageAspectRatio } from '../../lib/prismicImage';
 import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../../lib/publishedDate';
 import { getBatchedPostStats } from '../../lib/postStats';
 
@@ -49,7 +49,11 @@ export default async function HomePage() {
     <>
       {featured && (
         <section className="hero">
-          <Link href={`/analysis/${featured.uid}`} className="hero__media">
+          <Link
+            href={`/analysis/${featured.uid}`}
+            className="hero__media"
+            style={{ aspectRatio: imageAspectRatio(featured.data.cover_image) }}
+          >
             {featured.data.cover_image?.url ? (
               <Image
                 src={coverImageSrc(featured.data.cover_image.url)}
@@ -110,7 +114,7 @@ export default async function HomePage() {
               category={post.data.category || 'Analysis'}
               coverImageUrl={coverImageSrc(post.data.cover_image?.url)}
               coverImageAlt={post.data.cover_image?.alt}
-              coverRatio
+              coverImageAspectRatio={imageAspectRatio(post.data.cover_image)}
               engagement={
                 <PostEngagement
                   postUid={post.uid}

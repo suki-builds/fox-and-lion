@@ -5,7 +5,7 @@ import { getAnalysisList, getAnalysisBySlug } from '../../../../lib/prismic';
 import { buildMetadata } from '../../../../lib/seo';
 import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
 import YouTubeEmbed from '../../../../components/YouTubeEmbed';
-import { coverImageSrc } from '../../../../lib/prismicImage';
+import { coverImageSrc, imageAspectRatio } from '../../../../lib/prismicImage';
 import { effectivePublishedAt, isArchived } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
 import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
@@ -94,7 +94,10 @@ export default async function AnalysisDetailPage({ params }) {
   return (
     <article>
       <section className="hero">
-        <div className="hero__media">
+        <div
+          className="hero__media"
+          style={{ aspectRatio: imageAspectRatio(post.data.cover_image) }}
+        >
           {post.data.cover_image?.url ? (
             <Image
               src={coverImageSrc(post.data.cover_image.url)}

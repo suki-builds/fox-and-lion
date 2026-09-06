@@ -1,7 +1,7 @@
 import { getAnalysisList } from '../../../lib/prismic';
 import PostCard from '../../../components/PostCard';
 import PostEngagement from '../../../components/PostEngagement';
-import { coverImageSrc } from '../../../lib/prismicImage';
+import { coverImageSrc, imageAspectRatio } from '../../../lib/prismicImage';
 import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../../../lib/publishedDate';
 import { getBatchedPostStats } from '../../../lib/postStats';
 
@@ -32,7 +32,7 @@ export default async function AnalysisListPage() {
             category={post.data.category || 'Analysis'}
             coverImageUrl={coverImageSrc(post.data.cover_image?.url)}
             coverImageAlt={post.data.cover_image?.alt}
-            coverRatio
+            coverImageAspectRatio={imageAspectRatio(post.data.cover_image)}
             engagement={
               <PostEngagement
                 postUid={post.uid}
