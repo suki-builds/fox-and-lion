@@ -1,9 +1,17 @@
 import Link from 'next/link';
-import { getJobDetail, getCompanyBySlug } from '../../../../../lib/ats';
+import { getJobDetail, getJobMetadataData, getCompanyBySlug } from '../../../../../lib/ats';
+import { buildMetadata } from '../../../../../lib/seo';
 
 export async function generateMetadata({ params }) {
   const job = await getJobDetail(params.company, params.id);
-  return { title: job ? `${job.title} — ${job.company} — Fox and Lion` : 'Role not found — Fox and Lion' };
+  if (!job) return { title: 'Role not found — Fox and Lion' };
+
+  const data = await getJobMetadataData(params.company, params.id);
+  return buildMetadata({
+    data,
+    fallbackTitle: `${job.title} — ${job.company} — Fox and Lion`,
+    fallbackDescription: `${job.roleType !== 'Other' ? `${job.roleType} role` : 'Role'} at ${job.company}${job.location ? ` — ${job.location}` : ''}.`,
+  });
 }
 
 export default async function JobDetailPage({ params }) {
