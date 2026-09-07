@@ -90,6 +90,23 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
     pendingRef.current = pending;
   }, [pending]);
 
+  // Set true the moment a vote actually saves (see handleVote) - once this
+  // component has its own confirmed vote, score/myVote stop taking updates
+  // from the caller's `stats` prop for the rest of this mount, even though
+  // views/comments/shares keep syncing normally. Without this there's a
+  // second, narrower version of the bug the pendingRef guard above already
+  // fixes: lib/useFreshStats.js fires its own refresh the moment a list
+  // page mounts, running concurrently with anything the visitor does. If
+  // that fetch was already in flight before a vote and resolves after it,
+  // its data is a genuine, newer `providedStats` reference - pendingRef
+  // alone doesn't block it (pending is back to false by then) - but the
+  // numbers it carries were captured from before the vote, so applying it
+  // would silently overwrite an already-saved vote with stale ones. This
+  // is what was showing as the same post displaying different vote counts
+  // on the list page vs. its own detail page (which has no such refresh
+  // and so never hits this race).
+  const hasVotedRef = useRef(false);
+
   // Picks up a later, fresher `stats` object from the caller (see
   // lib/useFreshStats.js) - the useState calls above only apply on first
   // render, so without this a client-side stats refresh handed down as a
@@ -108,8 +125,10 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
     setViews(providedStats.views);
     setComments(providedStats.comments);
     setShares(providedStats.shares);
-    setScore(providedStats.score);
-    setMyVote(providedStats.myVote);
+    if (!hasVotedRef.current) {
+      setScore(providedStats.score);
+      setMyVote(providedStats.myVote);
+    }
   }, [providedStats]);
 
   async function handleVote(event, direction) {
@@ -169,6 +188,7 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
         }
       }
       if (error) throw error;
+      hasVotedRef.current = true;
     } catch (err) {
       console.error('Vote failed to save:', err.message || err);
       setMyVote(prevVote);
