@@ -1,9 +1,8 @@
-import Link from 'next/link';
 import { getBatchedThumbnails } from '../lib/newsThumbnails';
 import { resolveSourceName } from '../lib/format';
 import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../lib/publishedDate';
 import { getBatchedPostStats } from '../lib/postStats';
-import PostEngagement from './PostEngagement';
+import HomeNewsList from './HomeNewsList';
 
 const MAX_ITEMS = 4;
 
@@ -18,7 +17,10 @@ function formatDate(date) {
 
 // The homepage's News section — a compact list, image/headline/source all
 // linking to Fox and Lion's own internal summary page for that item, not
-// out to the original source article.
+// out to the original source article. Fetches everything server-side
+// (thumbnails, an initial stats snapshot) and hands off to HomeNewsList
+// (a Client Component) to render and refresh stats after load - see
+// lib/useFreshStats.js.
 export default async function DefenceNewsList({ posts }) {
   const items = sortByPublishedAt(posts || []).slice(0, MAX_ITEMS);
 
@@ -36,41 +38,20 @@ export default async function DefenceNewsList({ posts }) {
     getBatchedPostStats('news', items.map((post) => post.uid)),
   ]);
 
-  return (
-    <div className="news-list">
-      {items.map((post) => {
-        const meta = thumbnails[post.uid] || { image: null, siteName: null };
-        const sourceName = resolveSourceName(meta.siteName, post.data.source_url);
-        const href = `/news/${post.uid}`;
+  const listItems = items.map((post) => {
+    const meta = thumbnails[post.uid] || { image: null, siteName: null };
+    return {
+      id: post.id,
+      uid: post.uid,
+      href: `/news/${post.uid}`,
+      title: post.data.title,
+      imageUrl: meta.image,
+      sourceName: resolveSourceName(meta.siteName, post.data.source_url),
+      formattedDate: formatDate(effectivePublishedAt(post)),
+      archived: isArchived(post),
+      stats: stats[post.uid],
+    };
+  });
 
-        return (
-          <div className="news-list__item" key={post.id}>
-            {meta.image && (
-              <Link href={href} className="news-list__thumb">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={meta.image} alt="" />
-              </Link>
-            )}
-            <div>
-              <Link href={href} className="news-list__headline-link">
-                <h3 className="news-list__headline">{post.data.title}</h3>
-              </Link>
-              {sourceName && (
-                <Link href={href} className="news-list__source">
-                  {sourceName}
-                </Link>
-              )}
-              <span className="news-list__time">{formatDate(effectivePublishedAt(post))}</span>
-              <PostEngagement
-                postUid={post.uid}
-                postType="news"
-                archived={isArchived(post)}
-                stats={stats[post.uid]}
-              />
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
+  return <HomeNewsList items={listItems} />;
 }

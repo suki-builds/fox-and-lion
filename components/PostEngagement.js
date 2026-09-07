@@ -83,6 +83,21 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
     };
   }, [postUid, postType, providedStats]);
 
+  // Picks up a later, fresher `stats` object from the caller (see
+  // lib/useFreshStats.js) - the useState calls above only apply on first
+  // render, so without this a client-side stats refresh handed down as a
+  // new `stats` prop would never actually reach the screen. Skipped while
+  // a vote is in flight so a refresh landing at the same moment doesn't
+  // clobber that vote's own optimistic update.
+  useEffect(() => {
+    if (!providedStats || pending) return;
+    setViews(providedStats.views);
+    setComments(providedStats.comments);
+    setShares(providedStats.shares);
+    setScore(providedStats.score);
+    setMyVote(providedStats.myVote);
+  }, [providedStats, pending]);
+
   async function handleVote(event, direction) {
     event.preventDefault();
     event.stopPropagation();

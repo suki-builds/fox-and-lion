@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import PostCard from './PostCard';
 import PostEngagement from './PostEngagement';
+import { useFreshStats } from '../lib/useFreshStats';
 
 // Renders the first PAGE_SIZE items and reveals PAGE_SIZE more per click,
 // avoiding an unbounded DOM/scroll length as the News archive grows. All
@@ -16,6 +17,24 @@ export default function NewsListClient({ posts }) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const visiblePosts = posts.slice(0, visibleCount);
   const hasMore = visibleCount < posts.length;
+
+  // Stats (views/comments/shares/score) were baked into the page at last
+  // ISR regeneration - up to an hour stale. Refetching them client-side is
+  // cheap (one batched query, same as the server-side fetch, just
+  // triggered from the browser instead) and isn't limited by that cache,
+  // so this swaps in current numbers within a single round-trip after
+  // load. Only covers the currently-revealed posts, re-running (and
+  // covering the newly-revealed batch too) each time "Load more" changes
+  // visibleCount.
+  const initialStats = useMemo(() => {
+    const map = {};
+    posts.forEach((post) => {
+      map[post.uid] = post.stats;
+    });
+    return map;
+  }, [posts]);
+  const visibleUids = useMemo(() => visiblePosts.map((post) => post.uid), [visiblePosts]);
+  const freshStats = useFreshStats('news', visibleUids, initialStats);
 
   return (
     <>
@@ -38,7 +57,7 @@ export default function NewsListClient({ posts }) {
                 postUid={post.uid}
                 postType="news"
                 archived={post.archived}
-                stats={post.stats}
+                stats={freshStats[post.uid] || post.stats}
               />
             }
           />
