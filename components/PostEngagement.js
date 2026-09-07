@@ -105,23 +105,43 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
     setMyVote(nextVote);
     setScore(prevScore - prevVote + nextVote);
 
-    try {
+    // Supabase-js doesn't throw on a failed write (an expired access token,
+    // an RLS rejection) - it resolves normally with an `error` field, so a
+    // bare try/catch around these calls never sees it and the optimistic
+    // update above was staying on screen even when nothing was actually
+    // saved. writeVote() below is called up to twice: getSession() reads
+    // whatever's cached locally without validating it, so a token that
+    // expired since the page loaded reads as "signed in" here but gets
+    // rejected by the actual write - refreshSession() and retrying once
+    // covers that case instead of just failing more visibly.
+    async function writeVote(userId) {
       if (nextVote === 0) {
-        await supabase
+        return supabase
           .from('news_post_votes')
           .delete()
           .eq('post_type', postType)
           .eq('post_uid', postUid)
-          .eq('user_id', session.user.id);
-      } else {
-        await supabase
-          .from('news_post_votes')
-          .upsert(
-            { post_type: postType, post_uid: postUid, user_id: session.user.id, value: nextVote },
-            { onConflict: 'post_type,post_uid,user_id' }
-          );
+          .eq('user_id', userId);
       }
-    } catch {
+      return supabase
+        .from('news_post_votes')
+        .upsert(
+          { post_type: postType, post_uid: postUid, user_id: userId, value: nextVote },
+          { onConflict: 'post_type,post_uid,user_id' }
+        );
+    }
+
+    try {
+      let { error } = await writeVote(session.user.id);
+      if (error) {
+        const { data: refreshed } = await supabase.auth.refreshSession();
+        if (refreshed?.session) {
+          ({ error } = await writeVote(refreshed.session.user.id));
+        }
+      }
+      if (error) throw error;
+    } catch (err) {
+      console.error('Vote failed to save:', err.message || err);
       setMyVote(prevVote);
       setScore(prevScore);
     } finally {
