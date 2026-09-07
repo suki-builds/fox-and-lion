@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../lib/supabase/client';
+import { usePostStats } from './PostStatsProvider';
 import BarChartIcon from './BarChartIcon';
 import CommentIcon from './CommentIcon';
 import ShareIcon from './ShareIcon';
@@ -21,25 +22,50 @@ function formatCompactNumber(n) {
   return `${value.toFixed(digits).replace(/\.0$/, '')}${unit}`;
 }
 
-// `stats`, when provided, is a pre-fetched { score, views, comments,
-// shares, myVote } object - see lib/postStats.js's getBatchedPostStats(),
-// which every list page now calls once for all its cards. That's what
-// keeps this self-contained-fetch fallback below from turning into an N+1
-// query pattern on a long list: it only actually runs when a caller hasn't
-// already done the batched fetch (currently just the News/Analysis detail
-// pages, where there's only ever one instance anyway, so a single query is
-// already as cheap as it gets).
-export default function PostEngagement({ postUid, postType = 'news', archived = false, stats: providedStats }) {
+// Vote arrows plus view/comment/share counts for one post. Used unchanged
+// on News and Analysis detail pages and on every list surface.
+//
+// Stats come from a PostStatsProvider above this card when there is one
+// (list pages - one batched read for the whole list), and otherwise from
+// this component's own fetch (detail pages, where there's a single card and
+// a per-instance query is already as cheap as it gets).
+//
+// `myVote` is three-state on purpose: null means "not resolved yet", 0
+// means "resolved, and you haven't voted". Conflating those two is what
+// caused list-page votes to appear to work and then revert - see the long
+// note in supabase/migrations/0020_vote_toggle_rpc.sql. Nothing in here
+// treats null as "not voted": the arrows render inactive, but the write
+// path doesn't consult myVote at all, and an unresolved myVote gets
+// hydrated below rather than assumed.
+export default function PostEngagement({ postUid, postType = 'news', archived = false }) {
   const router = useRouter();
-  const [score, setScore] = useState(providedStats ? providedStats.score : null);
-  const [views, setViews] = useState(providedStats ? providedStats.views : null);
-  const [comments, setComments] = useState(providedStats ? providedStats.comments : null);
-  const [shares, setShares] = useState(providedStats ? providedStats.shares : null);
-  const [myVote, setMyVote] = useState(providedStats ? providedStats.myVote : 0);
+  const { entry, resolvingMyVote, fetchStartedAt } = usePostStats(postUid);
+
+  const [score, setScore] = useState(entry ? entry.score : null);
+  const [views, setViews] = useState(entry ? entry.views : null);
+  const [comments, setComments] = useState(entry ? entry.comments : null);
+  const [shares, setShares] = useState(entry ? entry.shares : null);
+  const [myVote, setMyVote] = useState(entry ? entry.myVote : null);
   const [pending, setPending] = useState(false);
 
+  // When this card last successfully wrote a vote. Any snapshot from the
+  // provider that was *started* before that write carries pre-vote numbers,
+  // so applying it would silently undo the vote on screen.
+  //
+  // This replaces an earlier `hasVotedRef` flag that, once you voted,
+  // ignored every future update from the provider for the rest of the
+  // mount. That did stop the stale overwrite, but it also meant a newer,
+  // genuinely-correct refresh could never correct the display either - the
+  // card stayed frozen on whatever it had optimistically guessed. Comparing
+  // timestamps rejects only the snapshots that are actually older, so state
+  // still re-converges on the truth afterwards.
+  const lastWriteAt = useRef(0);
+
+  // Detail pages: no provider above this card, so fetch its own stats and
+  // vote.
+  const needsOwnStats = entry === undefined;
   useEffect(() => {
-    if (providedStats) return;
+    if (!needsOwnStats) return undefined;
 
     let active = true;
     const supabase = createClient();
@@ -55,20 +81,26 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
       setComments(stats?.[0]?.comments ?? 0);
       setShares(stats?.[0]?.shares ?? 0);
 
-      if (session) {
-        const { data: myRow } = await supabase
-          .from('news_post_votes')
-          .select('value')
-          .eq('post_type', postType)
-          .eq('post_uid', postUid)
-          .eq('user_id', session.user.id)
-          .maybeSingle();
-        if (active) setMyVote(myRow?.value ?? 0);
+      // A signed-out visitor genuinely hasn't voted, so 0 is the real
+      // answer here rather than a placeholder.
+      if (!session) {
+        setMyVote(0);
+        return;
       }
+      const { data: myRow } = await supabase
+        .from('news_post_votes')
+        .select('value')
+        .eq('post_type', postType)
+        .eq('post_uid', postUid)
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+      if (active) setMyVote(myRow?.value ?? 0);
     }
 
     // Fails soft (stats stay at 0) if the migrations in supabase/migrations
-    // haven't been applied yet.
+    // haven't been applied yet. myVote is deliberately left null on failure
+    // - an unknown vote must not degrade into a confident "you haven't
+    // voted", which is the exact bug this component is built around.
     load().catch(() => {
       if (active) {
         setScore((s) => s ?? 0);
@@ -81,122 +113,135 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
     return () => {
       active = false;
     };
-  }, [postUid, postType, providedStats]);
+  }, [needsOwnStats, postUid, postType]);
 
-  // pendingRef mirrors `pending` without being a dependency below - see
-  // why in the comment on that effect.
-  const pendingRef = useRef(pending);
+  // Picks up newer snapshots from the provider. Views/comments/shares are
+  // unaffected by voting so they always apply; score/myVote only apply if
+  // the snapshot is newer than this card's last write.
   useEffect(() => {
-    pendingRef.current = pending;
-  }, [pending]);
-
-  // Set true the moment a vote actually saves (see handleVote) - once this
-  // component has its own confirmed vote, score/myVote stop taking updates
-  // from the caller's `stats` prop for the rest of this mount, even though
-  // views/comments/shares keep syncing normally. Without this there's a
-  // second, narrower version of the bug the pendingRef guard above already
-  // fixes: lib/useFreshStats.js fires its own refresh the moment a list
-  // page mounts, running concurrently with anything the visitor does. If
-  // that fetch was already in flight before a vote and resolves after it,
-  // its data is a genuine, newer `providedStats` reference - pendingRef
-  // alone doesn't block it (pending is back to false by then) - but the
-  // numbers it carries were captured from before the vote, so applying it
-  // would silently overwrite an already-saved vote with stale ones. This
-  // is what was showing as the same post displaying different vote counts
-  // on the list page vs. its own detail page (which has no such refresh
-  // and so never hits this race).
-  const hasVotedRef = useRef(false);
-
-  // Picks up a later, fresher `stats` object from the caller (see
-  // lib/useFreshStats.js) - the useState calls above only apply on first
-  // render, so without this a client-side stats refresh handed down as a
-  // new `stats` prop would never actually reach the screen. Deliberately
-  // keyed only on `providedStats`, not `pending`: a vote's own handleVote
-  // flips `pending` true then false again, and if `pending` were a
-  // dependency here that false-again transition re-ran this effect with
-  // whatever (now stale) `providedStats` the caller last passed down,
-  // stomping the vote that had just been optimistically applied and
-  // actually saved a moment earlier - the vote would flash active and
-  // immediately revert. Reading pendingRef.current instead still skips
-  // syncing while a vote is genuinely in flight, without that unwanted
-  // re-run once it finishes.
-  useEffect(() => {
-    if (!providedStats || pendingRef.current) return;
-    setViews(providedStats.views);
-    setComments(providedStats.comments);
-    setShares(providedStats.shares);
-    if (!hasVotedRef.current) {
-      setScore(providedStats.score);
-      setMyVote(providedStats.myVote);
+    if (!entry) return;
+    setViews(entry.views);
+    setComments(entry.comments);
+    setShares(entry.shares);
+    if (fetchStartedAt > lastWriteAt.current) {
+      setScore(entry.score);
+      if (entry.myVote !== null) setMyVote(entry.myVote);
     }
-  }, [providedStats]);
+  }, [entry, fetchStartedAt]);
 
-  async function handleVote(event, direction) {
-    event.preventDefault();
-    event.stopPropagation();
-    if (pending || archived) return;
+  // Fallback vote resolution: this card has stats but its myVote is still
+  // unresolved and no batched lookup is going to resolve it - because the
+  // provider's refresh failed, or because there is no provider above it.
+  // Resolving it costs a single narrow row read, and is what makes "you
+  // already voted" render correctly even when the batched path is
+  // unavailable. Correctness shouldn't depend on remembering to wire up a
+  // provider; that assumption is what left the Analysis list broken.
+  const hydratedOwnVote = useRef(false);
+  useEffect(() => {
+    if (needsOwnStats || myVote !== null || resolvingMyVote || hydratedOwnVote.current) {
+      return undefined;
+    }
+    hydratedOwnVote.current = true;
 
+    let active = true;
     const supabase = createClient();
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) {
-      router.push('/sign-in');
-      return;
-    }
 
-    const prevVote = myVote;
-    const prevScore = score ?? 0;
-    const nextVote = myVote === direction ? 0 : direction;
-
-    setPending(true);
-    setMyVote(nextVote);
-    setScore(prevScore - prevVote + nextVote);
-
-    // Supabase-js doesn't throw on a failed write (an expired access token,
-    // an RLS rejection) - it resolves normally with an `error` field, so a
-    // bare try/catch around these calls never sees it and the optimistic
-    // update above was staying on screen even when nothing was actually
-    // saved. writeVote() below is called up to twice: getSession() reads
-    // whatever's cached locally without validating it, so a token that
-    // expired since the page loaded reads as "signed in" here but gets
-    // rejected by the actual write - refreshSession() and retrying once
-    // covers that case instead of just failing more visibly.
-    async function writeVote(userId) {
-      if (nextVote === 0) {
-        return supabase
-          .from('news_post_votes')
-          .delete()
-          .eq('post_type', postType)
-          .eq('post_uid', postUid)
-          .eq('user_id', userId);
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        if (active) setMyVote(0);
+        return;
       }
-      return supabase
+      const { data: myRow, error } = await supabase
         .from('news_post_votes')
-        .upsert(
-          { post_type: postType, post_uid: postUid, user_id: userId, value: nextVote },
-          { onConflict: 'post_type,post_uid,user_id' }
-        );
-    }
-
-    try {
-      let { error } = await writeVote(session.user.id);
-      if (error) {
-        const { data: refreshed } = await supabase.auth.refreshSession();
-        if (refreshed?.session) {
-          ({ error } = await writeVote(refreshed.session.user.id));
-        }
-      }
+        .select('value')
+        .eq('post_type', postType)
+        .eq('post_uid', postUid)
+        .eq('user_id', session.user.id)
+        .maybeSingle();
       if (error) throw error;
-      hasVotedRef.current = true;
-    } catch (err) {
-      console.error('Vote failed to save:', err.message || err);
-      setMyVote(prevVote);
-      setScore(prevScore);
-    } finally {
-      setPending(false);
-    }
-  }
+      if (active) setMyVote(myRow?.value ?? 0);
+    })().catch((err) => {
+      // Leave myVote null - unresolved, not "unvoted". The write path
+      // doesn't depend on it, so voting still works correctly from here.
+      console.error('Could not resolve your vote for', postUid, err?.message || err);
+    });
+
+    return () => {
+      active = false;
+    };
+  }, [needsOwnStats, myVote, resolvingMyVote, postUid, postType]);
+
+  const handleVote = useCallback(
+    async (event, direction) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (pending || archived) return;
+
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push('/sign-in');
+        return;
+      }
+
+      const prevVote = myVote;
+      const prevScore = score;
+
+      setPending(true);
+
+      // Optimistic update only when the current vote is actually known.
+      // When it isn't, showing nothing for one round-trip is right;
+      // guessing is what produced the phantom +1 that made list counts read
+      // one higher than the same post's detail page.
+      if (myVote !== null && score !== null) {
+        const optimistic = myVote === direction ? 0 : direction;
+        setMyVote(optimistic);
+        setScore(score - myVote + optimistic);
+      }
+
+      // toggle_post_vote resolves insert/flip/delete server-side from the
+      // caller's own row and returns the authoritative score and vote - see
+      // supabase/migrations/0020_vote_toggle_rpc.sql. The client sends only
+      // which arrow was pressed, so a stale or unresolved myVote can't
+      // produce a wrong write, and the score is assigned rather than
+      // arithmetic applied to a possibly-stale base.
+      //
+      // Called up to twice: getSession() reads whatever's cached locally
+      // without validating it, so a token that expired since the page
+      // loaded reads as "signed in" here but gets rejected by the actual
+      // write - refreshSession() and retrying once covers that.
+      const castVote = () =>
+        supabase.rpc('toggle_post_vote', { ptype: postType, uid: postUid, direction });
+
+      try {
+        let { data, error } = await castVote();
+        if (error) {
+          const { data: refreshed } = await supabase.auth.refreshSession();
+          if (refreshed?.session) ({ data, error } = await castVote());
+        }
+        if (error) throw error;
+
+        const row = Array.isArray(data) ? data[0] : data;
+        if (!row) throw new Error('toggle_post_vote returned no row');
+
+        lastWriteAt.current = Date.now();
+        setScore(row.score);
+        setMyVote(row.my_vote);
+      } catch (err) {
+        // supabase-js resolves rather than throws on a failed write (an
+        // expired token, an RLS rejection), so the `error` field above is
+        // the only signal that nothing was saved - without checking it the
+        // optimistic update stays on screen over an unchanged database.
+        console.error('Vote failed to save:', err?.message || err);
+        setMyVote(prevVote);
+        setScore(prevScore);
+      } finally {
+        setPending(false);
+      }
+    },
+    [pending, archived, myVote, score, postType, postUid, router]
+  );
 
   return (
     <div className="post-engagement" onClick={(event) => event.stopPropagation()}>

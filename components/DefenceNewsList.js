@@ -19,8 +19,8 @@ function formatDate(date) {
 // linking to Fox and Lion's own internal summary page for that item, not
 // out to the original source article. Fetches everything server-side
 // (thumbnails, an initial stats snapshot) and hands off to HomeNewsList
-// (a Client Component) to render and refresh stats after load - see
-// lib/useFreshStats.js.
+// (a Client Component) to render, refresh stats after load, and resolve the
+// visitor's own vote - see components/PostStatsProvider.js.
 export default async function DefenceNewsList({ posts }) {
   const items = sortByPublishedAt(posts || []).slice(0, MAX_ITEMS);
 

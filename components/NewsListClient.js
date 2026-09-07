@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import PostCard from './PostCard';
 import PostEngagement from './PostEngagement';
-import { useFreshStats } from '../lib/useFreshStats';
+import PostStatsProvider from './PostStatsProvider';
 
 // Renders the first PAGE_SIZE items and reveals PAGE_SIZE more per click,
 // avoiding an unbounded DOM/scroll length as the News archive grows. All
@@ -19,13 +19,11 @@ export default function NewsListClient({ posts }) {
   const hasMore = visibleCount < posts.length;
 
   // Stats (views/comments/shares/score) were baked into the page at last
-  // ISR regeneration - up to an hour stale. Refetching them client-side is
-  // cheap (one batched query, same as the server-side fetch, just
-  // triggered from the browser instead) and isn't limited by that cache,
-  // so this swaps in current numbers within a single round-trip after
-  // load. Only covers the currently-revealed posts, re-running (and
-  // covering the newly-revealed batch too) each time "Load more" changes
-  // visibleCount.
+  // ISR regeneration - up to an hour stale - and carry no myVote at all,
+  // since resolving that server-side would drop this page out of ISR. The
+  // provider refetches both client-side in one batched query. Only covers
+  // the currently-revealed posts, re-running (and covering the
+  // newly-revealed batch too) each time "Load more" changes visibleCount.
   const initialStats = useMemo(() => {
     const map = {};
     posts.forEach((post) => {
@@ -34,10 +32,9 @@ export default function NewsListClient({ posts }) {
     return map;
   }, [posts]);
   const visibleUids = useMemo(() => visiblePosts.map((post) => post.uid), [visiblePosts]);
-  const freshStats = useFreshStats('news', visibleUids, initialStats);
 
   return (
-    <>
+    <PostStatsProvider postType="news" uids={visibleUids} initialStats={initialStats}>
       <div className="post-grid" style={{ marginTop: '2rem' }}>
         {visiblePosts.length === 0 && (
           <p style={{ padding: '1.5rem' }}>Nothing published yet.</p>
@@ -53,12 +50,7 @@ export default function NewsListClient({ posts }) {
             coverImageUrl={post.coverImageUrl}
             compact
             engagement={
-              <PostEngagement
-                postUid={post.uid}
-                postType="news"
-                archived={post.archived}
-                stats={freshStats[post.uid] || post.stats}
-              />
+              <PostEngagement postUid={post.uid} postType="news" archived={post.archived} />
             }
           />
         ))}
@@ -74,6 +66,6 @@ export default function NewsListClient({ posts }) {
           </button>
         </div>
       )}
-    </>
+    </PostStatsProvider>
   );
 }

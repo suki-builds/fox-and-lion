@@ -4,6 +4,7 @@ import { getAnalysisList, getNewsList } from '../../lib/prismic';
 import { getAllJobs } from '../../lib/ats';
 import PostCard from '../../components/PostCard';
 import PostEngagement from '../../components/PostEngagement';
+import PostStatsProvider from '../../components/PostStatsProvider';
 import IllustrationPlaceholder from '../../components/IllustrationPlaceholder';
 import DefenceNewsList from '../../components/DefenceNewsList';
 import JobsList from '../../components/JobsList';
@@ -100,32 +101,41 @@ export default async function HomePage() {
             View all analysis &#8599;
           </Link>
         </div>
-        <div className="recent-analysis-grid">
-          {recentAnalysis.length === 0 && (
-            <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>
-          )}
-          {recentAnalysis.map((post) => (
-            <PostCard
-              key={post.id}
-              href={`/analysis/${post.uid}`}
-              date={effectivePublishedAt(post)}
-              title={post.data.title}
-              byline={post.data.author}
-              category={post.data.category || 'Analysis'}
-              coverImageUrl={coverImageSrc(post.data.cover_image?.url)}
-              coverImageAlt={post.data.cover_image?.alt}
-              coverImageAspectRatio={imageAspectRatio(post.data.cover_image)}
-              engagement={
-                <PostEngagement
-                  postUid={post.uid}
-                  postType="analysis"
-                  archived={isArchived(post, 'analysis')}
-                  stats={recentAnalysisStats[post.uid]}
-                />
-              }
-            />
-          ))}
-        </div>
+        {/* Same as /analysis: the provider is what resolves each card's own
+            vote client-side, which getBatchedPostStats deliberately can't do
+            without dropping this page out of ISR. The News section above gets
+            the same treatment inside HomeNewsList. */}
+        <PostStatsProvider
+          postType="analysis"
+          uids={recentAnalysis.map((post) => post.uid)}
+          initialStats={recentAnalysisStats}
+        >
+          <div className="recent-analysis-grid">
+            {recentAnalysis.length === 0 && (
+              <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>
+            )}
+            {recentAnalysis.map((post) => (
+              <PostCard
+                key={post.id}
+                href={`/analysis/${post.uid}`}
+                date={effectivePublishedAt(post)}
+                title={post.data.title}
+                byline={post.data.author}
+                category={post.data.category || 'Analysis'}
+                coverImageUrl={coverImageSrc(post.data.cover_image?.url)}
+                coverImageAlt={post.data.cover_image?.alt}
+                coverImageAspectRatio={imageAspectRatio(post.data.cover_image)}
+                engagement={
+                  <PostEngagement
+                    postUid={post.uid}
+                    postType="analysis"
+                    archived={isArchived(post, 'analysis')}
+                  />
+                }
+              />
+            ))}
+          </div>
+        </PostStatsProvider>
 
         <JobsList jobs={latestJobs} />
       </div>
