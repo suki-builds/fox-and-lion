@@ -1,6 +1,27 @@
 import Link from 'next/link';
-import { getJobDetail, getJobMetadataData, getCompanyBySlug } from '../../../../../lib/ats';
+import { notFound } from 'next/navigation';
+import { getAllJobs, getJobDetail, getJobMetadataData, getCompanyBySlug } from '../../../../../lib/ats';
 import { buildMetadata } from '../../../../../lib/seo';
+
+// Prerendered per job and refreshed hourly, the same as /news/[slug] and
+// /analysis/[slug]. Until this was added, this was the one content route in
+// the app with no caching at all - it built as `ƒ (Dynamic)` and answered
+// every request with `Cache-Control: no-store` and `X-Vercel-Cache: MISS`,
+// repeat hits on the same URL included. That's what made it the top Active
+// CPU consumer on the project: roughly double any other route's
+// invocations, while (going by the Supabase call count over the same
+// window) almost none of those requests reached a job that actually exists.
+export const revalidate = 3600;
+
+// Jobs re-sync daily (app/api/sync-jobs/route.js) but builds don't, so a
+// job added since the last deploy won't be in this list. `dynamicParams`
+// stays at its default of true so those still render on demand - and are
+// then cached for the revalidate window above rather than re-rendered on
+// every request, which is the behaviour that actually mattered here.
+export async function generateStaticParams() {
+  const jobs = await getAllJobs();
+  return jobs.map((job) => ({ company: job.companySlug, id: String(job.platformId) }));
+}
 
 export async function generateMetadata({ params }) {
   const job = await getJobDetail(params.company, params.id);
@@ -20,19 +41,13 @@ export default async function JobDetailPage({ params }) {
   // ATS-sourced jobs keep applying through their origin platform.
   const isManualJob = !getCompanyBySlug(params.company);
 
-  if (!job) {
-    return (
-      <div className="container">
-        <Link href="/careers" className="job-detail__back">
-          &larr; All careers
-        </Link>
-        <div className="job-detail__not-found">
-          <h1>Role not found</h1>
-          <p>This listing may have closed or been removed from {params.company}&rsquo;s board.</p>
-        </div>
-      </div>
-    );
-  }
+  // notFound() rather than rendering "Role not found" inline, which this
+  // used to do - and served with a 200. Any URL under /careers/*/* answered
+  // 200, so `/careers/totally-made-up/abc123` was a successful page as far
+  // as a crawler was concerned: nothing ever got dropped from an index, and
+  // an unbounded set of made-up URLs each cost a full render. A real 404 is
+  // cacheable and tells a crawler to stop. See ./not-found.js for the copy.
+  if (!job) notFound();
 
   const formattedDate = job.postedAt
     ? new Date(job.postedAt).toLocaleDateString('en-GB', {

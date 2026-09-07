@@ -32,6 +32,29 @@ export async function GET(request) {
   const supabase = createAdminClient();
   const summary = [];
 
+  // Removing a company from COMPANIES used to orphan its rows rather than
+  // clear them: the per-company delete below only ever touches slugs that
+  // are still configured, so a de-listed company's jobs stayed in the table
+  // and kept being served on /careers indefinitely. Anduril and Palantir
+  // were excluded by request and left 2,521 stale rows behind - 84% of the
+  // table, still on the public board with posted_at dates back to 2019, and
+  // 2,521 extra links into the job detail route for crawlers to walk.
+  // Pruning here means de-listing a company is enough on its own.
+  const configuredSlugs = COMPANIES.map((c) => c.slug);
+  if (configuredSlugs.length > 0) {
+    const { error: pruneError, count: pruned } = await supabase
+      .from('ats_jobs')
+      .delete({ count: 'exact' })
+      .not('company_slug', 'in', `(${configuredSlugs.join(',')})`);
+    if (pruneError) {
+      // Non-fatal: stale rows are a content/cost problem, not a correctness
+      // one for the companies that are still configured below.
+      console.warn('ats_jobs prune failed:', pruneError.message);
+    } else if (pruned) {
+      console.log(`Pruned ${pruned} ats_jobs rows for de-listed companies`);
+    }
+  }
+
   // Sequential, not Promise.all - these are all writes to the same table
   // and there's no user waiting on this response, so there's nothing to
   // gain from parallelizing the Supabase calls (the slow part, hitting 12+
