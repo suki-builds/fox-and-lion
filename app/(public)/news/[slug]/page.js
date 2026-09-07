@@ -1,7 +1,7 @@
 import { PrismicRichText } from '@prismicio/react';
 import { getNewsList, getNewsBySlug } from '../../../../lib/prismic';
 import { buildMetadata } from '../../../../lib/seo';
-import { getPageMeta } from '../../../../lib/ogImage';
+import { getThumbnail } from '../../../../lib/newsThumbnails';
 import { resolveSourceName } from '../../../../lib/format';
 import { effectivePublishedAt, isArchived } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
   // source-article/YouTube thumbnail the page body itself displays,
   // rather than shipping a social card with no image.
   const youtubeId = post.data.source_url ? extractYouTubeId(post.data.source_url) : null;
-  const meta = !youtubeId && post.data.source_url ? await getPageMeta(post.data.source_url) : null;
+  const meta = !youtubeId && post.data.source_url ? await getThumbnail(post.uid, post.data.source_url) : null;
   const fallbackImage = youtubeId
     ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
     : meta?.image || undefined;
@@ -57,11 +57,11 @@ export default async function NewsDetailPage({ params }) {
     { day: 'numeric', month: 'long', year: 'numeric' }
   );
   const archived = isArchived(post);
-  const meta = post.data.source_url ? await getPageMeta(post.data.source_url) : null;
+  const meta = post.data.source_url ? await getThumbnail(post.uid, post.data.source_url) : null;
   const thumbnail = meta?.image;
   const sourceName = post.data.source_url ? resolveSourceName(meta?.siteName, post.data.source_url) : null;
   const youtubeId = post.data.source_url ? extractYouTubeId(post.data.source_url) : null;
-  // YouTube's own watch-page og:image sits far past getPageMeta's 100KB
+  // YouTube's own watch-page og:image sits far past scrapePageMeta's 100KB
   // read cap (YouTube front-loads a huge amount of inline JS/config before
   // its <meta> tags), so meta.image comes back empty for these — derive the
   // thumbnail directly from the video ID instead via YouTube's stable

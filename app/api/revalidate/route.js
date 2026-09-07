@@ -1,6 +1,7 @@
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 import { getPrismicClient } from '../../../lib/prismic';
+import { storeThumbnail } from '../../../lib/newsThumbnails';
 
 const DETAIL_PATH_BY_TYPE = {
   analysis_post: (uid) => `/analysis/${uid}`,
@@ -26,6 +27,14 @@ async function warmChangedDetailPages(documentIds, origin) {
         const doc = await client.getByID(id);
         const buildPath = DETAIL_PATH_BY_TYPE[doc.type];
         if (!buildPath) return;
+        if (doc.type === 'news_post' && doc.data.source_url) {
+          // Best-effort - see lib/newsThumbnails.js. A failure here just
+          // means the thumbnail falls back to a live, self-healing scrape
+          // on the next page read instead of blocking the webhook.
+          await storeThumbnail(doc.uid, doc.data.source_url).catch((err) => {
+            console.error(`Failed to scrape thumbnail for ${doc.uid}:`, err.message);
+          });
+        }
         await fetch(`${origin}${buildPath(doc.uid)}`, { cache: 'no-store' });
       } catch (err) {
         // err.message only - the Prismic client attaches its full request

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getPageMeta } from '../lib/ogImage';
+import { getBatchedThumbnails } from '../lib/newsThumbnails';
 import { resolveSourceName } from '../lib/format';
 import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../lib/publishedDate';
 import { getBatchedPostStats } from '../lib/postStats';
@@ -26,15 +26,20 @@ export default async function DefenceNewsList({ posts }) {
     return <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>;
   }
 
-  const [metas, stats] = await Promise.all([
-    Promise.all(items.map((post) => getPageMeta(post.data.source_url))),
+  const uidToSourceUrl = {};
+  items.forEach((post) => {
+    if (post.data.source_url) uidToSourceUrl[post.uid] = post.data.source_url;
+  });
+
+  const [thumbnails, stats] = await Promise.all([
+    getBatchedThumbnails(uidToSourceUrl),
     getBatchedPostStats('news', items.map((post) => post.uid)),
   ]);
 
   return (
     <div className="news-list">
-      {items.map((post, index) => {
-        const meta = metas[index];
+      {items.map((post) => {
+        const meta = thumbnails[post.uid] || { image: null, siteName: null };
         const sourceName = resolveSourceName(meta.siteName, post.data.source_url);
         const href = `/news/${post.uid}`;
 
