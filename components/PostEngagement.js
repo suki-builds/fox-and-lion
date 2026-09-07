@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../lib/supabase/client';
 import BarChartIcon from './BarChartIcon';
@@ -83,20 +83,34 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
     };
   }, [postUid, postType, providedStats]);
 
+  // pendingRef mirrors `pending` without being a dependency below - see
+  // why in the comment on that effect.
+  const pendingRef = useRef(pending);
+  useEffect(() => {
+    pendingRef.current = pending;
+  }, [pending]);
+
   // Picks up a later, fresher `stats` object from the caller (see
   // lib/useFreshStats.js) - the useState calls above only apply on first
   // render, so without this a client-side stats refresh handed down as a
-  // new `stats` prop would never actually reach the screen. Skipped while
-  // a vote is in flight so a refresh landing at the same moment doesn't
-  // clobber that vote's own optimistic update.
+  // new `stats` prop would never actually reach the screen. Deliberately
+  // keyed only on `providedStats`, not `pending`: a vote's own handleVote
+  // flips `pending` true then false again, and if `pending` were a
+  // dependency here that false-again transition re-ran this effect with
+  // whatever (now stale) `providedStats` the caller last passed down,
+  // stomping the vote that had just been optimistically applied and
+  // actually saved a moment earlier - the vote would flash active and
+  // immediately revert. Reading pendingRef.current instead still skips
+  // syncing while a vote is genuinely in flight, without that unwanted
+  // re-run once it finishes.
   useEffect(() => {
-    if (!providedStats || pending) return;
+    if (!providedStats || pendingRef.current) return;
     setViews(providedStats.views);
     setComments(providedStats.comments);
     setShares(providedStats.shares);
     setScore(providedStats.score);
     setMyVote(providedStats.myVote);
-  }, [providedStats, pending]);
+  }, [providedStats]);
 
   async function handleVote(event, direction) {
     event.preventDefault();
