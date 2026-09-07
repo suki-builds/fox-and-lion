@@ -30,7 +30,7 @@ export async function GET() {
   const newsItems = newsPosts.map((post) => ({
     type: 'News',
     title: post.data.title,
-    excerpt: post.data.seo_description || '',
+    excerpt: asText(post.data.commentary) || '',
     url: `/news/${post.uid}`,
     date: effectivePublishedAt(post),
   }));

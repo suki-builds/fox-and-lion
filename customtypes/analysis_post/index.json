@@ -12,8 +12,7 @@
       "title": {
         "config": {
           "label": "Title",
-          "placeholder": "",
-          "useAsTitle": true
+          "placeholder": ""
         },
         "type": "Text"
       },
@@ -64,19 +63,27 @@
         },
         "type": "Timestamp"
       },
-      "seo_title": {
+      "meta_title": {
         "config": {
-          "label": "SEO Title",
+          "label": "Meta Title",
           "placeholder": ""
         },
         "type": "Text"
       },
-      "seo_description": {
+      "meta_description": {
         "config": {
-          "label": "SEO Description",
+          "label": "Meta Description",
           "placeholder": ""
         },
         "type": "Text"
+      },
+      "meta_image": {
+        "config": {
+          "constraint": {},
+          "label": "Meta Image",
+          "thumbnails": []
+        },
+        "type": "Image"
       },
       "seo_twitter_card": {
         "config": {
@@ -99,14 +106,6 @@
         },
         "type": "Boolean"
       },
-      "seo_image": {
-        "config": {
-          "constraint": {},
-          "label": "SEO Image",
-          "thumbnails": []
-        },
-        "type": "Image"
-      },
       "slices": {
         "config": {
           "choices": {}
@@ -115,33 +114,7 @@
         "type": "Slices"
       }
     },
-    "SEO & Metadata": {
-      "meta_title": {
-        "config": {
-          "label": "Meta Title",
-          "placeholder": "A title of the page used for social media and search engines"
-        },
-        "type": "Text"
-      },
-      "meta_description": {
-        "config": {
-          "label": "Meta Description",
-          "placeholder": "A brief summary of the page"
-        },
-        "type": "Text"
-      },
-      "meta_image": {
-        "config": {
-          "constraint": {
-            "height": 1260,
-            "width": 2400
-          },
-          "label": "Meta Image",
-          "thumbnails": []
-        },
-        "type": "Image"
-      }
-    }
+    "SEO & Metadata": {}
   },
   "label": "Analysis Post",
   "repeatable": true,

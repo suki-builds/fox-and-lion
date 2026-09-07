@@ -6,8 +6,8 @@
       "path": "/analysis-post/:uid"
     },
     {
-      "type": "homepage",
-      "path": "/"
+      "type": "careers_post",
+      "path": "/careers-post/:uid"
     },
     {
       "type": "news_post",

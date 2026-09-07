@@ -12,22 +12,21 @@
       "title": {
         "config": {
           "label": "Title",
-          "placeholder": "e.g. Senior Software Engineer",
-          "useAsTitle": true
+          "placeholder": ""
         },
         "type": "Text"
       },
       "company_name": {
         "config": {
           "label": "Company Name",
-          "placeholder": "Fox and Lion"
+          "placeholder": ""
         },
         "type": "Text"
       },
       "location": {
         "config": {
           "label": "Location",
-          "placeholder": "e.g. London, United Kingdom"
+          "placeholder": ""
         },
         "type": "Text"
       },
@@ -35,9 +34,9 @@
         "config": {
           "label": "Workplace Type",
           "options": [
-            "Remote",
+            "On-site",
             "Hybrid",
-            "Onsite"
+            "Remote"
           ],
           "placeholder": ""
         },
@@ -85,9 +84,12 @@
       },
       "apply_url": {
         "config": {
+          "allowTargetBlank": true,
+          "allowText": true,
           "label": "Apply URL",
-          "placeholder": "https://",
-          "select": "web"
+          "placeholder": "",
+          "repeat": false,
+          "select": null
         },
         "type": "Link"
       },
@@ -103,7 +105,7 @@
       "posted_at": {
         "config": {
           "label": "Posted At",
-          "placeholder": "Leave blank to use this document's publish date"
+          "placeholder": ""
         },
         "type": "Timestamp"
       },
@@ -115,6 +117,40 @@
           "placeholder_true": "true"
         },
         "type": "Boolean"
+      },
+      "slices": {
+        "config": {
+          "choices": {}
+        },
+        "fieldset": "Slice Zone",
+        "type": "Slices"
+      }
+    },
+    "SEO & Metadata": {
+      "meta_title": {
+        "config": {
+          "label": "Meta Title",
+          "placeholder": "A title of the page used for social media and search engines"
+        },
+        "type": "Text"
+      },
+      "meta_description": {
+        "config": {
+          "label": "Meta Description",
+          "placeholder": "A brief summary of the page"
+        },
+        "type": "Text"
+      },
+      "meta_image": {
+        "config": {
+          "constraint": {
+            "height": 1260,
+            "width": 2400
+          },
+          "label": "Meta Image",
+          "thumbnails": []
+        },
+        "type": "Image"
       }
     }
   },
