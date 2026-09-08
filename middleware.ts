@@ -2,9 +2,10 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import { RETIRED_COMPANY_SLUGS } from './lib/retiredCompanySlugs';
 
-// Request-level logging for the careers job detail route, so Vercel's logs
-// can answer what the dashboard can't on the current plan: which company/id
-// slugs are actually being requested, and by what.
+// Request-level logging for the careers job detail route. Now that the
+// matcher below is narrowed, this only sees the retired slugs - which is
+// what's left worth watching: it shows the dead-URL crawl decaying as
+// those 410s get picked up.
 //
 // This lives in middleware rather than in the page on purpose. Reading
 // headers() inside a Server Component forces that route out of static/ISR
@@ -121,11 +122,35 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Excludes static assets (favicon/_next) and everything under /api/ -
-  // none of the existing API routes (submit-pitch, submit-contact,
-  // revalidate, search-index) are session-aware, so there's no reason for
-  // them to pay for a Supabase auth round-trip on every request.
+  // Only the paths that genuinely need this run it.
+  //
+  // This used to match every route except static assets and /api/, which
+  // meant a Supabase SSR client was constructed and auth.getUser() awaited
+  // on every request to every page - including fully static ones like
+  // /about and /terms-of-service, which cannot invoke a page function at
+  // all. That was the floor under this project's Active CPU: roughly one
+  // invocation per page view on a site that is almost entirely prerendered
+  // HTML, and it was why optimising individual routes never moved the
+  // total. Route-level fixes reduce the cost of rendering a page; this was
+  // a per-request tax charged on all of them equally.
+  //
+  // Only three routes read the session server-side (/account, /moderation
+  // and the /auth callback). Everywhere else resolves auth in the browser,
+  // where createBrowserClient refreshes tokens on its own - see
+  // components/SiteHeader.js and the refreshSession()/retry path in
+  // components/PostEngagement.js.
+  //
+  // The two /careers entries are not about sessions: they are what lets
+  // middleware answer retired company slugs with 410 Gone before routing,
+  // so ~2,200 dead crawler URLs cost no page render. They must stay in
+  // sync with RETIRED_COMPANY_SLUGS in lib/retiredCompanySlugs.js - Next
+  // requires this matcher to be a static literal, so it can't be built
+  // from that array. Adding a slug there means adding a line here.
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|api/|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/account/:path*',
+    '/moderation/:path*',
+    '/auth/:path*',
+    '/careers/anduril/:path*',
+    '/careers/palantir/:path*',
   ],
 };

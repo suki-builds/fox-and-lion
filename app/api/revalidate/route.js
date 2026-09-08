@@ -18,15 +18,34 @@ const DETAIL_PATH_BY_TYPE = {
 // directly, forcing it to regenerate immediately instead of waiting on
 // organic traffic. Best-effort: any lookup/fetch failure here is logged and
 // swallowed, never blocks the 200 response the Prismic webhook is waiting on.
-async function warmChangedDetailPages(documentIds, origin) {
-  if (!Array.isArray(documentIds) || documentIds.length === 0) return;
+// Resolves the webhook's raw document IDs to their type/uid, then for each
+// changed document revalidates that one page and fetches it so the new HTML
+// is built immediately rather than on whoever happens to visit next.
+//
+// This used to be paired with pattern-wide calls - revalidatePath('/news/
+// [slug]', 'page') and friends - which marked *every* page of that route
+// stale on *every* publish: 355 news pages, 16 analysis, 497 careers, for
+// one edited post. Each of those then cost a regeneration the next time
+// anything requested it. Revalidating the specific path instead keeps the
+// blast radius at the one document that actually changed.
+//
+// Best-effort throughout: any lookup/fetch failure is logged and swallowed,
+// never blocking the 200 the Prismic webhook is waiting on. The revalidate
+// windows on the detail routes are the backstop if this misses something.
+async function revalidateChangedDocuments(documentIds, origin) {
+  if (!Array.isArray(documentIds) || documentIds.length === 0) return { paths: [], types: [] };
   const client = getPrismicClient();
+  const paths = [];
+  const types = [];
+
   await Promise.all(
     documentIds.map(async (id) => {
       try {
         const doc = await client.getByID(id);
+        types.push(doc.type);
         const buildPath = DETAIL_PATH_BY_TYPE[doc.type];
         if (!buildPath) return;
+        const path = buildPath(doc.uid);
         if (doc.type === 'news_post' && doc.data.source_url) {
           // Best-effort - see lib/newsThumbnails.js. A failure here just
           // means the thumbnail falls back to a live, self-healing scrape
@@ -35,16 +54,20 @@ async function warmChangedDetailPages(documentIds, origin) {
             console.error(`Failed to scrape thumbnail for ${doc.uid}:`, err.message);
           });
         }
-        await fetch(`${origin}${buildPath(doc.uid)}`, { cache: 'no-store' });
+        revalidatePath(path);
+        paths.push(path);
+        await fetch(`${origin}${path}`, { cache: 'no-store' });
       } catch (err) {
         // err.message only - the Prismic client attaches its full request
         // URL (including the access_token query param) to some of its own
         // errors, and logging the whole object would leak that token into
         // Vercel's log stream.
-        console.error(`Failed to warm page for changed document ${id}:`, err.message);
+        console.error(`Failed to revalidate changed document ${id}:`, err.message);
       }
     })
   );
+
+  return { paths, types };
 }
 
 // On-demand ISR revalidation, triggered by a single Prismic webhook
@@ -75,31 +98,33 @@ export async function POST(request) {
     return NextResponse.json({ revalidated: false, message: 'Invalid or missing secret' }, { status: 401 });
   }
 
-  const paths = [
-    '/',
-    '/analysis',
-    '/analysis/[slug]',
-    '/news',
-    '/news/[slug]',
-    '/careers',
-    '/careers/[company]/[id]',
-    '/api/search-index',
-  ];
-  revalidatePath('/');
-  revalidatePath('/analysis');
-  revalidatePath('/analysis/[slug]', 'page');
-  revalidatePath('/news');
-  revalidatePath('/news/[slug]', 'page');
-  revalidatePath('/careers');
-  revalidatePath('/careers/[company]/[id]', 'page');
-  revalidatePath('/api/search-index');
+  // The list/aggregate pages genuinely can change on any publish (a new
+  // post appears, an old one drops off the fold), and there are only a
+  // handful of them, so these stay unconditional.
+  const paths = ['/', '/analysis', '/news', '/careers', '/api/search-index'];
+  paths.forEach((path) => revalidatePath(path));
+
+  const { paths: detailPaths, types } = await revalidateChangedDocuments(
+    body?.documents,
+    new URL(request.url).origin
+  );
+  paths.push(...detailPaths);
+
+  // Manual job postings are Prismic careers_post documents, but their URL
+  // is /careers/<company-slug>/<uid> where the slug is derived from the
+  // company name inside lib/ats.js - not reconstructable here without
+  // reaching into that module's internals. So this one still goes wide,
+  // but only when a careers_post is actually among the changed documents
+  // rather than on every news publish as it did before.
+  if (types.includes('careers_post')) {
+    revalidatePath('/careers/[company]/[id]', 'page');
+    paths.push('/careers/[company]/[id]');
+  }
   // getAllJobs() in lib/ats.js reads manual postings live from Prismic on
   // every call (no cache of its own to bust) and ATS-sourced jobs from the
   // ats_jobs Supabase table (kept fresh by the separate cron-triggered
   // app/api/sync-jobs route, not by this webhook) - so revalidatePath('/careers')
   // above is already sufficient here.
-
-  await warmChangedDetailPages(body?.documents, new URL(request.url).origin);
 
   return NextResponse.json({ revalidated: true, paths });
 }

@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getAllJobs, getJobDetail, getJobMetadataData, getCompanyBySlug } from '../../../../../lib/ats';
@@ -11,7 +12,18 @@ import { buildMetadata } from '../../../../../lib/seo';
 // CPU consumer on the project: roughly double any other route's
 // invocations, while (going by the Supabase call count over the same
 // window) almost none of those requests reached a job that actually exists.
-export const revalidate = 3600;
+// Matched to the once-a-day sync (vercel.json -> app/api/sync-jobs) that is
+// the only thing that changes this data. The hourly window this replaced
+// could never surface anything fresher than that sync, but it did set a
+// ceiling of 497 regenerations an hour across the prerendered set. I set
+// that hourly value when adding ISR here and sized it by habit rather than
+// against the data's actual update cadence.
+export const revalidate = 86400;
+
+// getJobDetail runs in generateMetadata and again in the page body. For an
+// ATS job that was two `select('*')` reads pulling the full row - including
+// a description_html that can be ~10KB - to render one page.
+const getJob = cache(getJobDetail);
 
 // Jobs re-sync daily (app/api/sync-jobs/route.js) but builds don't, so a
 // job added since the last deploy won't be in this list. `dynamicParams`
@@ -24,7 +36,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
-  const job = await getJobDetail(params.company, params.id);
+  const job = await getJob(params.company, params.id);
   if (!job) return { title: 'Role not found — Fox and Lion' };
 
   const data = await getJobMetadataData(params.company, params.id);
@@ -36,7 +48,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function JobDetailPage({ params }) {
-  const job = await getJobDetail(params.company, params.id);
+  const job = await getJob(params.company, params.id);
   // Manually-posted (careers_post) jobs route to our own intake form;
   // ATS-sourced jobs keep applying through their origin platform.
   const isManualJob = !getCompanyBySlug(params.company);

@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import Image from 'next/image';
 import { PrismicRichText } from '@prismicio/react';
 import { asText } from '@prismicio/client';
@@ -14,7 +15,15 @@ import PostEngagement from '../../../../components/PostEngagement';
 import ViewTracker from '../../../../components/ViewTracker';
 import CommentThread from '../../../../components/CommentThread';
 
-export const revalidate = 3600;
+// Same reasoning as /news/[slug]: an analysis post changes only when it is
+// republished, and app/api/revalidate/route.js handles that per-post from
+// the Prismic webhook. Daily is a self-healing safety net, not the primary
+// freshness mechanism.
+export const revalidate = 86400;
+
+// generateMetadata and the page body both need the same post; cache()
+// makes that one Prismic round-trip per render instead of two.
+const getPost = cache(getAnalysisBySlug);
 
 export async function generateStaticParams() {
   const posts = await getAnalysisList();
@@ -22,7 +31,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
-  const post = await getAnalysisBySlug(params.slug);
+  const post = await getPost(params.slug);
   if (!post) return { title: 'Analysis — Fox and Lion' };
 
   return buildMetadata({
@@ -73,7 +82,7 @@ const bodyComponents = {
 };
 
 export default async function AnalysisDetailPage({ params }) {
-  const post = await getAnalysisBySlug(params.slug);
+  const post = await getPost(params.slug);
 
   if (!post) {
     return (

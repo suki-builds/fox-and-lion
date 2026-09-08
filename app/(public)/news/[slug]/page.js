@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { PrismicRichText } from '@prismicio/react';
 import { getNewsList, getNewsBySlug } from '../../../../lib/prismic';
 import { buildMetadata } from '../../../../lib/seo';
@@ -12,7 +13,28 @@ import PostEngagement from '../../../../components/PostEngagement';
 import ViewTracker from '../../../../components/ViewTracker';
 import CommentThread from '../../../../components/CommentThread';
 
-export const revalidate = 3600;
+// A published news post's body comes from Prismic and only changes when
+// someone republishes it - which app/api/revalidate/route.js already
+// handles on demand, per-post, from the Prismic webhook. An hourly window
+// on top of that re-rendered all 355 prerendered pages on a rolling basis
+// for content that had not changed, and set a ceiling of 355 regenerations
+// an hour (8,520/day) that nothing on our side controlled: a crawler that
+// decided to walk the archive hourly would have hit it without warning.
+//
+// A day keeps a safety net - if the webhook is ever misconfigured or fails
+// silently, the site self-heals within 24h instead of serving stale posts
+// forever - while cutting the worst case 24-fold. Set this to `false` to
+// remove time-based regeneration entirely; correctness then depends solely
+// on the webhook firing.
+export const revalidate = 86400;
+
+// generateMetadata and the page body below each need the same post and the
+// same thumbnail, and each runs once per render - so without this every
+// regeneration made two Prismic round-trips and two Supabase reads to
+// fetch identical data. cache() dedupes them within a single render pass,
+// halving the work of every regeneration that does still happen.
+const getPost = cache(getNewsBySlug);
+const getPostThumbnail = cache(getThumbnail);
 
 export async function generateStaticParams() {
   const posts = await getNewsList();
@@ -20,7 +42,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }) {
-  const post = await getNewsBySlug(params.slug);
+  const post = await getPost(params.slug);
   if (!post) return { title: 'News — Fox and Lion' };
 
   // News has no cover_image field, so buildMetadata's usual meta_image ->
@@ -28,7 +50,7 @@ export async function generateMetadata({ params }) {
   // source-article/YouTube thumbnail the page body itself displays,
   // rather than shipping a social card with no image.
   const youtubeId = post.data.source_url ? extractYouTubeId(post.data.source_url) : null;
-  const meta = !youtubeId && post.data.source_url ? await getThumbnail(post.uid, post.data.source_url) : null;
+  const meta = !youtubeId && post.data.source_url ? await getPostThumbnail(post.uid, post.data.source_url) : null;
   const fallbackImage = youtubeId
     ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
     : meta?.image || undefined;
@@ -41,7 +63,7 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function NewsDetailPage({ params }) {
-  const post = await getNewsBySlug(params.slug);
+  const post = await getPost(params.slug);
 
   if (!post) {
     return (
@@ -57,7 +79,7 @@ export default async function NewsDetailPage({ params }) {
     { day: 'numeric', month: 'long', year: 'numeric' }
   );
   const archived = isArchived(post);
-  const meta = post.data.source_url ? await getThumbnail(post.uid, post.data.source_url) : null;
+  const meta = post.data.source_url ? await getPostThumbnail(post.uid, post.data.source_url) : null;
   const thumbnail = meta?.image;
   const sourceName = post.data.source_url ? resolveSourceName(meta?.siteName, post.data.source_url) : null;
   const youtubeId = post.data.source_url ? extractYouTubeId(post.data.source_url) : null;
