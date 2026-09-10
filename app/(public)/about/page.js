@@ -40,7 +40,9 @@ export default function AboutPage() {
         </p>
         <ul>
           <li>
-            <strong>Analysis</strong> &mdash; considered commentary and interviews on
+            {' '}
+           <Link href="/analysis"><strong>Analysis</strong></Link>
+             &mdash; considered commentary and interviews on
             defence technology, procurement, policy, and industrial base reform, written
             by operators, founders, veterans, investors, and policy insiders.
           </li>
