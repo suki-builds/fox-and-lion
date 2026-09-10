@@ -41,19 +41,24 @@ export default function AboutPage() {
         <ul>
           <li>
             {' '}
-           <Link href="/analysis"><strong>Analysis</strong></Link>
-             &mdash; considered commentary and interviews on
+           <Link href="/analysis"><strong>Analysis </strong></Link>
+            &mdash; considered commentary and interviews on
             defence technology, procurement, policy, and industrial base reform, written
             by operators, founders, veterans, investors, and policy insiders.
           </li>
-          <li>
-            <strong>Defence Tech Jobs</strong> &mdash; a live jobs board carrying the
-            latest open roles across the defence technology sector.
-          </li>
-          <li>
-            <strong>News</strong> &mdash; a curated selection of the defence technology
+          <li>  
+            {' '}
+           <Link href="/news"><strong>News </strong></Link>
+            &mdash; a curated selection of the defence technology
             stories that merit attention, gathered in one place.
           </li>
+          <li>
+            {' '}
+           <Link href="/careers"><strong>Defence Tech Jobs </strong></Link>
+            &mdash; a live jobs board carrying the
+            latest open roles across the defence technology sector.
+          </li>
+
         </ul>
 
         <h2>Who We Write For</h2>
