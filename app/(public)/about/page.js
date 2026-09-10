@@ -14,7 +14,8 @@ export default function AboutPage() {
       <div className="article-body">
         <h2>Who We Are</h2>
         <p>
-          Fox and Lion is a defence technology publication and community, founded by two
+          Fox and Lion is the leading defence technology publication and community, publishing
+          analyses, the latest news, and sector-wide open roles. We were founded by two
           former military officers whose service has spanned platoon to division level,
           across line and senior headquarters roles in Europe, North America, and East
           Asia.
