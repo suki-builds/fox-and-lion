@@ -1,8 +1,11 @@
 #!/usr/bin/env node
-// One-off backfill: scrapes and stores a thumbnail for every News post
-// that predates news_post_thumbnails (see
-// supabase/migrations/0018_news_post_thumbnails.sql - run that migration
-// in the Supabase SQL Editor first). Run once, manually:
+// Backfill/repair: scrapes and stores a thumbnail for every News post that
+// has no row yet, OR whose row is missing an image or source name (see
+// supabase/migrations/0018_news_post_thumbnails.sql). Safe to re-run: it only
+// ever fills gaps and never overwrites a stored value with NULL - which is
+// how it was used to recover from the 2026-09-13 incident, when every row's
+// image_url and site_name had been nulled (see
+// supabase/migrations/0021_protect_thumbnail_values.sql). Run manually:
 //
 //   NEXT_PUBLIC_PRISMIC_REPOSITORY_NAME=... PRISMIC_ACCESS_TOKEN=... NEXT_PUBLIC_SUPABASE_URL=... SUPABASE_SERVICE_ROLE_KEY=... node scripts/backfill-news-thumbnails.mjs
 //
@@ -89,20 +92,29 @@ async function main() {
   const posts = await prismicClient.getAllByType('news_post');
   console.log(`Found ${posts.length} News posts.`);
 
-  console.log('Checking which already have a stored thumbnail...');
-  const { data: existing, error: readError } = await supabase
-    .from('news_post_thumbnails')
-    .select('post_uid');
-  if (readError) {
-    console.error('Failed to read news_post_thumbnails - has the migration been run?', readError.message);
-    process.exit(1);
+  console.log('Checking which already have a complete stored thumbnail...');
+  // Paged: PostgREST silently caps a single select at 1000 rows.
+  const existing = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error: readError } = await supabase
+      .from('news_post_thumbnails')
+      .select('post_uid, image_url, site_name')
+      .range(from, from + 999);
+    if (readError) {
+      console.error('Failed to read news_post_thumbnails - has the migration been run?', readError.message);
+      process.exit(1);
+    }
+    existing.push(...(data || []));
+    if (!data || data.length < 1000) break;
   }
-  const alreadyDone = new Set((existing || []).map((row) => row.post_uid));
+  // "Complete" = has both fields. A row missing either is worth another try;
+  // a successful scrape fills the gap and a failed one changes nothing.
+  const complete = new Set(existing.filter((row) => row.image_url && row.site_name).map((row) => row.post_uid));
 
   const noSourceUrl = posts.filter((post) => !post.data.source_url).length;
-  const toScrape = posts.filter((post) => post.data.source_url && !alreadyDone.has(post.uid));
+  const toScrape = posts.filter((post) => post.data.source_url && !complete.has(post.uid));
   console.log(
-    `${toScrape.length} post(s) need scraping (${alreadyDone.size} already done, ${noSourceUrl} have no source_url).`
+    `${toScrape.length} post(s) need scraping (${complete.size} complete, ${noSourceUrl} have no source_url).`
   );
 
   let done = 0;
@@ -113,9 +125,20 @@ async function main() {
     while (queue.length > 0) {
       const post = queue.shift();
       const meta = await scrapePageMeta(post.data.source_url);
-      const { error } = await supabase
-        .from('news_post_thumbnails')
-        .upsert({ post_uid: post.uid, image_url: meta.image, site_name: meta.siteName }, { onConflict: 'post_uid' });
+      // Same rule as storeThumbnail in lib/newsThumbnails.js: write only what
+      // the scrape actually found. A failed scrape returns NULLs, and writing
+      // those would erase whatever is already stored.
+      let error;
+      if (!meta.image && !meta.siteName) {
+        ({ error } = await supabase
+          .from('news_post_thumbnails')
+          .upsert({ post_uid: post.uid }, { onConflict: 'post_uid', ignoreDuplicates: true }));
+      } else {
+        const row = { post_uid: post.uid, scraped_at: new Date().toISOString() };
+        if (meta.image) row.image_url = meta.image;
+        if (meta.siteName) row.site_name = meta.siteName;
+        ({ error } = await supabase.from('news_post_thumbnails').upsert(row, { onConflict: 'post_uid' }));
+      }
       done += 1;
       if (error) {
         storageErrors += 1;
