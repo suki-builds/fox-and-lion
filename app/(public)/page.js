@@ -18,10 +18,11 @@ export default async function HomePage() {
   const [analysisPosts, newsPosts, jobs] = await Promise.all([
     getAnalysisList(),
     getNewsList(),
-    getAllJobs().catch((err) => {
-      console.warn('Homepage jobs fetch failed:', err);
-      return [];
-    }),
+    // No catch: a failed jobs read used to become an empty list, cached
+    // with the homepage for up to an hour. getAllJobs now throws at
+    // runtime so the last good homepage keeps being served, and degrades
+    // on its own during a build - see lib/ats.js.
+    getAllJobs(),
   ]);
   // Featured jobs (capped at 3, same as /careers) always claim a slot in
   // the homepage teaser rather than only appearing if they happen to be
