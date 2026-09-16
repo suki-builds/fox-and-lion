@@ -5,10 +5,8 @@ import { asText } from '@prismicio/client';
 import { getAnalysisList, getAnalysisBySlug } from '../../../../lib/prismic';
 import { buildMetadata } from '../../../../lib/seo';
 import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
-import YouTubeEmbed from '../../../../components/YouTubeEmbed';
 import { coverImageSrc, imageAspectRatio } from '../../../../lib/prismicImage';
 import { effectivePublishedAt, isArchived } from '../../../../lib/publishedDate';
-import { extractYouTubeId } from '../../../../lib/youtube';
 import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
 import ShareButton from '../../../../components/ShareButton';
 import PostEngagement from '../../../../components/PostEngagement';
@@ -56,29 +54,8 @@ const bodyComponents = {
       {node.copyright && <figcaption>{node.copyright}</figcaption>}
     </figure>
   ),
-  embed: ({ node }) => {
-    const embed = node.oembed;
-    // Prismic already extracts the video ID via oEmbed when the URL was
-    // pasted (embed_url) - extractYouTubeId(embed_url) is only a fallback
-    // in case provider_name isn't recognized as YouTube by string match.
-    const videoId = extractYouTubeId(embed.embed_url);
-    if ((embed.provider_name || '').toLowerCase() === 'youtube' && videoId) {
-      return (
-        <div className="article-body__video">
-          <YouTubeEmbed videoId={videoId} thumbnail={embed.thumbnail_url} title={embed.title} />
-        </div>
-      );
-    }
-    // Non-YouTube providers (e.g. Vimeo) fall back to a plain link rather
-    // than silently dropping the block.
-    return (
-      <p className="article-body__video-fallback">
-        <a href={embed.embed_url} target="_blank" rel="noopener noreferrer">
-          {embed.title || embed.embed_url}
-        </a>
-      </p>
-    );
-  },
+  // `embed` now comes from sharedRichTextComponents, so News commentary
+  // renders videos the same way this page always has.
 };
 
 export default async function AnalysisDetailPage({ params }) {
