@@ -49,6 +49,7 @@ const bodyComponents = {
         width={node.dimensions.width}
         height={node.dimensions.height}
         sizes="(max-width: 680px) 100vw, 680px"
+        quality={90}
         style={{ width: '100%', height: 'auto' }}
       />
       {node.copyright && <figcaption>{node.copyright}</figcaption>}
@@ -90,6 +91,7 @@ export default async function AnalysisDetailPage({ params }) {
               alt={post.data.cover_image.alt || ''}
               fill
               sizes="(max-width: 900px) 100vw, 1200px"
+              quality={90}
               priority
             />
           ) : (

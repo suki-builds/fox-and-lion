@@ -62,6 +62,7 @@ export default async function HomePage() {
                 alt={featured.data.cover_image.alt || ''}
                 fill
                 sizes="(max-width: 900px) 100vw, 1200px"
+                quality={90}
                 priority
               />
             ) : (

@@ -36,6 +36,7 @@ export default function PostCardMedia({ src, alt, className, aspectRatio }) {
           alt={alt || ''}
           fill
           sizes="(max-width: 640px) 100vw, 220px"
+          quality={90}
           onError={() => setFailed(true)}
         />
       </div>
