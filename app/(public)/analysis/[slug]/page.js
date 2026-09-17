@@ -5,7 +5,7 @@ import { asText } from '@prismicio/client';
 import { getAnalysisList, getAnalysisBySlug } from '../../../../lib/prismic';
 import { buildMetadata } from '../../../../lib/seo';
 import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
-import { coverImageSrc, imageAspectRatio } from '../../../../lib/prismicImage';
+import { coverImageSrc, imageAspectRatio, uncompressedImageSrc } from '../../../../lib/prismicImage';
 import { effectivePublishedAt, isArchived } from '../../../../lib/publishedDate';
 import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
 import ShareButton from '../../../../components/ShareButton';
@@ -44,7 +44,7 @@ const bodyComponents = {
   image: ({ node }) => (
     <figure className="article-body__image">
       <Image
-        src={node.url}
+        src={uncompressedImageSrc(node.url)}
         alt={node.alt || ''}
         width={node.dimensions.width}
         height={node.dimensions.height}
