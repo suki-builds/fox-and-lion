@@ -73,12 +73,13 @@ export default function AboutPage() {
         <h2>Our Community</h2>
         <p>
           Fox and Lion is as much a community as a publication. What exists today grew
-          out of conversations on Reddit and Discord, where serving personnel, veterans,
+          out of conversations online, where serving personnel, veterans,
           and the wider defence technology community continue to meet for candid,
-          non-tribal discussion.
+          non-tribal discussion. 
         </p>
         <p>
-          We have also begun bringing that community together in person, through Defence
+          Fox and Lion is the premier networking hub for defence tech in the UK and 
+          Europe. We bring that community together in person, through Defence
           Tech Drinks, an informal gathering in London open to anyone &mdash; serving
           personnel, veterans, founders, operators, investors, and Whitehall alike.
         </p>
