@@ -1,7 +1,7 @@
 :root {
-  --color-bg: #0a0e18;
-  --color-panel: #131a2c;
-  --color-panel-hover: #171f37;
+  --color-bg: #0a0d13;
+  --color-panel: #131822;
+  --color-panel-hover: #171d2a;
   --color-border: rgba(255, 255, 255, 0.09);
   --color-border-strong: rgba(255, 255, 255, 0.16);
   --color-text: #f4f2ec;
@@ -519,8 +519,8 @@ a {
     45deg,
     var(--color-panel),
     var(--color-panel) 10px,
-    #0f1524 10px,
-    #0f1524 20px
+    #0f141c 10px,
+    #0f141c 20px
   );
   border: 1px dashed var(--color-border-strong);
 }
@@ -1481,7 +1481,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(10, 14, 24, 0.8);
+  background: rgba(10, 13, 19, 0.8);
   border: 1px solid var(--color-accent);
   border-radius: 8px;
   transition: background 0.15s ease;
@@ -2016,7 +2016,7 @@ a {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(10, 14, 24, 0.85);
+  background: rgba(10, 13, 19, 0.85);
   display: flex;
   justify-content: center;
   align-items: flex-start;
