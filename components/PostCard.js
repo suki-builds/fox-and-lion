@@ -52,6 +52,7 @@ export default function PostCard({
           alt={coverImageAlt}
           className={coverImageAspectRatio ? 'post-card__media--cover-ratio' : undefined}
           aspectRatio={coverImageAspectRatio}
+          placeholder={compact ? '/news-placeholder.png' : undefined}
         />
       )}
       <div className="post-card__content">
