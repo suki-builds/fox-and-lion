@@ -1,8 +1,28 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import PostEngagement from './PostEngagement';
 import PostStatsProvider from './PostStatsProvider';
+
+// Same fallback the News page's thumbnails use (see PostCardMedia.js): a
+// story with no scraped image, or one whose image fails to load, shows the
+// placeholder in the same box instead of leaving its row out of line.
+const PLACEHOLDER_SRC = '/news-placeholder.png';
+
+function NewsThumb({ href, imageUrl }) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <Link href={href} className="news-list__thumb">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={imageUrl && !failed ? imageUrl : PLACEHOLDER_SRC}
+        alt=""
+        onError={() => setFailed(true)}
+      />
+    </Link>
+  );
+}
 
 // Renders the homepage's News section. The provider refreshes its stats
 // (views/comments/shares/score) client-side so they don't sit stale for up
@@ -24,12 +44,7 @@ export default function HomeNewsList({ items }) {
       <div className="news-list">
         {items.map((item) => (
           <div className="news-list__item" key={item.id}>
-            {item.imageUrl && (
-              <Link href={item.href} className="news-list__thumb">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.imageUrl} alt="" />
-              </Link>
-            )}
+            <NewsThumb href={item.href} imageUrl={item.imageUrl} />
             <div>
               <Link href={item.href} className="news-list__headline-link">
                 <h3 className="news-list__headline">{item.title}</h3>
