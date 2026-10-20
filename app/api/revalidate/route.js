@@ -70,6 +70,29 @@ async function revalidateChangedDocuments(documentIds, origin) {
   return { paths, types };
 }
 
+// The homepage shows both News and Analysis (and the latest jobs), so it
+// rebuilds on any of them.
+const LIST_PATHS_BY_TYPE = {
+  news_post: ['/', '/news'],
+  analysis_post: ['/', '/analysis'],
+  careers_post: ['/', '/careers'],
+};
+const ALL_LIST_PATHS = ['/', '/news', '/analysis', '/careers'];
+
+async function warmListPages(types, origin) {
+  const wanted = new Set(types.length === 0 ? ALL_LIST_PATHS : []);
+  types.forEach((type) => (LIST_PATHS_BY_TYPE[type] || []).forEach((path) => wanted.add(path)));
+  const paths = [...wanted];
+  await Promise.all(
+    paths.map((path) =>
+      fetch(`${origin}${path}`, { cache: 'no-store' }).catch((err) => {
+        console.error(`Failed to rebuild ${path}:`, err.message);
+      })
+    )
+  );
+  return paths;
+}
+
 // On-demand ISR revalidation, triggered by a single Prismic webhook
 // (Settings > Webhooks) pointed at this route — see README.md for exact
 // webhook configuration.
@@ -104,11 +127,20 @@ export async function POST(request) {
   const paths = ['/', '/analysis', '/news', '/careers', '/api/search-index'];
   paths.forEach((path) => revalidatePath(path));
 
-  const { paths: detailPaths, types } = await revalidateChangedDocuments(
-    body?.documents,
-    new URL(request.url).origin
-  );
+  const origin = new URL(request.url).origin;
+  const { paths: detailPaths, types } = await revalidateChangedDocuments(body?.documents, origin);
   paths.push(...detailPaths);
+
+  // revalidatePath only marks these stale, so each list page used to rebuild
+  // whenever somebody next visited it - and until then kept serving the
+  // pre-publish copy. In practice the News index rebuilt promptly while the
+  // homepage, visited less, sat a post behind it for up to the hour. This
+  // rebuilds the lists that can actually have changed right now, after the
+  // changed documents above have been resolved so the new content is
+  // already live in Prismic. Scoped by document type because each rebuild
+  // costs CPU: a News publish has no business rebuilding /careers. A call
+  // with no documents (a manual trigger) refreshes all of them.
+  const warmed = await warmListPages(types, origin);
 
   // Manual job postings are Prismic careers_post documents, but their URL
   // is /careers/<company-slug>/<uid> where the slug is derived from the
@@ -126,7 +158,7 @@ export async function POST(request) {
   // app/api/sync-jobs route, not by this webhook) - so revalidatePath('/careers')
   // above is already sufficient here.
 
-  return NextResponse.json({ revalidated: true, paths });
+  return NextResponse.json({ revalidated: true, paths, warmed });
 }
 
 export async function GET() {
