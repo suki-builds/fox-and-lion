@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
 const PRISMIC_IMAGE_HOST = 'https://images.prismic.io/';
@@ -21,6 +21,15 @@ const PRISMIC_IMAGE_HOST = 'https://images.prismic.io/';
 // per site visitor. See the bandwidth note in the migration plan.
 export default function PostCardMedia({ src, alt, className, aspectRatio, placeholder }) {
   const [failed, setFailed] = useState(false);
+  const imgRef = useRef(null);
+
+  // An image that fails before hydration has already fired its error event
+  // by the time onError is attached - catch that on mount (same as
+  // HomeNewsList's NewsThumb).
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img && img.complete && img.naturalWidth === 0) setFailed(true);
+  }, []);
 
   if (!src || failed) {
     if (!placeholder) return null;
@@ -56,7 +65,7 @@ export default function PostCardMedia({ src, alt, className, aspectRatio, placeh
   return (
     <div className={wrapperClassName} style={wrapperStyle}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt={alt || ''} onError={() => setFailed(true)} />
+      <img ref={imgRef} src={src} alt={alt || ''} onError={() => setFailed(true)} />
     </div>
   );
 }

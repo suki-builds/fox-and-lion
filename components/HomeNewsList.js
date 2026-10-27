@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import PostEngagement from './PostEngagement';
 import PostStatsProvider from './PostStatsProvider';
@@ -12,10 +12,22 @@ const PLACEHOLDER_SRC = '/news-placeholder.png';
 
 function NewsThumb({ href, imageUrl }) {
   const [failed, setFailed] = useState(false);
+  const imgRef = useRef(null);
+
+  // An image that fails while the server-rendered HTML is still loading
+  // errors before React hydrates and attaches onError, so that handler
+  // never fires and the browser's broken-image icon stays. Catch that case
+  // on mount instead.
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img && img.complete && img.naturalWidth === 0) setFailed(true);
+  }, []);
+
   return (
     <Link href={href} className="news-list__thumb">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
+        ref={imgRef}
         src={imageUrl && !failed ? imageUrl : PLACEHOLDER_SRC}
         alt=""
         onError={() => setFailed(true)}

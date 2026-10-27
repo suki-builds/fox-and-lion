@@ -13,7 +13,7 @@ export default function TermsOfServicePage() {
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
       <h1>Terms of Service</h1>
-      <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--mono-stack)', fontSize: '0.85rem' }}>
+      <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--label-stack)', fontSize: '0.85rem' }}>
         Last updated: 31 August 2026 &middot; Version 1.0
       </p>
 

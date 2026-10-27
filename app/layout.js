@@ -1,4 +1,4 @@
-import { Fraunces, IBM_Plex_Mono, Source_Sans_3, Libre_Franklin } from 'next/font/google';
+import { Libre_Caslon_Text, Schibsted_Grotesk, Source_Sans_3 } from 'next/font/google';
 import './globals.css';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
@@ -6,22 +6,22 @@ import AdBanner from '../components/AdBanner';
 import CookieBanner from '../components/CookieBanner';
 import { Analytics } from '@vercel/analytics/next';
 
-// Serif for headlines — Fraunces has the slightly formal, engraved weight
-// that suits a defence/heraldic register without tipping into pastiche.
-const fraunces = Fraunces({
+// Serif for headlines — Caslon, the typeface of 18th-century British
+// printing, in its regular weight: reserved and a little old, rather than
+// the fashionable display serifs. Bold is loaded only for <strong> inside a
+// heading; headings themselves are set at 400 (see globals.css).
+const caslon = Libre_Caslon_Text({
   subsets: ['latin'],
-  weight: ['500', '600'],
-  style: ['normal', 'italic'],
+  weight: ['400', '700'],
   variable: '--font-display',
   display: 'swap',
 });
 
-// Monospace for dates, bylines, and section labels — gives the
-// document-like, dossier feel seen in the reference site.
-const plexMono = IBM_Plex_Mono({
+// Grotesque for eyebrows, section labels, buttons, sources, dates and the
+// mobile tab bar. Variable, so any weight the CSS asks for is available.
+const schibsted = Schibsted_Grotesk({
   subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-mono',
+  variable: '--font-label',
   display: 'swap',
 });
 
@@ -30,14 +30,6 @@ const sourceSans = Source_Sans_3({
   subsets: ['latin'],
   weight: ['400', '600'],
   variable: '--font-body',
-  display: 'swap',
-});
-
-// Newspaper gothic for the header's sign-in link and section tabs.
-const libreFranklin = Libre_Franklin({
-  subsets: ['latin'],
-  weight: ['600', '700', '800'],
-  variable: '--font-franklin',
   display: 'swap',
 });
 
@@ -85,7 +77,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${plexMono.variable} ${sourceSans.variable} ${libreFranklin.variable}`}
+      className={`${caslon.variable} ${schibsted.variable} ${sourceSans.variable}`}
     >
       <body>
         <SiteHeader />
