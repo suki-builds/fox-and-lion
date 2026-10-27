@@ -8,6 +8,7 @@ import PostStatsProvider from '../../components/PostStatsProvider';
 import IllustrationPlaceholder from '../../components/IllustrationPlaceholder';
 import DefenceNewsList from '../../components/DefenceNewsList';
 import JobsList from '../../components/JobsList';
+import NewsletterSignup from '../../components/NewsletterSignup';
 import { coverImageSrc, imageAspectRatio } from '../../lib/prismicImage';
 import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../../lib/publishedDate';
 import { getBatchedPostStats } from '../../lib/postStats';
@@ -96,6 +97,8 @@ export default async function HomePage() {
           </Link>
         </div>
         <DefenceNewsList posts={newsPosts} />
+
+        <NewsletterSignup />
 
         <div className="section-header">
           <h2 className="section-label">Recent Analysis</h2>

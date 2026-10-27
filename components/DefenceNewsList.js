@@ -21,8 +21,13 @@ function formatDate(date) {
 // (thumbnails, an initial stats snapshot) and hands off to HomeNewsList
 // (a Client Component) to render, refresh stats after load, and resolve the
 // visitor's own vote - see components/PostStatsProvider.js.
-export default async function DefenceNewsList({ posts }) {
-  const items = sortByPublishedAt(posts || []).slice(0, MAX_ITEMS);
+//
+// Also used for "More news" under each news post, which passes excludeUid
+// so the post being read doesn't list itself.
+export default async function DefenceNewsList({ posts, excludeUid }) {
+  const items = sortByPublishedAt(posts || [])
+    .filter((post) => post.uid !== excludeUid)
+    .slice(0, MAX_ITEMS);
 
   if (items.length === 0) {
     return <p style={{ padding: '1.5rem 0' }}>Nothing published yet.</p>;

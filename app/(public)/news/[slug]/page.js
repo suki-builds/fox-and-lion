@@ -1,6 +1,7 @@
 import { cache } from 'react';
+import Link from 'next/link';
 import { PrismicRichText } from '@prismicio/react';
-import { getNewsList, getNewsBySlug } from '../../../../lib/prismic';
+import { getNewsList, getNewsBySlug, getLatestNews } from '../../../../lib/prismic';
 import { buildMetadata } from '../../../../lib/seo';
 import { getThumbnail } from '../../../../lib/newsThumbnails';
 import { resolveSourceName } from '../../../../lib/format';
@@ -12,6 +13,7 @@ import ShareButton from '../../../../components/ShareButton';
 import PostEngagement from '../../../../components/PostEngagement';
 import ViewTracker from '../../../../components/ViewTracker';
 import CommentThread from '../../../../components/CommentThread';
+import DefenceNewsList from '../../../../components/DefenceNewsList';
 
 // A published news post's body comes from Prismic and only changes when
 // someone republishes it - which app/api/revalidate/route.js already
@@ -79,7 +81,10 @@ export default async function NewsDetailPage({ params }) {
     { day: 'numeric', month: 'long', year: 'numeric' }
   );
   const archived = isArchived(post);
-  const meta = post.data.source_url ? await getPostThumbnail(post.uid, post.data.source_url) : null;
+  const [meta, latestNews] = await Promise.all([
+    post.data.source_url ? getPostThumbnail(post.uid, post.data.source_url) : null,
+    getLatestNews(6),
+  ]);
   const thumbnail = meta?.image;
   const sourceName = post.data.source_url ? resolveSourceName(meta?.siteName, post.data.source_url) : null;
   const youtubeId = post.data.source_url ? extractYouTubeId(post.data.source_url) : null;
@@ -153,6 +158,20 @@ export default async function NewsDetailPage({ params }) {
       <ShareButton postUid={post.uid} postType="news" />
 
       <CommentThread postUid={post.uid} postType="news" archived={archived} />
+
+      {/* The latest stories as of this page's last build - so on an older
+          post it can lag a new publish by up to the revalidate window
+          above, since the webhook deliberately rebuilds only the post that
+          changed, not every news page. */}
+      <section className="more-news">
+        <div className="section-header">
+          <h2 className="section-label">More News</h2>
+          <Link href="/news" className="section-cta">
+            View all news &#8599;
+          </Link>
+        </div>
+        <DefenceNewsList posts={latestNews} excludeUid={post.uid} />
+      </section>
     </article>
   );
 }

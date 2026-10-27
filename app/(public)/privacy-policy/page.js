@@ -59,8 +59,19 @@ export default function PrivacyPolicyPage() {
           visitors arrive at the site. Vercel Analytics does not use cookies; instead,
           visitors are identified during their visit using a short-lived hash generated
           from their request, which is automatically discarded after 24 hours and is not
-          used to track visitors across sessions or other websites. We do not currently use
-          any other analytics, advertising, or tracking cookies on this site.
+          used to track visitors across sessions or other websites.
+        </p>
+        <p>
+          We set the following cookies. <em>Strictly necessary:</em> sign-in cookies that
+          keep you logged in if you create an account, and a cookie (fl_cookie_consent,
+          kept for six months) that remembers your cookie choice. <em>Optional, only with
+          your consent:</em> an anonymous random identifier (fl_visitor_id, kept for one
+          year) used solely so that view and share counts on articles count each browser
+          once. It is not linked to your account, shared with anyone, or used for
+          advertising. You can accept or reject optional cookies in the banner shown on
+          your first visit, and change your choice at any time using &ldquo;Cookie
+          Settings&rdquo; in the site footer. We do not use advertising or cross-site
+          tracking cookies.
         </p>
 
         <h2>3. Why we collect this data and our legal basis</h2>

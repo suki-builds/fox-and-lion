@@ -1,8 +1,9 @@
-import { Fraunces, IBM_Plex_Mono, Source_Sans_3 } from 'next/font/google';
+import { Fraunces, IBM_Plex_Mono, Source_Sans_3, Libre_Franklin } from 'next/font/google';
 import './globals.css';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import AdBanner from '../components/AdBanner';
+import CookieBanner from '../components/CookieBanner';
 import { Analytics } from '@vercel/analytics/next';
 
 // Serif for headlines — Fraunces has the slightly formal, engraved weight
@@ -29,6 +30,14 @@ const sourceSans = Source_Sans_3({
   subsets: ['latin'],
   weight: ['400', '600'],
   variable: '--font-body',
+  display: 'swap',
+});
+
+// Newspaper gothic for the header's sign-in link and section tabs.
+const libreFranklin = Libre_Franklin({
+  subsets: ['latin'],
+  weight: ['600', '700', '800'],
+  variable: '--font-franklin',
   display: 'swap',
 });
 
@@ -76,13 +85,14 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${plexMono.variable} ${sourceSans.variable}`}
+      className={`${fraunces.variable} ${plexMono.variable} ${sourceSans.variable} ${libreFranklin.variable}`}
     >
       <body>
         <SiteHeader />
         <AdBanner />
         <main>{children}</main>
         <SiteFooter />
+        <CookieBanner />
         <Analytics />
       </body>
     </html>

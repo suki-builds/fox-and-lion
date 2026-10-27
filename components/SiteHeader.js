@@ -2,19 +2,31 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import SearchOverlay from './SearchOverlay';
 import SearchIcon from './SearchIcon';
 import { createClient } from '../lib/supabase/client';
 
+// Every section is always visible as a tab - no hamburger menu - so the
+// tab bar works the same at every width, just spread across the full row
+// on mobile.
+const TABS = [
+  { href: '/', label: 'Home' },
+  { href: '/analysis', label: 'Analysis' },
+  { href: '/news', label: 'News' },
+  { href: '/careers', label: 'Careers' },
+  { href: '/about', label: 'About' },
+];
+
+function isActive(pathname, href) {
+  if (href === '/') return pathname === '/';
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+
 export default function SiteHeader() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname() || '/';
   const [searchOpen, setSearchOpen] = useState(false);
   const [user, setUser] = useState(null);
-
-  function openSearch() {
-    setMenuOpen(false);
-    setSearchOpen(true);
-  }
 
   // Client-side, not read in a Server Component - most pages on this site
   // rely on ISR (revalidate = 3600); reading auth cookies anywhere in the
@@ -33,20 +45,12 @@ export default function SiteHeader() {
 
   return (
     <header className="site-header">
-      <div className="site-header__inner">
-        <Link href="/" className="site-header__logo" onClick={() => setMenuOpen(false)}>
+      <div className="site-header__masthead">
+        <Link href="/" className="site-header__logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Fox and Lion" className="site-header__logo-img" />
         </Link>
-        <nav className="site-header__nav">
-          <Link href="/analysis">Analysis</Link>
-          <Link href="/news">News</Link>
-          <Link href="/careers">Careers</Link>
-        </nav>
         <div className="site-header__actions">
-          <button type="button" className="site-header__search" aria-label="Search" onClick={openSearch}>
-            <SearchIcon className="site-header__search-icon" />
-          </button>
           {user ? (
             <Link href="/account" className="site-header__avatar-link" aria-label="Account">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -65,47 +69,32 @@ export default function SiteHeader() {
               Sign In
             </Link>
           )}
+          <button
+            type="button"
+            className="site-header__search"
+            aria-label="Search"
+            onClick={() => setSearchOpen(true)}
+          >
+            <SearchIcon className="site-header__search-icon" />
+          </button>
         </div>
-        <button
-          type="button"
-          className="site-header__menu-toggle"
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
       </div>
 
-      <div className={`site-header__mobile-panel${menuOpen ? ' is-open' : ''}`}>
-        <nav className="site-header__mobile-nav">
-          <Link href="/analysis" onClick={() => setMenuOpen(false)}>
-            Analysis
-          </Link>
-          <Link href="/news" onClick={() => setMenuOpen(false)}>
-            News
-          </Link>
-          <Link href="/careers" onClick={() => setMenuOpen(false)}>
-            Careers
-          </Link>
-        </nav>
-        <div className="site-header__mobile-actions">
-          <button type="button" className="site-header__search" aria-label="Search" onClick={openSearch}>
-            <SearchIcon className="site-header__search-icon" /> Search
-          </button>
-          {user ? (
-            <Link href="/account" className="site-header__sign-in" onClick={() => setMenuOpen(false)}>
-              Account
+      <nav className="site-header__tabs" aria-label="Sections">
+        {TABS.map(({ href, label }) => {
+          const active = isActive(pathname, href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={`site-header__tab${active ? ' is-active' : ''}`}
+              aria-current={active ? 'page' : undefined}
+            >
+              {label}
             </Link>
-          ) : (
-            <Link href="/sign-in" className="site-header__sign-in" onClick={() => setMenuOpen(false)}>
-              Sign In
-            </Link>
-          )}
-        </div>
-      </div>
+          );
+        })}
+      </nav>
 
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </header>
