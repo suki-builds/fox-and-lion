@@ -1,17 +1,19 @@
 import { cache } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { PrismicRichText } from '@prismicio/react';
 import { asText } from '@prismicio/client';
-import { getAnalysisList, getAnalysisBySlug } from '../../../../lib/prismic';
+import { getAnalysisList, getAnalysisBySlug, getLatestAnalysis } from '../../../../lib/prismic';
 import { buildMetadata } from '../../../../lib/seo';
 import IllustrationPlaceholder from '../../../../components/IllustrationPlaceholder';
 import { coverImageSrc, imageAspectRatio, uncompressedImageSrc } from '../../../../lib/prismicImage';
-import { effectivePublishedAt, isArchived } from '../../../../lib/publishedDate';
+import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../../../../lib/publishedDate';
 import { sharedRichTextComponents } from '../../../../lib/richTextComponents';
 import ShareButton from '../../../../components/ShareButton';
 import PostEngagement from '../../../../components/PostEngagement';
 import ViewTracker from '../../../../components/ViewTracker';
 import CommentThread from '../../../../components/CommentThread';
+import AnalysisGrid from '../../../../components/AnalysisGrid';
 
 // Same reasoning as /news/[slug]: an analysis post changes only when it is
 // republished, and app/api/revalidate/route.js handles that per-post from
@@ -72,6 +74,9 @@ export default async function AnalysisDetailPage({ params }) {
   }
 
   const archived = isArchived(post, 'analysis');
+  const moreAnalysis = sortByPublishedAt(await getLatestAnalysis(6))
+    .filter((other) => other.uid !== post.uid)
+    .slice(0, 4);
 
   const formattedDate = new Date(effectivePublishedAt(post)).toLocaleDateString(
     'en-GB',
@@ -135,6 +140,20 @@ export default async function AnalysisDetailPage({ params }) {
         <ShareButton postUid={post.uid} postType="analysis" />
 
         <CommentThread postUid={post.uid} postType="analysis" archived={archived} />
+
+        {/* As under news posts: the latest as of this page's last build, so
+            it can lag a new publish by up to the revalidate window above. */}
+        {moreAnalysis.length > 0 && (
+          <section className="more-news">
+            <div className="section-header">
+              <h2 className="section-label">More Analysis</h2>
+              <Link href="/analysis" className="section-cta">
+                View all analysis &#8599;
+              </Link>
+            </div>
+            <AnalysisGrid posts={moreAnalysis} />
+          </section>
+        )}
       </div>
     </article>
   );

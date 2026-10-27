@@ -35,7 +35,7 @@ export default function CookieBanner() {
     <div className="cookie-banner" role="region" aria-label="Cookie consent">
       <div className="cookie-banner__inner">
         <p className="cookie-banner__text">
-          We use essential cookies to keep you signed in. With your permission, we&rsquo;d
+          We use essential cookies to keep you signed in. With your permission, we will
           also set one cookie to count article views and shares accurately. No advertising
           or cross-site tracking. See our <Link href="/privacy-policy">Privacy Policy</Link>.
         </p>

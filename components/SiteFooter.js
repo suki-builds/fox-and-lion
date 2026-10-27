@@ -25,6 +25,8 @@ export default function SiteFooter() {
           <Link href="/about">About</Link>
           <Link href="/submission-guidelines">Submissions Guidelines</Link>
           <Link href="/submission-portal">Submit a Pitch</Link>
+          <Link href="/advertising-guide">Advertising Guide</Link>
+          <Link href="/sponsorship-guide">Sponsorship Guide</Link>
           <Link href="/contact">Contact</Link>
           <Link href="/privacy-policy">Privacy Policy</Link>
           <Link href="/terms-of-service">Terms of Service</Link>
