@@ -25,14 +25,28 @@ export const revalidate = 86400;
 // a description_html that can be ~10KB - to render one page.
 const getJob = cache(getJobDetail);
 
-// Jobs re-sync daily (app/api/sync-jobs/route.js) but builds don't, so a
-// job added since the last deploy won't be in this list. `dynamicParams`
-// stays at its default of true so those still render on demand - and are
-// then cached for the revalidate window above rather than re-rendered on
-// every request, which is the behaviour that actually mattered here.
+// Only the featured jobs plus the newest ones are prerendered - the ones
+// the homepage and the top of /careers link to. Prerendering every job
+// (~1,750 once the Ashby/Workable companies landed) stretched each deploy
+// from about a minute to 5-7, rendering hundreds of pages nobody opened
+// before the next push.
+//
+// Everything else - the long tail, and any job added by the daily sync
+// (app/api/sync-jobs/route.js) since the last deploy - renders on its
+// first visit after a deploy: `dynamicParams` stays at its default of true,
+// and the result is then cached for the revalidate window above rather
+// than re-rendered on every request, which is the behaviour that actually
+// mattered for CPU here.
+const PRERENDERED_JOB_COUNT = 100;
+
 export async function generateStaticParams() {
+  // getAllJobs() is already newest-first.
   const jobs = await getAllJobs();
-  return jobs.map((job) => ({ company: job.companySlug, id: String(job.platformId) }));
+  const featured = jobs.filter((job) => job.featured);
+  const rest = jobs.filter((job) => !job.featured);
+  return [...featured, ...rest]
+    .slice(0, PRERENDERED_JOB_COUNT)
+    .map((job) => ({ company: job.companySlug, id: String(job.platformId) }));
 }
 
 export async function generateMetadata({ params }) {
