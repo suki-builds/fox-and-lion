@@ -7,9 +7,9 @@ import SearchOverlay from './SearchOverlay';
 import SearchIcon from './SearchIcon';
 import { createClient } from '../lib/supabase/client';
 
-// Every section is always visible as a tab - no hamburger menu - so the
-// tab bar works the same at every width, just spread across the full row
-// on mobile.
+// Mobile shows every section as a tab under the masthead instead of a
+// hamburger menu. Desktop keeps the original inline links (see
+// globals.css, which switches between the two at 768px).
 const TABS = [
   { href: '/', label: 'Home' },
   { href: '/analysis', label: 'Analysis' },
@@ -50,6 +50,12 @@ export default function SiteHeader() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Fox and Lion" className="site-header__logo-img" />
         </Link>
+        {/* Desktop only - see the tab bar below for mobile. */}
+        <nav className="site-header__nav">
+          <Link href="/analysis">Analysis</Link>
+          <Link href="/news">News</Link>
+          <Link href="/careers">Careers</Link>
+        </nav>
         <div className="site-header__actions">
           {user ? (
             <Link href="/account" className="site-header__avatar-link" aria-label="Account">
