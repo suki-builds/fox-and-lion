@@ -16,7 +16,7 @@ const TABS = [
   { href: '/news', label: 'News' },
   { href: '/careers', label: 'Careers' },
   { href: '/submission-portal', label: 'Pitch' },
-  { href: '/submission-guidelines', label: 'Guidelines' },
+  { href: '/submission-guidelines', label: 'Guide' },
 ];
 
 function isActive(pathname, href) {
