@@ -5,8 +5,7 @@ export const metadata = {
 };
 
 // Static page, same as the other guidelines pages - edit this file
-// directly. PLACEHOLDER COPY: everything below is dummy text to be replaced
-// with the real advertising terms.
+// directly. Source: Advertising Guide text.docx.
 export default function AdvertisingGuidePage() {
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
@@ -14,60 +13,71 @@ export default function AdvertisingGuidePage() {
 
       <div className="article-body">
         <p>
-          <em>Placeholder text &mdash; to be replaced with the final advertising guide.</em>
+          <strong>
+            Reach the people who build, buy, fund and use defence technology across the UK
+            and Europe.
+          </strong>
+        </p>
+        <p>Engage a powerful community at the intersection of defence, technology, and investment.</p>
+        <p>
+          Fox and Lion is a defence tech community and publication with a focus on the UK and
+          Europe. Our readers include founders, operators, engineers, investors, officials, and
+          serving and former members of the armed forces.
         </p>
         <p>
-          Fox and Lion is read by people who build, buy, fund and use defence technology
-          across the UK and Europe. Advertising with us puts your organisation in front of
-          that audience, alongside analysis and news they come to us for. Lorem ipsum
-          dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-          labore et dolore magna aliqua.
+          Our analyses, news, and careers board help the community follow procurement, funding,
+          industrial policy, and emerging technology, with the context needed to understand
+          each development. Contributions come from people with direct first-hand experience in
+          their field, including founders, engineers, investors and veterans.
         </p>
-
-        <h2>Our Audience</h2>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Our readers include
-          founders, engineers, investors, procurement officials, civil servants and serving
-          and former members of the armed forces. Ut enim ad minim veniam, quis nostrud
-          exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          Fox and Lion also brings the community together through events, newsletters, and an
+          online community. This connects the companies, funders and institutions that shape UK
+          and European defence technology.
         </p>
+        <p>
+          We work with partners whose work is relevant to this community. Partnerships, from
+          events to sponsored series, support independent analysis and give partners a clearly
+          labelled way to reach the people they want to engage. Below are the ways to advertise
+          with Fox and Lion.
+        </p>
+        <p>Every advertisement is kept separate from our editorial decisions.</p>
 
         <h2>Formats</h2>
-        <ul>
-          <li>
-            <strong>Leaderboard banner</strong> &mdash; 728&times;90 on desktop, 320&times;50
-            on mobile, shown at the top of every page.
-          </li>
-          <li>
-            <strong>Careers listing</strong> &mdash; a featured position at the top of the
-            Careers board. Duis aute irure dolor in reprehenderit.
-          </li>
-          <li>
-            <strong>Newsletter placement</strong> &mdash; a short text advert in the
-            newsletter. Excepteur sint occaecat cupidatat non proident.
-          </li>
-        </ul>
-
-        <h2>Creative Specifications</h2>
         <p>
-          Lorem ipsum dolor sit amet: banners should be supplied as PNG or JPG at the exact
-          sizes above, under 150KB, with a single destination URL. Animated or
-          auto-playing creative is not accepted. Sed ut perspiciatis unde omnis iste natus
-          error sit voluptatem accusantium doloremque laudantium.
+          <strong>Leaderboard banner.</strong> Desktop and mobile banners, shown at the top of
+          every page.
+        </p>
+        <p>
+          <strong>Careers listing.</strong> A featured position at the top of the Careers board.
+        </p>
+        <p>
+          <strong>Newsletter placement.</strong> A short text &amp; image advert in our
+          newsletters across several platforms.
+        </p>
+        <p>
+          For events and sponsored content, see our{' '}
+          <Link href="/sponsorship-guide">Sponsorship Guide</Link>.
         </p>
 
         <h2>Rates and Booking</h2>
         <p>
-          Rates are available on request. Nemo enim ipsam voluptatem quia voluptas sit
-          aspernatur aut odit aut fugit. Bookings are confirmed once creative has been
-          received and approved.
+          Rates are available on request. Please use the <Link href="/contact">contact
+          page</Link>, or email{' '}
+          <a href="mailto:foxandlion@advancedgrowinglabs.com?subject=Advertising">
+            foxandlion@advancedgrowinglabs.com
+          </a>{' '}
+          with &ldquo;Advertising&rdquo; in the subject line, and tell us your preferred
+          format and dates. Bookings are confirmed once creative has been received and
+          approved. Please allow 5 working days before your start date.
         </p>
 
-        <h2>What We Don&rsquo;t Accept</h2>
+        <h2>What We Do Not Accept</h2>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. We reserve the right to
-          decline any advertisement at our discretion. Advertising never influences our
-          editorial coverage.
+          We reserve the right to decline any advertisement at our discretion, including
+          advertising that is misleading, unlawful or inconsistent with our editorial
+          standards. Advertising never influences our editorial coverage, and paid content is
+          always labelled.
         </p>
 
         <h2>Get in Touch</h2>
