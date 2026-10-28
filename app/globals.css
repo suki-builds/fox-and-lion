@@ -175,10 +175,10 @@ a {
 }
 
 .site-header__tab {
-  flex: 1;
+  flex: none;
   display: flex;
   justify-content: center;
-  padding: 0.6rem 0 0.45rem;
+  padding: 0.6rem 0.55rem 0.45rem;
   border-bottom: 3px solid transparent;
   font-family: var(--label-stack);
   font-weight: 600;
@@ -193,6 +193,11 @@ a {
 
 .site-header__tab + .site-header__tab {
   border-left: 1px solid var(--color-border-strong);
+}
+
+/* Tabs line up from the left; this one is pushed to the far right. */
+.site-header__tab--end {
+  margin-left: auto;
 }
 
 .site-header__tab.is-active {
@@ -213,7 +218,7 @@ a {
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1200px) {
   .site-header {
     border-bottom: 1px solid var(--color-border);
   }
@@ -230,10 +235,16 @@ a {
     margin-right: auto;
   }
 
+  /* Same treatment as the "Read the full analysis" link: grotesk caps. */
   .site-header__nav a {
     color: var(--color-text-body);
+    font-family: var(--label-stack);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
     text-decoration: none;
-    font-size: 0.95rem;
     transition: color 0.15s ease;
   }
 
@@ -248,11 +259,11 @@ a {
   }
 
   .site-header__sign-in {
-    font-family: inherit;
-    font-weight: 400;
-    font-size: 0.95rem;
-    letter-spacing: normal;
-    text-transform: none;
+    font-family: var(--label-stack);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     color: var(--color-text-body);
   }
 
@@ -261,7 +272,7 @@ a {
   }
 }
 
-@media (min-width: 768px) and (hover: hover) {
+@media (min-width: 1200px) and (hover: hover) {
   .site-header__nav a:hover,
   .site-header__search:hover,
   .site-header__sign-in:hover {
@@ -283,11 +294,22 @@ a {
   }
 }
 
-/* Very narrow phones: keep all five tabs on one row. */
+/* Phones: keep all five tabs on one row, with room before the end group. */
+@media (max-width: 420px) {
+  .site-header__tab {
+    padding-left: 0.45rem;
+    padding-right: 0.45rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+  }
+}
+
 @media (max-width: 360px) {
   .site-header__tab {
-    font-size: 0.68rem;
-    letter-spacing: 0.04em;
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
+    font-size: 0.64rem;
+    letter-spacing: 0.02em;
   }
 }
 
@@ -445,11 +467,15 @@ a {
 }
 
 @media (max-width: 760px) {
-  /* Tighter gap between the hero image and the text block below it - only
-     the top is reduced, so the sides/bottom keep their usual padding. */
+  /* Equal space above and below so the text block sits centred between
+     the image and the divider, and narrower sides to match the rest of the
+     mobile page. */
   .hero__copy {
-    padding-top: 0.9rem;
-    padding-bottom: 2rem;
+    padding-top: 1.6rem;
+    padding-bottom: 1.6rem;
+    /* Same side gutter as the sections below (.container). */
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }
 
@@ -548,12 +574,13 @@ a {
     margin-bottom: 0.35rem;
   }
 
+  /* Byline sits midway between the headline and the call to action. */
   .hero__copy h1 {
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.75rem;
   }
 
   .hero__meta {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
   }
 }
 
@@ -648,7 +675,9 @@ a {
    matches the Defence News section; one column on mobile. */
 .recent-analysis-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* minmax(0, ...) so a card's minimum content width can't push the two
+     columns wider than the page on tablet-width screens. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: 2.5rem;
   margin-bottom: 1rem;
 }
@@ -704,6 +733,7 @@ a {
 
 .post-card__meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.4rem;
   font-family: var(--label-stack);
@@ -746,6 +776,10 @@ a {
 .post-card .post-engagement,
 .news-list__item .post-engagement {
   margin-top: 0.3rem;
+  /* Wraps rather than overflowing a narrow card (e.g. the two-column
+     analysis grid on tablet-width screens). */
+  flex-wrap: wrap;
+  row-gap: 0.3rem;
 }
 
 .post-engagement__votes {
@@ -2470,10 +2504,204 @@ a {
   color: var(--color-text-muted);
 }
 
+/* ---------- Most Popular (homepage) ---------- */
+
+.most-popular {
+  margin-top: 2.5rem;
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+}
+
+.most-popular__tabs {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border-strong);
+}
+
+.most-popular__window {
+  margin-left: auto;
+  padding: 0 1.25rem;
+  font-family: var(--label-stack);
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+/* Styled as the active tab of a tab strip, so a second tab can slot in
+   beside it later. */
+.most-popular__tab {
+  margin: 0;
+  padding: 0.85rem 1.25rem 0.7rem;
+  font-family: var(--label-stack);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  color: var(--color-text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.most-popular__tab.is-active {
+  color: var(--color-text);
+  border-bottom-color: var(--color-accent);
+}
+
+.most-popular__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 1.25rem;
+}
+
+/* A stacked list on phones and tablets; a row of five image cards on wide
+   screens. */
+.most-popular__item {
+  display: flex;
+  gap: 1rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.most-popular__item:last-child {
+  border-bottom: none;
+}
+
+.most-popular__media {
+  display: none;
+}
+
+@media (min-width: 1000px) {
+  .most-popular__list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+
+  .most-popular__item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-content: start;
+    column-gap: 0.6rem;
+    row-gap: 0.75rem;
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .most-popular__media {
+    display: block;
+    grid-column: 1 / -1;
+    position: relative;
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--color-bg);
+  }
+
+  .most-popular__media img {
+    object-fit: cover;
+    transition: opacity 0.15s ease;
+  }
+
+  .most-popular__rank {
+    font-size: 1.6rem;
+  }
+}
+
+@media (min-width: 1000px) and (hover: hover) {
+  .most-popular__media:hover img {
+    opacity: 0.85;
+  }
+}
+
+.most-popular__rank {
+  flex-shrink: 0;
+  width: 1.5rem;
+  font-family: var(--display-stack);
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--color-accent);
+}
+
+.most-popular__body {
+  min-width: 0;
+}
+
+.most-popular__title {
+  display: block;
+  font-family: var(--display-stack);
+  font-size: 0.98rem;
+  line-height: 1.3;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+@media (hover: hover) {
+  .most-popular__title:hover {
+    color: var(--color-accent);
+  }
+}
+
+.most-popular__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.75rem;
+  row-gap: 0.15rem;
+  margin-top: 0.35rem;
+  font-family: var(--label-stack);
+  font-size: 0.78rem;
+  line-height: 1.3;
+  color: var(--color-text-muted);
+}
+
+.most-popular__views {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.most-popular__views-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
 /* ---------- More news (under a news post) ---------- */
 
 .more-news .section-header {
   margin-top: 3rem;
+}
+
+/* Tight gaps between page sections: each section starts close under the
+   one above - on mobile as close as a section header's own divider sits
+   under its "View all" button (~13px), on desktop a little more. After the
+   base rules above so it wins on source order. */
+.section-header,
+.more-news .section-header,
+.newsletter,
+.most-popular,
+.jobs-panel {
+  margin-top: 1.5rem;
+}
+
+.jobs-panel {
+  padding-top: 0;
+}
+
+.recent-analysis-grid {
+  margin-bottom: 0;
+}
+
+@media (max-width: 760px) {
+  .section-header,
+  .more-news .section-header,
+  .newsletter,
+  .most-popular,
+  .jobs-panel {
+    margin-top: 0.8rem;
+  }
 }
 
 /* ---------- Cookie banner ---------- */

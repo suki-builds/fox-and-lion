@@ -5,6 +5,7 @@ import { getAllJobs } from '../../lib/ats';
 import IllustrationPlaceholder from '../../components/IllustrationPlaceholder';
 import DefenceNewsList from '../../components/DefenceNewsList';
 import AnalysisGrid from '../../components/AnalysisGrid';
+import MostPopular from '../../components/MostPopular';
 import JobsList from '../../components/JobsList';
 import NewsletterSignup from '../../components/NewsletterSignup';
 import { coverImageSrc, imageAspectRatio } from '../../lib/prismicImage';
@@ -103,6 +104,8 @@ export default async function HomePage() {
           </Link>
         </div>
         <AnalysisGrid posts={recentAnalysis} />
+
+        <MostPopular posts={analysisPosts} />
 
         <JobsList jobs={latestJobs} />
       </div>

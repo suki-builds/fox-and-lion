@@ -8,18 +8,20 @@ import SearchIcon from './SearchIcon';
 import { createClient } from '../lib/supabase/client';
 
 // Mobile shows every section as a tab under the masthead instead of a
-// hamburger menu. Desktop keeps the original inline links (see
-// globals.css, which switches between the two at 768px).
+// hamburger menu - the logo is the way home. Desktop keeps the original
+// inline links (see globals.css, which switches between the two at 1200px - the
+// desktop row of five links needs that much width).
+// The `end` tab and everything after it sit apart at the far right of the
+// bar.
 const TABS = [
-  { href: '/', label: 'Home' },
   { href: '/analysis', label: 'Analysis' },
   { href: '/news', label: 'News' },
   { href: '/careers', label: 'Careers' },
-  { href: '/about', label: 'About' },
+  { href: '/submission-portal', label: 'Pitch', end: true },
+  { href: '/submission-guidelines', label: 'Guidelines' },
 ];
 
 function isActive(pathname, href) {
-  if (href === '/') return pathname === '/';
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -55,6 +57,8 @@ export default function SiteHeader() {
           <Link href="/analysis">Analysis</Link>
           <Link href="/news">News</Link>
           <Link href="/careers">Careers</Link>
+          <Link href="/submission-portal">Submit a Pitch</Link>
+          <Link href="/submission-guidelines">Submissions Guidelines</Link>
         </nav>
         <div className="site-header__actions">
           {user ? (
@@ -87,13 +91,13 @@ export default function SiteHeader() {
       </div>
 
       <nav className="site-header__tabs" aria-label="Sections">
-        {TABS.map(({ href, label }) => {
+        {TABS.map(({ href, label, end }) => {
           const active = isActive(pathname, href);
           return (
             <Link
               key={href}
               href={href}
-              className={`site-header__tab${active ? ' is-active' : ''}`}
+              className={`site-header__tab${end ? ' site-header__tab--end' : ''}${active ? ' is-active' : ''}`}
               aria-current={active ? 'page' : undefined}
             >
               {label}
