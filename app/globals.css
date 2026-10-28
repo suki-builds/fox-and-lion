@@ -169,16 +169,18 @@ a {
 /* Newspaper-style section tabs: a heavy rule above, a hairline below,
    hairlines between, and the current section underlined in the accent. */
 .site-header__tabs {
-  display: flex;
+  /* Five equal-width cells, labels centred in each. */
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   border-top: 2px solid var(--color-text);
   border-bottom: 1px solid var(--color-border-strong);
 }
 
 .site-header__tab {
-  flex: none;
   display: flex;
   justify-content: center;
-  padding: 0.6rem 0.55rem 0.45rem;
+  padding: 0.6rem 0.2rem 0.45rem;
   border-bottom: 3px solid transparent;
   font-family: var(--label-stack);
   font-weight: 600;
@@ -193,11 +195,6 @@ a {
 
 .site-header__tab + .site-header__tab {
   border-left: 1px solid var(--color-border-strong);
-}
-
-/* Tabs line up from the left; this one is pushed to the far right. */
-.site-header__tab--end {
-  margin-left: auto;
 }
 
 .site-header__tab.is-active {
@@ -294,22 +291,19 @@ a {
   }
 }
 
-/* Phones: keep all five tabs on one row, with room before the end group. */
+/* Phones: smaller lettering so the longest label ("Guidelines") still
+   fits its fifth of the bar. */
 @media (max-width: 420px) {
   .site-header__tab {
-    padding-left: 0.45rem;
-    padding-right: 0.45rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.04em;
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
   }
 }
 
 @media (max-width: 360px) {
   .site-header__tab {
-    padding-left: 0.35rem;
-    padding-right: 0.35rem;
-    font-size: 0.64rem;
-    letter-spacing: 0.02em;
+    font-size: 0.6rem;
+    letter-spacing: 0.01em;
   }
 }
 

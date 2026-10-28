@@ -11,13 +11,11 @@ import { createClient } from '../lib/supabase/client';
 // hamburger menu - the logo is the way home. Desktop keeps the original
 // inline links (see globals.css, which switches between the two at 1200px - the
 // desktop row of five links needs that much width).
-// The `end` tab and everything after it sit apart at the far right of the
-// bar.
 const TABS = [
   { href: '/analysis', label: 'Analysis' },
   { href: '/news', label: 'News' },
   { href: '/careers', label: 'Careers' },
-  { href: '/submission-portal', label: 'Pitch', end: true },
+  { href: '/submission-portal', label: 'Pitch' },
   { href: '/submission-guidelines', label: 'Guidelines' },
 ];
 
@@ -91,13 +89,13 @@ export default function SiteHeader() {
       </div>
 
       <nav className="site-header__tabs" aria-label="Sections">
-        {TABS.map(({ href, label, end }) => {
+        {TABS.map(({ href, label }) => {
           const active = isActive(pathname, href);
           return (
             <Link
               key={href}
               href={href}
-              className={`site-header__tab${end ? ' site-header__tab--end' : ''}${active ? ' is-active' : ''}`}
+              className={`site-header__tab${active ? ' is-active' : ''}`}
               aria-current={active ? 'page' : undefined}
             >
               {label}
