@@ -134,14 +134,19 @@ export default async function NewsDetailPage({ params }) {
           <span className="article-meta__label">Date</span>
           <span className="article-meta__value">{formattedDate}</span>
         </div>
-        <div className="article-meta__block">
-          <span className="article-meta__label">Source</span>
-          <span className="article-meta__value">
-            <a href={post.data.source_url} target="_blank" rel="noopener noreferrer">
-              {sourceName || post.data.source_url}
-            </a>
-          </span>
-        </div>
+        {/* Posts written in-house from several sources have no source_url,
+            so there is nothing to credit or link - leave the block out
+            rather than render an empty link. */}
+        {post.data.source_url && (
+          <div className="article-meta__block">
+            <span className="article-meta__label">Source</span>
+            <span className="article-meta__value">
+              <a href={post.data.source_url} target="_blank" rel="noopener noreferrer">
+                {sourceName || post.data.source_url}
+              </a>
+            </span>
+          </div>
+        )}
         <div className="article-meta__block">
           <PostEngagement postUid={post.uid} postType="news" archived={archived} />
         </div>
