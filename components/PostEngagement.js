@@ -9,8 +9,9 @@ import { formatCompactNumber } from '../lib/format';
 import CommentIcon from './CommentIcon';
 import ShareIcon from './ShareIcon';
 
-// Vote arrows plus view/comment/share counts for one post. Used unchanged
-// on News and Analysis detail pages and on every list surface.
+// Vote arrows plus view/comment/share counts for one post. Used on News and
+// Analysis detail pages and on every list surface. News posts don't show the
+// view count - it's still recorded, just not displayed.
 //
 // Stats come from a PostStatsProvider above this card when there is one
 // (list pages - one batched read for the whole list), and otherwise from
@@ -255,10 +256,12 @@ export default function PostEngagement({ postUid, postType = 'news', archived = 
           {archived ? '▽' : '▼'}
         </button>
       </div>
-      <span className="post-engagement__views" aria-label={`${views ?? 0} views`}>
-        <BarChartIcon className="post-engagement__views-icon" />
-        {views === null ? '–' : formatCompactNumber(views)}
-      </span>
+      {postType !== 'news' && (
+        <span className="post-engagement__views" aria-label={`${views ?? 0} views`}>
+          <BarChartIcon className="post-engagement__views-icon" />
+          {views === null ? '–' : formatCompactNumber(views)}
+        </span>
+      )}
       <span className="post-engagement__comments" aria-label={`${comments ?? 0} comments`}>
         <CommentIcon className="post-engagement__comments-icon" />
         {comments === null ? '–' : comments}

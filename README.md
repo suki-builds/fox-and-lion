@@ -1,5 +1,7 @@
 # Fox and Lion — Next.js site
 
+Planned but unbuilt features are listed in [ROADMAP.md](ROADMAP.md).
+
 Phase 1 scaffold: core site with two manually-authored content sections
 (Analysis, News) backed by Prismic, plus a live jobs board sourced
 directly from company ATS APIs (see `lib/ats.js`). No digest integration,
