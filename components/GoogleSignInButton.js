@@ -2,9 +2,19 @@
 
 import { createClient } from '../lib/supabase/client';
 
-export default function GoogleSignInButton({ disabled = false }) {
+// Carries the sign-in page's newsletter choice through the Google redirect
+// to app/auth/callback/route.ts, which subscribes the account's email once
+// sign-in succeeds. A short-lived cookie rather than a query parameter on
+// redirectTo - see the note below on why that URL stays bare. Strictly
+// functional and set only on this click, so it needs no cookie consent.
+export const NEWSLETTER_OPTIN_COOKIE = 'fl_newsletter_optin';
+
+export default function GoogleSignInButton({ disabled = false, newsletter = false }) {
   async function handleSignIn() {
     if (disabled) return;
+    document.cookie = newsletter
+      ? `${NEWSLETTER_OPTIN_COOKIE}=1; Max-Age=600; Path=/; SameSite=Lax; Secure`
+      : `${NEWSLETTER_OPTIN_COOKIE}=; Max-Age=0; Path=/; SameSite=Lax; Secure`;
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
       provider: 'google',

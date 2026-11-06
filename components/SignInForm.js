@@ -11,9 +11,13 @@ import GoogleSignInButton from './GoogleSignInButton';
 // more weight than a claim nobody confirmed. The OPSEC checkbox is separate
 // from the Terms/Guidelines one since it's a distinct, substantive
 // commitment (see Section 6 of the Terms of Service), not just boilerplate.
+//
+// The newsletter box is optional and unticked by default - consent to
+// marketing email has to be an active choice, and it doesn't gate sign-in.
 export default function SignInForm() {
   const [agreedTerms, setAgreedTerms] = useState(false);
   const [agreedOpsec, setAgreedOpsec] = useState(false);
+  const [newsletter, setNewsletter] = useState(false);
 
   return (
     <div>
@@ -57,8 +61,19 @@ export default function SignInForm() {
         </span>
       </label>
 
+      <label className="submission-form__checkbox" style={{ marginTop: '0.85rem' }}>
+        <input
+          type="checkbox"
+          checked={newsletter}
+          onChange={(event) => setNewsletter(event.target.checked)}
+        />
+        <span>
+          Send me the Fox and Lion newsletter (optional). You can unsubscribe at any time.
+        </span>
+      </label>
+
       <div style={{ marginTop: '1.25rem' }}>
-        <GoogleSignInButton disabled={!agreedTerms || !agreedOpsec} />
+        <GoogleSignInButton disabled={!agreedTerms || !agreedOpsec} newsletter={newsletter} />
       </div>
     </div>
   );
