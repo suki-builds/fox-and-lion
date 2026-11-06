@@ -138,8 +138,8 @@ export default function CommentComposer({
             className="comment-composer__name"
             value={name}
             onChange={(event) => setName(event.target.value)}
-            placeholder="Your name"
-            aria-label="Your name"
+            placeholder="Name *"
+            aria-label="Name (required)"
             minLength={2}
             maxLength={40}
             autoComplete="name"
@@ -150,8 +150,8 @@ export default function CommentComposer({
             className="comment-composer__name"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            placeholder="Email (not shown)"
-            aria-label="Email address, not shown publicly"
+            placeholder="Email *"
+            aria-label="Email (required, not shown publicly)"
             maxLength={254}
             autoComplete="email"
             required
@@ -176,7 +176,8 @@ export default function CommentComposer({
         className="comment-composer__textarea"
         value={body}
         onChange={(event) => setBody(event.target.value)}
-        placeholder={placeholder}
+        // Every guest field is required, so each gets an asterisk.
+        placeholder={guest ? `${placeholder.replace(/…$/, '')} *` : placeholder}
         maxLength={MAX_LENGTH}
         rows={isEdit ? 3 : 2}
         autoFocus={autoFocus}

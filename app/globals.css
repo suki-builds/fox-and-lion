@@ -3065,16 +3065,20 @@ a {
   font-size: 0.85rem;
 }
 
+/* Same as .section-cta ("View all news") - buttons don't inherit
+   line-height, so it's set here to match the link's. */
 .comment-composer__submit {
   font-family: var(--label-stack);
   font-size: 0.78rem;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: inherit;
   text-transform: uppercase;
   color: var(--color-bg);
   background: var(--color-accent);
   border: none;
   cursor: pointer;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 4px;
 }
 
