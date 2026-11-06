@@ -55,7 +55,8 @@ export default function CommentThread({ postUid, postType = 'news', archived = f
         return;
       }
 
-      const userIds = [...new Set((rows || []).map((row) => row.user_id))];
+      // Guest comments have no user_id, and no profile to look up.
+      const userIds = [...new Set((rows || []).map((row) => row.user_id).filter(Boolean))];
       let profileMap = {};
       if (userIds.length > 0) {
         const { data: profileRows } = await supabase
@@ -102,7 +103,7 @@ export default function CommentThread({ postUid, postType = 'news', archived = f
   // of Google's OAuth metadata, so this just uses the current user's own
   // profile (fetched once above) directly.
   function addComment(row) {
-    if (myProfile) {
+    if (row.user_id && myProfile) {
       setProfiles((prev) => ({ ...prev, [row.user_id]: myProfile }));
     }
     setComments((prev) => [...(prev || []), row]);
@@ -151,17 +152,14 @@ export default function CommentThread({ postUid, postType = 'news', archived = f
         <p className="comment-thread__sign-in-prompt">
           This post is archived — comments are closed, but the discussion below is still here to read.
         </p>
-      ) : user ? (
+      ) : (
         <CommentComposer
           postUid={postUid}
           postType={postType}
           onSubmitted={addComment}
           submitLabel="Comment"
+          guest={!user}
         />
-      ) : (
-        <p className="comment-thread__sign-in-prompt">
-          <Link prefetch={false} href="/sign-in">Sign in</Link> to join the discussion.
-        </p>
       )}
 
       {tree.length === 0 ? (

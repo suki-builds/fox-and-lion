@@ -182,7 +182,7 @@ export default function ModerationQueue({ initialReports }) {
 
             <p className="moderation-queue__comment">
               <span className="moderation-queue__author">
-                {author?.username || 'Unknown user'}:
+                {comment?.guest_name ? `${comment.guest_name} (guest)` : author?.username || 'Unknown user'}:
               </span>{' '}
               {!comment ? (
                 <em>[comment deleted]</em>
@@ -216,7 +216,7 @@ export default function ModerationQueue({ initialReports }) {
                 onChange={(event) =>
                   setBanDurations((prev) => ({ ...prev, [report.id]: event.target.value }))
                 }
-                disabled={pendingId === report.id || !comment}
+                disabled={pendingId === report.id || !comment?.user_id}
               >
                 {BAN_DURATIONS.map((duration) => (
                   <option key={duration.value} value={duration.value}>
@@ -228,7 +228,9 @@ export default function ModerationQueue({ initialReports }) {
                 type="button"
                 className="moderation-queue__ban"
                 onClick={() => handleBan(report)}
-                disabled={pendingId === report.id || !comment}
+                // Guests have no account to ban. Their comments are rate
+                // limited by IP instead - see 0026_guest_comments.sql.
+                disabled={pendingId === report.id || !comment?.user_id}
               >
                 Ban &amp; remove
               </button>

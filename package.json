@@ -16,6 +16,7 @@
     "@vercel/analytics": "^2.0.1",
     "fuse.js": "^7.5.0",
     "next": "14.2.35",
+    "obscenity": "^0.4.5",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },

@@ -4,8 +4,10 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 // cron-triggered sync route (app/api/sync-jobs/route.js) to write ats_jobs,
 // and by lib/newsThumbnails.js to write news_post_thumbnails (from the
 // Prismic publish webhook and, as a self-healing fallback, from Server
-// Component render paths) - never import this into anything that writes
-// based on arbitrary client/user input. Requires SUPABASE_SERVICE_ROLE_KEY,
+// Component render paths). The one exception to "never write user input
+// with this" is app/api/guest-comment/route.js, which validates and filters
+// first and can only call the narrow insert_guest_comment() RPC - don't
+// import this into anything else that writes based on client/user input. Requires SUPABASE_SERVICE_ROLE_KEY,
 // found in the Supabase dashboard under Project Settings > API - kept
 // separate from the public anon key everything else in this app uses, and
 // never exposed to the browser (no NEXT_PUBLIC_ prefix).

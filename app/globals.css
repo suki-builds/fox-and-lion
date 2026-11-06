@@ -2899,6 +2899,18 @@ a {
   color: var(--color-text);
 }
 
+.comment__guest-label {
+  color: var(--color-text-muted);
+  font-family: var(--label-stack);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 3px;
+  padding: 0.05rem 0.35rem;
+}
+
 .comment__timestamp,
 .comment__edited {
   color: var(--color-text-muted);
@@ -2989,6 +3001,54 @@ a {
 .comment-composer__error {
   color: var(--color-danger);
   font-size: 0.8rem;
+}
+
+.comment-composer__notice {
+  color: var(--color-text-body);
+  font-size: 0.8rem;
+}
+
+.comment-composer__guest {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.comment-composer__name {
+  flex: 0 1 15rem;
+  min-width: 0;
+  background: var(--color-panel);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.8rem;
+}
+
+.comment-composer__name:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.comment-composer__guest-hint {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.comment-composer__guest-hint a {
+  color: var(--color-accent);
+}
+
+/* Off-screen rather than display:none, which some bots know to skip. */
+.comment-composer__honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
 }
 
 .comment-composer__actions {
@@ -3203,6 +3263,11 @@ a {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+}
+
+.moderation-section__heading {
+  margin: 2rem 0 1rem;
+  font-size: 1.2rem;
 }
 
 .moderation-queue__item {

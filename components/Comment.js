@@ -42,7 +42,8 @@ export default function Comment({
   const [removing, setRemoving] = useState(false);
 
   const profile = profiles[comment.user_id];
-  const isOwn = currentUserId && currentUserId === comment.user_id;
+  const isGuest = !comment.user_id;
+  const isOwn = Boolean(currentUserId) && currentUserId === comment.user_id;
   const isRemoved = Boolean(comment.removed_at);
   // No new replies once a post is archived - editing/deleting/reporting an
   // existing comment is still allowed, since that's cleanup of your own
@@ -74,8 +75,11 @@ export default function Comment({
           <div className="comment__meta">
             {!isRemoved && (
               <span className="comment__author">
-                {profile?.username || 'Fox and Lion reader'}
+                {isGuest ? comment.guest_name : profile?.username || 'Fox and Lion reader'}
               </span>
+            )}
+            {!isRemoved && isGuest && (
+              <span className="comment__guest-label">Guest</span>
             )}
             <span className="comment__timestamp">{formatTimestamp(comment.created_at)}</span>
             {comment.edited_at && !isRemoved && <span className="comment__edited">(edited)</span>}
@@ -85,7 +89,9 @@ export default function Comment({
             <p className="comment__text comment__text--removed">
               [{comment.removed_reason === 'deleted by author'
                 ? 'deleted by author'
-                : 'removed by moderator'}]
+                : comment.removed_reason === 'held for review'
+                  ? 'held for review'
+                  : 'removed by moderator'}]
             </p>
           ) : editing ? (
             <CommentComposer
@@ -150,6 +156,7 @@ export default function Comment({
               parentId={comment.id}
               placeholder="Write a reply…"
               submitLabel="Reply"
+              guest={!currentUserId}
               autoFocus
               onCancel={() => setReplying(false)}
               onSubmitted={(row) => {
