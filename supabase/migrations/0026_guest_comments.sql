@@ -2,6 +2,9 @@
 -- Run after 0025_top_viewed_posts.sql, in the Supabase SQL Editor - same as
 -- the other migrations, nothing here is applied automatically.
 --
+-- Safe to run more than once - if you ran an earlier version of this file,
+-- just run it again.
+--
 -- Safe to run while the current production site is live: signed-in
 -- commenting works exactly as before, and the old site simply shows any
 -- guest comment as "Fox and Lion reader".
@@ -34,15 +37,21 @@ alter table news_post_comments
   );
 
 -- Kept out of news_post_comments on purpose: that table is publicly
--- readable with select *, and the hashed IP and filter results are not for
--- the public. No insert/update policies - only insert_guest_comment()
--- writes here.
+-- readable with select *, and the guest's email, hashed IP and filter
+-- results are not for the public. No insert/update policies - only
+-- insert_guest_comment() writes here.
 create table if not exists news_comment_guest_meta (
   comment_id uuid primary key references news_post_comments(id) on delete cascade,
+  email text,
   key_hash text not null,
   flag_reasons text[] not null default '{}',
   created_at timestamptz not null default now()
 );
+
+-- For anyone who ran the first version of this file, which had no email.
+-- Nullable only so those earlier rows stay valid; insert_guest_comment()
+-- always sets it.
+alter table news_comment_guest_meta add column if not exists email text;
 
 create index if not exists news_comment_guest_meta_key_created_idx
   on news_comment_guest_meta (key_hash, created_at);
@@ -117,11 +126,16 @@ $$;
 -- 3 comments per 10 minutes and 20 per day for each hashed IP. Counts held
 -- comments too, so a spammer whose posts are all being held still runs into
 -- the limit. Callable only with the service-role key - see the revokes.
+-- The first version of this file had no email parameter. Postgres would
+-- keep that one alongside the new one as an overload, so drop it.
+drop function if exists insert_guest_comment(text, text, uuid, text, text, text, text[]);
+
 create or replace function insert_guest_comment(
   p_post_uid text,
   p_post_type text,
   p_parent_id uuid,
   p_guest_name text,
+  p_guest_email text,
   p_body text,
   p_key_hash text,
   p_flag_reasons text[]
@@ -135,6 +149,10 @@ declare
   held boolean := coalesce(array_length(p_flag_reasons, 1), 0) > 0;
   new_comment news_post_comments;
 begin
+  if p_guest_email is null or p_guest_email !~ '^[^@\s]+@[^@\s]+\.[^@\s]+$' then
+    raise exception 'A valid email address is required.';
+  end if;
+
   if (
     select count(*) from news_comment_guest_meta
     where key_hash = p_key_hash and created_at > now() - interval '10 minutes'
@@ -156,14 +174,14 @@ begin
   )
   returning * into new_comment;
 
-  insert into news_comment_guest_meta (comment_id, key_hash, flag_reasons)
-  values (new_comment.id, p_key_hash, coalesce(p_flag_reasons, '{}'));
+  insert into news_comment_guest_meta (comment_id, email, key_hash, flag_reasons)
+  values (new_comment.id, lower(p_guest_email), p_key_hash, coalesce(p_flag_reasons, '{}'));
 
   return new_comment;
 end;
 $$;
 
-revoke execute on function insert_guest_comment(text, text, uuid, text, text, text, text[])
+revoke execute on function insert_guest_comment(text, text, uuid, text, text, text, text, text[])
   from public, anon, authenticated;
-grant execute on function insert_guest_comment(text, text, uuid, text, text, text, text[])
+grant execute on function insert_guest_comment(text, text, uuid, text, text, text, text, text[])
   to service_role;

@@ -37,7 +37,7 @@ export default async function ModerationPage() {
   // Guest comments the filters held back - see app/api/guest-comment/route.js.
   const { data: held } = await supabase
     .from('news_post_comments')
-    .select('id, post_uid, post_type, body, guest_name, created_at, news_comment_guest_meta(flag_reasons)')
+    .select('id, post_uid, post_type, body, guest_name, created_at, news_comment_guest_meta(email, flag_reasons)')
     .eq('removed_reason', 'held for review')
     .order('created_at', { ascending: true });
 

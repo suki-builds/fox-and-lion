@@ -1,11 +1,21 @@
 import { createHmac } from 'crypto';
 import { NextResponse } from 'next/server';
 import { createAdminClient } from '../../../lib/supabase/admin';
-import { BODY_MAX, checkGuestName, flagReasons } from '../../../lib/guestCommentFilters';
+import {
+  BODY_MAX,
+  checkGuestEmail,
+  checkGuestName,
+  flagReasons,
+} from '../../../lib/guestCommentFilters';
 
 // Posts a comment for a visitor who isn't signed in. Clean comments appear
 // straight away; anything the filters flag is held until a moderator
 // approves it on /moderation. See supabase/migrations/0026_guest_comments.sql.
+//
+// Guests must give an email. It's never shown on the site - it's stored
+// alongside the comment for moderators only (news_comment_guest_meta) - and
+// it isn't verified, so it's a way to reach a commenter, not proof of who
+// they are.
 //
 // Bots are turned away before the database is touched:
 //   - `website` is a honeypot field, hidden from people but filled in by
@@ -44,6 +54,7 @@ export async function POST(request) {
   }
 
   const name = String(body.name || '').trim();
+  const email = String(body.email || '').trim();
   const text = String(body.body || '').trim();
   const postUid = String(body.postUid || '');
   const postType = String(body.postType || '');
@@ -58,7 +69,7 @@ export async function POST(request) {
       { status: 400 }
     );
   }
-  const nameError = checkGuestName(name);
+  const nameError = checkGuestName(name) || checkGuestEmail(email);
   if (nameError) {
     return NextResponse.json({ error: nameError }, { status: 400 });
   }
@@ -72,6 +83,7 @@ export async function POST(request) {
       p_post_type: postType,
       p_parent_id: parentId,
       p_guest_name: name,
+      p_guest_email: email,
       p_body: text,
       p_key_hash: hashClientKey(request),
       p_flag_reasons: reasons,

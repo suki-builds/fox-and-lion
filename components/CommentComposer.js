@@ -32,6 +32,7 @@ export default function CommentComposer({
   const router = useRouter();
   const [body, setBody] = useState(initialBody);
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [honeypot, setHoneypot] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
@@ -50,6 +51,7 @@ export default function CommentComposer({
         postType,
         parentId,
         name: name.trim(),
+        email: email.trim(),
         body: trimmed,
         website: honeypot,
         elapsedMs: Date.now() - openedAt.current,
@@ -143,6 +145,17 @@ export default function CommentComposer({
             autoComplete="name"
             required
           />
+          <input
+            type="email"
+            className="comment-composer__name"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            placeholder="Email (not shown)"
+            aria-label="Email address, not shown publicly"
+            maxLength={254}
+            autoComplete="email"
+            required
+          />
           <span className="comment-composer__guest-hint">
             Posting as a guest, or <Link prefetch={false} href="/sign-in">sign in</Link>
           </span>
@@ -186,7 +199,9 @@ export default function CommentComposer({
           <button
             type="submit"
             className="comment-composer__submit"
-            disabled={submitting || !body.trim() || (guest && name.trim().length < 2)}
+            disabled={
+              submitting || !body.trim() || (guest && (name.trim().length < 2 || !email.trim()))
+            }
           >
             {submitting ? 'Posting…' : submitLabel}
           </button>

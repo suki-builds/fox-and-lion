@@ -72,7 +72,9 @@ export default function HeldComments({ initialComments }) {
             </div>
 
             <p className="moderation-queue__comment">
-              <span className="moderation-queue__author">{comment.guest_name} (guest):</span>{' '}
+              <span className="moderation-queue__author">
+                {comment.guest_name} (guest{meta?.email ? `, ${meta.email}` : ''}):
+              </span>{' '}
               {comment.body}
             </p>
 
