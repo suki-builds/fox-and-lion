@@ -57,12 +57,12 @@ export default function AdvertisingGuidePage() {
         </p>
         <p>
           For events and sponsored content, see our{' '}
-          <Link href="/sponsorship-guide">Sponsorship Guide</Link>.
+          <Link prefetch={false} href="/sponsorship-guide">Sponsorship Guide</Link>.
         </p>
 
         <h2>Rates and Booking</h2>
         <p>
-          Rates are available on request. Please use the <Link href="/contact">contact
+          Rates are available on request. Please use the <Link prefetch={false} href="/contact">contact
           page</Link>, or email{' '}
           <a href="mailto:foxandlion@advancedgrowinglabs.com?subject=Advertising">
             foxandlion@advancedgrowinglabs.com
@@ -82,8 +82,8 @@ export default function AdvertisingGuidePage() {
 
         <h2>Get in Touch</h2>
         <p>
-          To discuss advertising with Fox and Lion, please <Link href="/contact">contact
-          us</Link>. See also our <Link href="/sponsorship-guide">Sponsorship Guide</Link>.
+          To discuss advertising with Fox and Lion, please <Link prefetch={false} href="/contact">contact
+          us</Link>. See also our <Link prefetch={false} href="/sponsorship-guide">Sponsorship Guide</Link>.
         </p>
       </div>
     </div>

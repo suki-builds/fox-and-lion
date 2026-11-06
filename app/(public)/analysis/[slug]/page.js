@@ -147,7 +147,7 @@ export default async function AnalysisDetailPage({ params }) {
           <section className="more-news">
             <div className="section-header">
               <h2 className="section-label">More Analysis</h2>
-              <Link href="/analysis" className="section-cta">
+              <Link prefetch={false} href="/analysis" className="section-cta">
                 View all analysis &#8599;
               </Link>
             </div>

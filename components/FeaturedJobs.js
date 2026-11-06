@@ -18,7 +18,7 @@ export default function FeaturedJobs({ jobs }) {
       <h2 className="featured-jobs__heading">Featured Jobs</h2>
       <div className="featured-jobs__grid">
         {jobs.map((job) => (
-          <Link
+          <Link prefetch={false}
             href={`/careers/${job.companySlug}/${job.platformId}`}
             className="featured-jobs__card"
             key={job.id}

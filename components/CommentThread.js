@@ -143,7 +143,7 @@ export default function CommentThread({ postUid, postType = 'news', archived = f
         </h2>
         <p className="comment-thread__rules-link">
           Keep it on-topic and respectful — read the{' '}
-          <Link href="/community-guidelines">Community Guidelines</Link>.
+          <Link prefetch={false} href="/community-guidelines">Community Guidelines</Link>.
         </p>
       </div>
 
@@ -160,7 +160,7 @@ export default function CommentThread({ postUid, postType = 'news', archived = f
         />
       ) : (
         <p className="comment-thread__sign-in-prompt">
-          <Link href="/sign-in">Sign in</Link> to join the discussion.
+          <Link prefetch={false} href="/sign-in">Sign in</Link> to join the discussion.
         </p>
       )}
 

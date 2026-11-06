@@ -304,7 +304,7 @@ export default function TermsOfServicePage() {
           </li>
           <li>
             These Terms, together with our{' '}
-            <Link href="/privacy-policy">Privacy Policy</Link> and Contributor Guidelines
+            <Link prefetch={false} href="/privacy-policy">Privacy Policy</Link> and Contributor Guidelines
             where applicable, constitute the entire agreement between you and Fox and Lion
             regarding the Forum.
           </li>

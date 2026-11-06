@@ -166,7 +166,7 @@ export default async function NewsDetailPage({ params }) {
       <section className="more-news">
         <div className="section-header">
           <h2 className="section-label">More News</h2>
-          <Link href="/news" className="section-cta">
+          <Link prefetch={false} href="/news" className="section-cta">
             View all news &#8599;
           </Link>
         </div>

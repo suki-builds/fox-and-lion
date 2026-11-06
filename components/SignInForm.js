@@ -25,11 +25,11 @@ export default function SignInForm() {
         />
         <span>
           I agree to the{' '}
-          <Link href="/terms-of-service" target="_blank" rel="noopener noreferrer">
+          <Link prefetch={false} href="/terms-of-service" target="_blank" rel="noopener noreferrer">
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link href="/community-guidelines" target="_blank" rel="noopener noreferrer">
+          <Link prefetch={false} href="/community-guidelines" target="_blank" rel="noopener noreferrer">
             Community Guidelines
           </Link>
           .
@@ -44,7 +44,7 @@ export default function SignInForm() {
         />
         <span>
           I agree to the OPSEC requirements in the{' '}
-          <Link href="/terms-of-service#opsec" target="_blank" rel="noopener noreferrer">
+          <Link prefetch={false} href="/terms-of-service#opsec" target="_blank" rel="noopener noreferrer">
             Terms of Service
           </Link>{' '}
           and will not post classified, restricted, or operationally sensitive information.

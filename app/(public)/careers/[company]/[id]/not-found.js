@@ -7,7 +7,7 @@ import Link from 'next/link';
 export default function JobNotFound() {
   return (
     <div className="container">
-      <Link href="/careers" className="job-detail__back">
+      <Link prefetch={false} href="/careers" className="job-detail__back">
         &larr; All careers
       </Link>
       <div className="job-detail__not-found">

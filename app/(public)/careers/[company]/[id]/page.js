@@ -85,7 +85,7 @@ export default async function JobDetailPage({ params }) {
 
   return (
     <div className="container">
-      <Link href="/careers" className="job-detail__back">
+      <Link prefetch={false} href="/careers" className="job-detail__back">
         &larr; All careers
       </Link>
 
@@ -100,7 +100,7 @@ export default async function JobDetailPage({ params }) {
           {formattedDate && <span>Posted {formattedDate}</span>}
         </div>
         {isManualJob ? (
-          <Link href={`/careers/${params.company}/${params.id}/apply`} className="job-detail__apply">
+          <Link prefetch={false} href={`/careers/${params.company}/${params.id}/apply`} className="job-detail__apply">
             Apply Now &#8599;
           </Link>
         ) : (

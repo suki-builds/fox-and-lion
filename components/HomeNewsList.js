@@ -24,7 +24,7 @@ function NewsThumb({ href, imageUrl }) {
   }, []);
 
   return (
-    <Link href={href} className="news-list__thumb">
+    <Link prefetch={false} href={href} className="news-list__thumb">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         ref={imgRef}
@@ -58,11 +58,11 @@ export default function HomeNewsList({ items }) {
           <div className="news-list__item" key={item.id}>
             <NewsThumb href={item.href} imageUrl={item.imageUrl} />
             <div>
-              <Link href={item.href} className="news-list__headline-link">
+              <Link prefetch={false} href={item.href} className="news-list__headline-link">
                 <h3 className="news-list__headline">{item.title}</h3>
               </Link>
               {item.sourceName && (
-                <Link href={item.href} className="news-list__source">
+                <Link prefetch={false} href={item.href} className="news-list__source">
                   {item.sourceName}
                 </Link>
               )}

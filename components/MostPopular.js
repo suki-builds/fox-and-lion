@@ -41,7 +41,7 @@ export default async function MostPopular({ posts }) {
         {ranked.map(({ post, views }, index) => (
           <li key={post.id} className="most-popular__item">
             {post.data.cover_image?.url && (
-              <Link href={`/analysis/${post.uid}`} className="most-popular__media" tabIndex={-1}>
+              <Link prefetch={false} href={`/analysis/${post.uid}`} className="most-popular__media" tabIndex={-1}>
                 <Image
                   src={coverImageSrc(post.data.cover_image.url, { w: 600 })}
                   alt=""
@@ -55,7 +55,7 @@ export default async function MostPopular({ posts }) {
               {index + 1}
             </span>
             <div className="most-popular__body">
-              <Link href={`/analysis/${post.uid}`} className="most-popular__title">
+              <Link prefetch={false} href={`/analysis/${post.uid}`} className="most-popular__title">
                 {post.data.title}
               </Link>
               <div className="most-popular__meta">

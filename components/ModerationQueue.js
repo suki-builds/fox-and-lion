@@ -166,7 +166,7 @@ export default function ModerationQueue({ initialReports }) {
                 {REASON_LABELS[report.reason_code] || report.reason_code}
               </span>
               {comment && (
-                <Link
+                <Link prefetch={false}
                   href={`${comment.post_type === 'analysis' ? '/analysis' : '/news'}/${comment.post_uid}`}
                   target="_blank"
                   rel="noopener noreferrer"

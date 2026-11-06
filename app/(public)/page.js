@@ -49,7 +49,7 @@ export default async function HomePage() {
     <>
       {featured && (
         <section className="hero">
-          <Link
+          <Link prefetch={false}
             href={`/analysis/${featured.uid}`}
             className="hero__media"
             style={{ aspectRatio: imageAspectRatio(featured.data.cover_image) }}
@@ -69,7 +69,7 @@ export default async function HomePage() {
           </Link>
           <div className="hero__copy">
             <p className="hero__label">{featuredCategory}</p>
-            <Link href={`/analysis/${featured.uid}`} className="hero__title-link">
+            <Link prefetch={false} href={`/analysis/${featured.uid}`} className="hero__title-link">
               <h1>{featured.data.title}</h1>
             </Link>
             <div className="hero__meta">
@@ -78,7 +78,7 @@ export default async function HomePage() {
               {featuredDate && <span>{featuredDate}</span>}
             </div>
             <div className="hero__cta">
-              <Link href={`/analysis/${featured.uid}`} className="eyebrow-link">
+              <Link prefetch={false} href={`/analysis/${featured.uid}`} className="eyebrow-link">
                 Read the full {featuredCategory.toLowerCase()} &rarr;
               </Link>
             </div>
@@ -89,7 +89,7 @@ export default async function HomePage() {
       <div className="container">
         <div className="section-header">
           <h2 className="section-label">Latest News</h2>
-          <Link href="/news" className="section-cta">
+          <Link prefetch={false} href="/news" className="section-cta">
             View all news &#8599;
           </Link>
         </div>
@@ -99,7 +99,7 @@ export default async function HomePage() {
 
         <div className="section-header">
           <h2 className="section-label">Recent Analysis</h2>
-          <Link href="/analysis" className="section-cta">
+          <Link prefetch={false} href="/analysis" className="section-cta">
             View all analysis &#8599;
           </Link>
         </div>

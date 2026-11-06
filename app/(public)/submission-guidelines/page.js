@@ -64,7 +64,7 @@ export default function SubmissionGuidelinesPage() {
         <h2>The Submission Process</h2>
         <p>
           All pitches should be submitted through our{' '}
-          <Link href="/submission-portal">submissions portal</Link>; we would ask
+          <Link prefetch={false} href="/submission-portal">submissions portal</Link>; we would ask
           that pitches not be sent by email or any other form of personal correspondence.
           A pitch should be brief (under 200 words) comprising the main argument to be
           made, together with a short account of why the author&rsquo;s experience

@@ -45,7 +45,7 @@ export default function PostCard({
   const sourceName = sourceNameProp ?? (sourceUrl ? resolveSourceName(null, sourceUrl) : null);
 
   return (
-    <Link href={href} className={`post-card${compact ? ' post-card--compact' : ''}`}>
+    <Link prefetch={false} href={href} className={`post-card${compact ? ' post-card--compact' : ''}`}>
       {showMedia && (
         <PostCardMedia
           src={coverImageUrl}

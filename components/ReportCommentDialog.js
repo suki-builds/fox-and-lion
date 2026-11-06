@@ -78,7 +78,7 @@ export default function ReportCommentDialog({ commentId, onClose }) {
           onChange={(event) => setDetail(event.target.value)}
         />
         <p className="report-dialog__guidelines-link">
-          See our <Link href="/community-guidelines">Community Guidelines</Link>.
+          See our <Link prefetch={false} href="/community-guidelines">Community Guidelines</Link>.
         </p>
         {status === 'error' && (
           <p className="report-dialog__error">

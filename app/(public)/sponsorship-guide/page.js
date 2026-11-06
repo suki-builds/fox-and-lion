@@ -78,12 +78,12 @@ export default function SponsorshipGuidePage() {
 
         <h2>Get in Touch</h2>
         <p>
-          To discuss sponsorship, please <Link href="/contact">contact us</Link>, or email{' '}
+          To discuss sponsorship, please <Link prefetch={false} href="/contact">contact us</Link>, or email{' '}
           <a href="mailto:foxandlion@advancedgrowinglabs.com?subject=Sponsorship">
             foxandlion@advancedgrowinglabs.com
           </a>{' '}
           with &ldquo;Sponsorship&rdquo; in the subject line. For display advertising, see
-          our <Link href="/advertising-guide">Advertising Guide</Link>.
+          our <Link prefetch={false} href="/advertising-guide">Advertising Guide</Link>.
         </p>
       </div>
     </div>

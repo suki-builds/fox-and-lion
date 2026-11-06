@@ -37,7 +37,7 @@ export default function CookieBanner() {
         <p className="cookie-banner__text">
           We use essential cookies to keep you signed in. With your permission, we will
           also set one cookie to count article views and shares accurately. No advertising
-          or cross-site tracking. See our <Link href="/privacy-policy">Privacy Policy</Link>.
+          or cross-site tracking. See our <Link prefetch={false} href="/privacy-policy">Privacy Policy</Link>.
         </p>
         <div className="cookie-banner__actions">
           <button

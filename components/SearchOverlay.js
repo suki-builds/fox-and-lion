@@ -146,7 +146,7 @@ export default function SearchOverlay({ open, onClose }) {
             <ul className="search-results">
               {results.map((item, index) => (
                 <li key={`${item.type}-${item.url}-${index}`}>
-                  <Link href={item.url} className="search-result" onClick={onClose}>
+                  <Link prefetch={false} href={item.url} className="search-result" onClick={onClose}>
                     <div className="search-result__head">
                       <span className="search-result__type">{item.type}</span>
                       {item.date && (
@@ -162,7 +162,7 @@ export default function SearchOverlay({ open, onClose }) {
           )}
         </div>
 
-        <Link href="/careers" className="search-overlay__careers-link" onClick={onClose}>
+        <Link prefetch={false} href="/careers" className="search-overlay__careers-link" onClick={onClose}>
           Looking for a job? Browse Careers &rarr;
         </Link>
       </div>

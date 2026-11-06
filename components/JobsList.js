@@ -19,13 +19,13 @@ export default function JobsList({ jobs }) {
         <div className="jobs-panel__title">
           <span className="section-label">Defence Tech Careers</span>
         </div>
-        <Link href="/careers" className="section-cta">
+        <Link prefetch={false} href="/careers" className="section-cta">
           View all careers &#8599;
         </Link>
       </div>
       {jobs.length === 0 && <p style={{ padding: '1.5rem 0' }}>No open roles right now.</p>}
       {jobs.map((job) => (
-        <Link
+        <Link prefetch={false}
           href={`/careers/${job.companySlug}/${job.platformId}`}
           className={`job-row${job.featured ? ' job-row--featured' : ''}`}
           key={job.id}

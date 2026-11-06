@@ -22,7 +22,7 @@ export default async function JobApplyPage({ params }) {
   if (!job) {
     return (
       <div className="container" style={{ paddingTop: '2.5rem' }}>
-        <Link href="/careers" className="job-detail__back">
+        <Link prefetch={false} href="/careers" className="job-detail__back">
           &larr; All careers
         </Link>
         <div className="job-detail__not-found">
@@ -35,7 +35,7 @@ export default async function JobApplyPage({ params }) {
 
   return (
     <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
-      <Link href={`/careers/${params.company}/${params.id}`} className="job-detail__back">
+      <Link prefetch={false} href={`/careers/${params.company}/${params.id}`} className="job-detail__back">
         &larr; View full job details
       </Link>
 

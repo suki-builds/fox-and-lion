@@ -11,7 +11,7 @@ export default function SubmissionPortalPage() {
       <h1>Submission Portal</h1>
       <p style={{ color: 'var(--color-text-body)', maxWidth: '680px' }}>
         Before pitching, please read our{' '}
-        <Link href="/submission-guidelines" style={{ color: 'var(--color-accent)' }}>
+        <Link prefetch={false} href="/submission-guidelines" style={{ color: 'var(--color-accent)' }}>
           Submissions Guidelines
         </Link>{' '}
         in full &mdash; it will save contributors and editors alike a great deal of time.
@@ -22,7 +22,7 @@ export default function SubmissionPortalPage() {
         <aside className="submission-sidebar">
           <div className="submission-sidebar__box">
             <p>Read the full submissions guidelines before you pitch.</p>
-            <Link href="/submission-guidelines" className="submission-sidebar__link">
+            <Link prefetch={false} href="/submission-guidelines" className="submission-sidebar__link">
               Submissions Guidelines &rarr;
             </Link>
           </div>

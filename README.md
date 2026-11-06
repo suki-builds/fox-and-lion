@@ -234,5 +234,9 @@ Storage > `application-attachments`.
 - **Job pages.** Only the featured job and the newest 100 are built at
   deploy time. The rest are generated on first visit, which keeps builds
   short.
+- **Links don't prefetch.** Every `<Link>` has `prefetch={false}`. By
+  default Next.js preloads each link as it scrolls into view, and every
+  preload is a CDN request, which ran close to the Hobby plan's limit.
+  Keep it off on new links.
 - **Vercel plan.** The Hobby plan is non-commercial only. Move to Pro before
   selling anything on the site.

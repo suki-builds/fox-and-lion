@@ -182,7 +182,7 @@ export default function JobsBoard({ jobs, companies }) {
           <p className="jobs-board__empty">No roles match those filters.</p>
         )}
         {visible.map((job) => (
-          <Link
+          <Link prefetch={false}
             href={`/careers/${job.companySlug}/${job.platformId}`}
             className="job-row"
             key={job.id}

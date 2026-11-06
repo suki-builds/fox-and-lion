@@ -42,20 +42,20 @@ export default function AboutPage() {
         <ul>
           <li>
             {' '}
-           <Link href="/analysis"><strong>Analysis </strong></Link>
+           <Link prefetch={false} href="/analysis"><strong>Analysis </strong></Link>
             &mdash; considered commentary and interviews on
             defence technology, procurement, policy, and industrial base reform, written
             by operators, founders, veterans, investors, and policy insiders.
           </li>
           <li>  
             {' '}
-           <Link href="/news"><strong>News </strong></Link>
+           <Link prefetch={false} href="/news"><strong>News </strong></Link>
             &mdash; a curated selection of the defence technology
             stories that merit attention, gathered in one place.
           </li>
           <li>
             {' '}
-           <Link href="/careers"><strong>Defence Tech Jobs </strong></Link>
+           <Link prefetch={false} href="/careers"><strong>Defence Tech Jobs </strong></Link>
             &mdash; a live jobs board carrying the
             latest open roles across the defence technology sector.
           </li>
@@ -96,7 +96,7 @@ export default function AboutPage() {
         <p>
           A full account of how to pitch, and what is expected of a submission may be
           found in our{' '}
-          <Link href="/submission-guidelines">Submissions Guidelines</Link>.
+          <Link prefetch={false} href="/submission-guidelines">Submissions Guidelines</Link>.
         </p>
 
         <h2>Join the Team</h2>

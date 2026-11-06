@@ -46,21 +46,21 @@ export default function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header__masthead">
-        <Link href="/" className="site-header__logo">
+        <Link prefetch={false} href="/" className="site-header__logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Fox and Lion" className="site-header__logo-img" />
         </Link>
         {/* Desktop only - see the tab bar below for mobile. */}
         <nav className="site-header__nav">
-          <Link href="/analysis">Analysis</Link>
-          <Link href="/news">News</Link>
-          <Link href="/careers">Careers</Link>
-          <Link href="/submission-portal">Submit a Pitch</Link>
-          <Link href="/submission-guidelines">Submissions Guidelines</Link>
+          <Link prefetch={false} href="/analysis">Analysis</Link>
+          <Link prefetch={false} href="/news">News</Link>
+          <Link prefetch={false} href="/careers">Careers</Link>
+          <Link prefetch={false} href="/submission-portal">Submit a Pitch</Link>
+          <Link prefetch={false} href="/submission-guidelines">Submissions Guidelines</Link>
         </nav>
         <div className="site-header__actions">
           {user ? (
-            <Link href="/account" className="site-header__avatar-link" aria-label="Account">
+            <Link prefetch={false} href="/account" className="site-header__avatar-link" aria-label="Account">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {/* referrerPolicy is required - Google's photo CDN
                   (lh3.googleusercontent.com) can reject the request based
@@ -73,7 +73,7 @@ export default function SiteHeader() {
               />
             </Link>
           ) : (
-            <Link href="/sign-in" className="site-header__sign-in">
+            <Link prefetch={false} href="/sign-in" className="site-header__sign-in">
               Sign In
             </Link>
           )}
@@ -92,7 +92,7 @@ export default function SiteHeader() {
         {TABS.map(({ href, label }) => {
           const active = isActive(pathname, href);
           return (
-            <Link
+            <Link prefetch={false}
               key={href}
               href={href}
               className={`site-header__tab${active ? ' is-active' : ''}`}

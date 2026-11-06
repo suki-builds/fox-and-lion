@@ -22,14 +22,14 @@ export default function SiteFooter() {
           </p>
         </div>
         <nav className="site-footer__nav">
-          <Link href="/about">About</Link>
-          <Link href="/submission-guidelines">Submissions Guidelines</Link>
-          <Link href="/submission-portal">Submit a Pitch</Link>
-          <Link href="/advertising-guide">Advertising Guide</Link>
-          <Link href="/sponsorship-guide">Sponsorship Guide</Link>
-          <Link href="/contact">Contact</Link>
-          <Link href="/privacy-policy">Privacy Policy</Link>
-          <Link href="/terms-of-service">Terms of Service</Link>
+          <Link prefetch={false} href="/about">About</Link>
+          <Link prefetch={false} href="/submission-guidelines">Submissions Guidelines</Link>
+          <Link prefetch={false} href="/submission-portal">Submit a Pitch</Link>
+          <Link prefetch={false} href="/advertising-guide">Advertising Guide</Link>
+          <Link prefetch={false} href="/sponsorship-guide">Sponsorship Guide</Link>
+          <Link prefetch={false} href="/contact">Contact</Link>
+          <Link prefetch={false} href="/privacy-policy">Privacy Policy</Link>
+          <Link prefetch={false} href="/terms-of-service">Terms of Service</Link>
           <CookieSettingsLink />
         </nav>
         <div className="site-footer__socials">
