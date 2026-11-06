@@ -3,15 +3,6 @@
 Features that have been discussed and planned but not built yet. Move an item
 out of this file once it ships.
 
-## Guest commenting
-
-Let readers comment without signing up. Comments currently need an account.
-
-- A comment form that takes a display name and no account.
-- Automatic spam and profanity filters. Anything they catch is flagged for
-  review.
-- Decide before building: whether flagged comments stay hidden until reviewed,
-  and who reviews them.
 
 ## LinkedIn login
 
