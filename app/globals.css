@@ -2399,15 +2399,10 @@ a {
   align-items: center;
   gap: 0.2rem;
   max-width: 728px;
+  /* Same small gap above and below - the hero underneath shouldn't touch
+     the creative. */
   margin: 0.3rem auto;
   padding: 0 1.5rem;
-}
-
-@media (min-width: 640px) {
-  .ad-banner {
-    /* Flush against the hero below, on desktop specifically. */
-    margin-bottom: 0;
-  }
 }
 
 .ad-banner__label {
