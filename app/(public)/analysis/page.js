@@ -17,7 +17,7 @@ export default async function AnalysisListPage() {
   const stats = await getBatchedPostStats('analysis', posts.map((post) => post.uid));
 
   return (
-    <div className="container" style={{ paddingTop: '2.5rem' }}>
+    <div className="container page">
       <h1>Analysis</h1>
       {/* The provider is what resolves each card's own vote. getBatchedPostStats
           can't do it server-side without calling cookies(), which would force

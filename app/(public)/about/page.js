@@ -8,7 +8,7 @@ export const metadata = {
 // this file directly when the copy is updated. Source: About V01.docx.
 export default function AboutPage() {
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
+    <div className="container page">
       <h1>About</h1>
 
       <div className="article-body">

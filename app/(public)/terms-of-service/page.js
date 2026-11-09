@@ -11,7 +11,7 @@ export const metadata = {
 // new version is issued, and bump "Last updated"/"Version" below to match.
 export default function TermsOfServicePage() {
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
+    <div className="container page">
       <h1>Terms of Service</h1>
       <p style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--label-stack)', fontSize: '0.85rem' }}>
         Last updated: 31 August 2026 &middot; Version 1.0

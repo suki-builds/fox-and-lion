@@ -66,7 +66,7 @@ export default async function AnalysisDetailPage({ params }) {
 
   if (!post) {
     return (
-      <div className="container" style={{ paddingTop: '2.5rem' }}>
+      <div className="container page">
         <h1>Not found</h1>
         <p>This article does not exist or has been unpublished.</p>
       </div>

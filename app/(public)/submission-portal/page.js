@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function SubmissionPortalPage() {
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
+    <div className="container page">
       <h1>Submission Portal</h1>
       <p style={{ color: 'var(--color-text-body)', maxWidth: '680px' }}>
         Before pitching, please read our{' '}

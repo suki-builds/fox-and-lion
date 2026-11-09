@@ -10,7 +10,7 @@ export const metadata = {
 // user-submitted).
 export default function CommunityGuidelinesPage() {
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
+    <div className="container page">
       <h1>Community Guidelines</h1>
 
       <div className="article-body">

@@ -9,7 +9,7 @@ export const metadata = {
 // Guidelines v04.docx.
 export default function SubmissionGuidelinesPage() {
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
+    <div className="container page">
       <h1>Submissions Guidelines</h1>
 
       <div className="article-body">

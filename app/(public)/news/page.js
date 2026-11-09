@@ -49,7 +49,7 @@ export default async function NewsListPage() {
   });
 
   return (
-    <div className="container" style={{ paddingTop: '2.5rem' }}>
+    <div className="container page">
       <h1>News</h1>
       <NewsListClient posts={items} />
     </div>

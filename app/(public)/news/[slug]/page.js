@@ -77,7 +77,7 @@ export default async function NewsDetailPage({ params }) {
 
   if (!post) {
     return (
-      <div className="container" style={{ paddingTop: '2.5rem' }}>
+      <div className="container page">
         <h1>Not found</h1>
         <p>This item does not exist or has been unpublished.</p>
       </div>
@@ -108,7 +108,7 @@ export default async function NewsDetailPage({ params }) {
     : null;
 
   return (
-    <article className="container" style={{ paddingTop: '2.5rem' }}>
+    <article className="container page">
       {post.data.source_url ? (
         <a
           href={post.data.source_url}

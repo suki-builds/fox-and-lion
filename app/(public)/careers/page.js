@@ -30,7 +30,7 @@ export default async function JobsPage() {
   const featuredJobs = jobs.filter((job) => job.featured).slice(0, 3);
 
   return (
-    <div className="container" style={{ paddingTop: '2.5rem' }}>
+    <div className="container page">
       <div className="jobs-board__header">
         <h1>Defence Tech Careers</h1>
       </div>

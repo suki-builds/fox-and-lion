@@ -30,7 +30,7 @@ export default async function AccountPage() {
     .maybeSingle();
 
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
+    <div className="container page">
       <h1>Account</h1>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', marginTop: '1.5rem' }}>
         {avatarUrl && (

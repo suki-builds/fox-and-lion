@@ -8,7 +8,7 @@ export const metadata = {
 // directly. Source: Sponsorship Guide text.docx.
 export default function SponsorshipGuidePage() {
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
+    <div className="container page">
       <h1>Sponsorship Guide</h1>
 
       <div className="article-body">

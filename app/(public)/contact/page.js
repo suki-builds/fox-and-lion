@@ -6,7 +6,7 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
+    <div className="container page">
       <h1>Contact</h1>
       <p style={{ color: 'var(--color-text-body)', maxWidth: '680px' }}>
         Have a question or something to raise with the editorial team? Send us a message

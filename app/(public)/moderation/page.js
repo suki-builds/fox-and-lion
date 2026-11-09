@@ -42,7 +42,7 @@ export default async function ModerationPage() {
     .order('created_at', { ascending: true });
 
   return (
-    <div className="container" style={{ paddingTop: '2.5rem', paddingBottom: '3rem' }}>
+    <div className="container page">
       <h1>Moderation Queue</h1>
       <h2 className="moderation-section__heading">Held for review</h2>
       <HeldComments initialComments={held || []} />
