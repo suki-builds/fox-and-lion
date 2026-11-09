@@ -23,6 +23,14 @@
         },
         "type": "Text"
       },
+      "title_image": {
+        "config": {
+          "constraint": {},
+          "label": "Title Image",
+          "thumbnails": []
+        },
+        "type": "Image"
+      },
       "commentary": {
         "config": {
           "allowTargetBlank": true,

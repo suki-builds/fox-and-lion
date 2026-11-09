@@ -1,4 +1,4 @@
-import { getBatchedThumbnails } from '../lib/newsThumbnails';
+import { getBatchedThumbnails, newsTitleImage } from '../lib/newsThumbnails';
 import { resolveSourceName } from '../lib/format';
 import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../lib/publishedDate';
 import { getBatchedPostStats } from '../lib/postStats';
@@ -50,7 +50,7 @@ export default async function DefenceNewsList({ posts, excludeUid }) {
       uid: post.uid,
       href: `/news/${post.uid}`,
       title: post.data.title,
-      imageUrl: meta.image,
+      imageUrl: newsTitleImage(post, { w: 800 }) || meta.image,
       sourceName: resolveSourceName(meta.siteName, post.data.source_url),
       formattedDate: formatDate(effectivePublishedAt(post)),
       archived: isArchived(post),

@@ -1,5 +1,5 @@
 import { getNewsList } from '../../../lib/prismic';
-import { getBatchedThumbnails } from '../../../lib/newsThumbnails';
+import { getBatchedThumbnails, newsTitleImage } from '../../../lib/newsThumbnails';
 import { resolveSourceName } from '../../../lib/format';
 import { effectivePublishedAt, sortByPublishedAt, isOlderThanDays, ARCHIVE_AFTER_DAYS } from '../../../lib/publishedDate';
 import { getBatchedPostStats } from '../../../lib/postStats';
@@ -43,7 +43,7 @@ export default async function NewsListPage() {
       title: post.data.title,
       sourceUrl: post.data.source_url,
       sourceName: meta ? resolveSourceName(meta.siteName, post.data.source_url) : null,
-      coverImageUrl: meta?.image,
+      coverImageUrl: newsTitleImage(post, { w: 800 }) || meta?.image,
       stats: stats[post.uid],
     };
   });

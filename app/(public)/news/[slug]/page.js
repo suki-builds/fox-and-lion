@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { PrismicRichText } from '@prismicio/react';
 import { getNewsList, getNewsBySlug, getLatestNews } from '../../../../lib/prismic';
 import { buildMetadata } from '../../../../lib/seo';
-import { getThumbnail } from '../../../../lib/newsThumbnails';
+import { getThumbnail, newsTitleImage } from '../../../../lib/newsThumbnails';
+import { socialImageSrc } from '../../../../lib/prismicImage';
 import { resolveSourceName } from '../../../../lib/format';
 import { effectivePublishedAt, isArchived } from '../../../../lib/publishedDate';
 import { extractYouTubeId } from '../../../../lib/youtube';
@@ -51,11 +52,18 @@ export async function generateMetadata({ params }) {
   // cover_image fallback has nothing to land on - give it the same
   // source-article/YouTube thumbnail the page body itself displays,
   // rather than shipping a social card with no image.
+  // An uploaded Title Image wins over both.
+  const titleImage = post.data.title_image?.url;
   const youtubeId = post.data.source_url ? extractYouTubeId(post.data.source_url) : null;
-  const meta = !youtubeId && post.data.source_url ? await getPostThumbnail(post.uid, post.data.source_url) : null;
-  const fallbackImage = youtubeId
-    ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
-    : meta?.image || undefined;
+  const meta =
+    !titleImage && !youtubeId && post.data.source_url
+      ? await getPostThumbnail(post.uid, post.data.source_url)
+      : null;
+  const fallbackImage = titleImage
+    ? socialImageSrc(titleImage)
+    : youtubeId
+      ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
+      : meta?.image || undefined;
 
   return buildMetadata({
     data: post.data,
@@ -85,7 +93,8 @@ export default async function NewsDetailPage({ params }) {
     post.data.source_url ? getPostThumbnail(post.uid, post.data.source_url) : null,
     getLatestNews(6),
   ]);
-  const thumbnail = meta?.image;
+  const titleImage = newsTitleImage(post);
+  const thumbnail = titleImage || meta?.image;
   const sourceName = post.data.source_url ? resolveSourceName(meta?.siteName, post.data.source_url) : null;
   const youtubeId = post.data.source_url ? extractYouTubeId(post.data.source_url) : null;
   // YouTube's own watch-page og:image sits far past scrapePageMeta's 100KB
@@ -95,7 +104,7 @@ export default async function NewsDetailPage({ params }) {
   // thumbnail CDN, no page fetch needed at all. hqdefault is used (not
   // maxresdefault) since it's guaranteed to exist for every video.
   const youtubeThumbnail = youtubeId
-    ? `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
+    ? titleImage || `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
     : null;
 
   return (

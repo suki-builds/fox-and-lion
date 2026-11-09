@@ -104,6 +104,7 @@ The code reads fields by these exact API IDs. Full definitions are in
 |---|---|---|
 | Title | `title` | Text |
 | Source URL | `source_url` | Text |
+| Title Image | `title_image` | Image, optional. Overrides the image pulled from the source |
 | Commentary | `commentary` | Rich Text |
 | Published At | `published_at` | Timestamp, optional |
 | SEO Description | `seo_description` | Text |
