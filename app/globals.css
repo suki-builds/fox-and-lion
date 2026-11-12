@@ -555,11 +555,14 @@ a {
   margin-bottom: 0;
 }
 
+/* Author and date in the grotesk, like bylines elsewhere on the site. */
 .hero__meta {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+  font-family: var(--label-stack);
+  font-size: 0.85rem;
   margin: 0.75rem 0 1.5rem;
 }
 
