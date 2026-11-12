@@ -180,6 +180,19 @@ a {
   object-fit: cover;
 }
 
+/* For an account with no profile photo (LinkedIn sometimes has none). */
+.site-header__avatar--initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent);
+  color: var(--color-bg);
+  font-family: var(--label-stack);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
 /* Newspaper-style section tabs: a heavy rule above, a hairline below,
    hairlines between, and the current section underlined in the accent. */
 .site-header__tabs {

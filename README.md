@@ -9,7 +9,7 @@ The [roadmap](ROADMAP.md) lists what's planned next.
 
 - **Next.js 14** (App Router), hosted on Vercel
 - **Prismic** for analysis, news and manually posted jobs
-- **Supabase** for sign-in (Google), votes, comments, view counts, pitch and
+- **Supabase** for sign-in (Google and LinkedIn), votes, comments, view counts, pitch and
   contact submissions, job applications and the newsletter list
 - Live jobs pulled each morning from company Greenhouse and Lever boards
   (`lib/ats.js`, synced by a Vercel cron at 06:00)
@@ -142,6 +142,12 @@ options must match exactly, including case and the `&`.
 The community features (votes, comments, views, moderation, profiles, the
 newsletter list and so on) are built from the migrations in
 `supabase/migrations/`, run in number order in the Supabase SQL editor.
+
+Sign-in uses Google and LinkedIn, both switched on under Authentication >
+Providers. LinkedIn is the "LinkedIn (OIDC)" provider, with the Client ID and
+Secret from a LinkedIn developer app that has the "Sign In with LinkedIn using
+OpenID Connect" product. Both providers send people back to
+`/auth/callback`, which must be in the Redirect URLs list.
 
 The form tables predate the migrations folder, so their SQL is here. The
 public site can insert into them but never read them. Read submissions in

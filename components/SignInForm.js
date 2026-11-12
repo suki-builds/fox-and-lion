@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import GoogleSignInButton from './GoogleSignInButton';
+import OAuthSignInButton from './OAuthSignInButton';
 
 // Requires two affirmative, unchecked-by-default checkboxes before enabling
 // sign-in - same pattern SubmissionPortalForm already uses for its
@@ -72,8 +72,17 @@ export default function SignInForm() {
         </span>
       </label>
 
-      <div style={{ marginTop: '1.25rem' }}>
-        <GoogleSignInButton disabled={!agreedTerms || !agreedOpsec} newsletter={newsletter} />
+      <div style={{ marginTop: '1.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+        <OAuthSignInButton
+          provider="google"
+          disabled={!agreedTerms || !agreedOpsec}
+          newsletter={newsletter}
+        />
+        <OAuthSignInButton
+          provider="linkedin_oidc"
+          disabled={!agreedTerms || !agreedOpsec}
+          newsletter={newsletter}
+        />
       </div>
     </div>
   );

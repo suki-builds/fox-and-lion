@@ -42,6 +42,11 @@ export default function SiteHeader() {
   }, []);
 
   const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+  // LinkedIn accounts don't always come with a photo - fall back to an initial.
+  const initial = (user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || '?')
+    .trim()
+    .charAt(0)
+    .toUpperCase();
 
   return (
     <header className="site-header">
@@ -61,16 +66,24 @@ export default function SiteHeader() {
         <div className="site-header__actions">
           {user ? (
             <Link prefetch={false} href="/account" className="site-header__avatar-link" aria-label="Account">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              {/* referrerPolicy is required - Google's photo CDN
-                  (lh3.googleusercontent.com) can reject the request based
-                  on the page's Referer header without it. */}
-              <img
-                src={avatarUrl}
-                alt=""
-                className="site-header__avatar"
-                referrerPolicy="no-referrer"
-              />
+              {avatarUrl ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {/* referrerPolicy is required - Google's photo CDN
+                      (lh3.googleusercontent.com) can reject the request based
+                      on the page's Referer header without it. */}
+                  <img
+                    src={avatarUrl}
+                    alt=""
+                    className="site-header__avatar"
+                    referrerPolicy="no-referrer"
+                  />
+                </>
+              ) : (
+                <span className="site-header__avatar site-header__avatar--initial" aria-hidden="true">
+                  {initial}
+                </span>
+              )}
             </Link>
           ) : (
             <Link prefetch={false} href="/sign-in" className="site-header__sign-in">

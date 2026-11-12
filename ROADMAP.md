@@ -3,27 +3,6 @@
 Features that have been discussed and planned but not built yet. Move an item
 out of this file once it ships.
 
-
-## LinkedIn login
-
-Add "Sign in with LinkedIn" next to the Google button. About an hour, most of
-it setup.
-
-1. In the LinkedIn developer portal, create an app tied to the Fox and Lion
-   Company Page.
-2. Add the product "Sign In with LinkedIn using OpenID Connect" (free).
-3. Add the Supabase callback URL as an allowed redirect.
-4. In Supabase, go to Authentication > Providers > LinkedIn (OIDC) and paste in
-   the Client ID and Secret.
-5. In the code, add a button like `components/GoogleSignInButton.js` using
-   provider `linkedin_oidc`, and show it in `components/SignInForm.js`.
-
-Notes:
-
-- LinkedIn gives name, email and photo only, not job title or employer.
-- Accounts with the same email on Google and LinkedIn merge automatically. A
-  different email creates a separate account.
-
 ## Shop and subscriptions
 
 Sell merch, stationery, physical issues and subscriptions through Stripe,

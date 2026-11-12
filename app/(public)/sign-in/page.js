@@ -11,7 +11,7 @@ export default function SignInPage() {
     <div className="container page">
       <h1>Sign In</h1>
       <p style={{ color: 'var(--color-text-body)', maxWidth: '680px' }}>
-        Sign in with your Google account.
+        Sign in with your Google or LinkedIn account.
       </p>
       <div style={{ marginTop: '1.5rem' }}>
         <SignInForm />
