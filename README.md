@@ -103,7 +103,7 @@ The code reads fields by these exact API IDs. Full definitions are in
 | Field | API ID | Type |
 |---|---|---|
 | Title | `title` | Text |
-| Source URL | `source_url` | Text |
+| Source URL | `source_url` | Text. Left blank, it becomes https://foxandlion.pub/news |
 | Title Image | `title_image` | Image, optional. Overrides the image pulled from the source |
 | Commentary | `commentary` | Rich Text |
 | Published At | `published_at` | Timestamp, optional |

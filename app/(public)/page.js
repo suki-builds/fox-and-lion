@@ -93,7 +93,7 @@ export default async function HomePage() {
             View all news &#8599;
           </Link>
         </div>
-        <DefenceNewsList posts={newsPosts} />
+        <DefenceNewsList posts={newsPosts} hideHouseSource />
 
         <NewsletterSignup />
 

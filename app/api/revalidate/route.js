@@ -1,6 +1,6 @@
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
-import { getPrismicClient } from '../../../lib/prismic';
+import { getPrismicClient, withNewsDefaults } from '../../../lib/prismic';
 import { storeThumbnail } from '../../../lib/newsThumbnails';
 
 const DETAIL_PATH_BY_TYPE = {
@@ -41,7 +41,8 @@ async function revalidateChangedDocuments(documentIds, origin) {
   await Promise.all(
     documentIds.map(async (id) => {
       try {
-        const doc = await client.getByID(id);
+        const fetched = await client.getByID(id);
+        const doc = fetched.type === 'news_post' ? withNewsDefaults(fetched) : fetched;
         types.push(doc.type);
         const buildPath = DETAIL_PATH_BY_TYPE[doc.type];
         if (!buildPath) return;

@@ -1,5 +1,5 @@
 import { getBatchedThumbnails, newsTitleImage } from '../lib/newsThumbnails';
-import { resolveSourceName } from '../lib/format';
+import { isHouseSource, resolveSourceName } from '../lib/format';
 import { effectivePublishedAt, sortByPublishedAt, isArchived } from '../lib/publishedDate';
 import { getBatchedPostStats } from '../lib/postStats';
 import HomeNewsList from './HomeNewsList';
@@ -24,7 +24,11 @@ function formatDate(date) {
 //
 // Also used for "More news" under each news post, which passes excludeUid
 // so the post being read doesn't list itself.
-export default async function DefenceNewsList({ posts, excludeUid }) {
+//
+// hideHouseSource (homepage only) leaves the source off posts whose source
+// is Fox and Lion itself, so those rows show just the date. "More news" on
+// the post pages keeps showing it.
+export default async function DefenceNewsList({ posts, excludeUid, hideHouseSource = false }) {
   const items = sortByPublishedAt(posts || [])
     .filter((post) => post.uid !== excludeUid)
     .slice(0, MAX_ITEMS);
@@ -51,7 +55,10 @@ export default async function DefenceNewsList({ posts, excludeUid }) {
       href: `/news/${post.uid}`,
       title: post.data.title,
       imageUrl: newsTitleImage(post, { w: 800 }) || meta.image,
-      sourceName: resolveSourceName(meta.siteName, post.data.source_url),
+      sourceName:
+        hideHouseSource && isHouseSource(post.data.source_url)
+          ? null
+          : resolveSourceName(meta.siteName, post.data.source_url),
       formattedDate: formatDate(effectivePublishedAt(post)),
       archived: isArchived(post),
       stats: stats[post.uid],

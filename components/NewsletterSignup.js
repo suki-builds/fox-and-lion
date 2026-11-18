@@ -30,7 +30,7 @@ export default function NewsletterSignup() {
     <section className="newsletter" aria-labelledby="newsletter-heading">
       <p className="newsletter__label">Newsletter</p>
       <h2 id="newsletter-heading" className="newsletter__heading">
-        Defence tech analysis, news and jobs, in your inbox.
+        Defence tech analysis, news, and jobs, in your inbox.
       </h2>
       {status === 'success' ? (
         <p className="newsletter__status is-success">

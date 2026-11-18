@@ -1,6 +1,6 @@
 import { getNewsList } from '../../../lib/prismic';
 import { getBatchedThumbnails, newsTitleImage } from '../../../lib/newsThumbnails';
-import { resolveSourceName } from '../../../lib/format';
+import { isHouseSource, resolveSourceName } from '../../../lib/format';
 import { effectivePublishedAt, sortByPublishedAt, isOlderThanDays, ARCHIVE_AFTER_DAYS } from '../../../lib/publishedDate';
 import { getBatchedPostStats } from '../../../lib/postStats';
 import NewsListClient from '../../../components/NewsListClient';
@@ -42,7 +42,13 @@ export default async function NewsListPage() {
       archived: isOlderThanDays(date, ARCHIVE_AFTER_DAYS.news),
       title: post.data.title,
       sourceUrl: post.data.source_url,
-      sourceName: meta ? resolveSourceName(meta.siteName, post.data.source_url) : null,
+      // '' rather than null for our own posts - PostCard resolves a null
+      // sourceName from the URL itself, which would bring it back.
+      sourceName: isHouseSource(post.data.source_url)
+        ? ''
+        : meta
+          ? resolveSourceName(meta.siteName, post.data.source_url)
+          : null,
       coverImageUrl: newsTitleImage(post, { w: 800 }) || meta?.image,
       stats: stats[post.uid],
     };

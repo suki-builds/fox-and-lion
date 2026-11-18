@@ -1111,6 +1111,11 @@ a {
   margin-left: 0.35rem;
 }
 
+/* No source before it (a Fox and Lion post on the homepage). */
+.news-list__headline-link + .news-list__time {
+  margin-left: 0;
+}
+
 /* ---------- Jobs panel ---------- */
 
 .jobs-panel {
