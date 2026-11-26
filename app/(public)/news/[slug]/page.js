@@ -107,6 +107,23 @@ export default async function NewsDetailPage({ params }) {
     ? titleImage || `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`
     : null;
 
+  // The main image (or video), and the optional Image Caption under it.
+  // Without a caption the markup is exactly as before.
+  const mainMedia = youtubeId ? (
+    <YouTubeEmbed videoId={youtubeId} thumbnail={youtubeThumbnail} title={post.data.title} />
+  ) : thumbnail ? (
+    <a
+      href={post.data.source_url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="news-detail__image"
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={thumbnail} alt="" />
+    </a>
+  ) : null;
+  const imageCaption = post.data.image_caption?.trim();
+
   return (
     <article className="container page">
       {post.data.source_url ? (
@@ -122,20 +139,13 @@ export default async function NewsDetailPage({ params }) {
         <h1>{post.data.title}</h1>
       )}
 
-      {youtubeId ? (
-        <YouTubeEmbed videoId={youtubeId} thumbnail={youtubeThumbnail} title={post.data.title} />
+      {mainMedia && imageCaption ? (
+        <figure className="news-detail__figure">
+          {mainMedia}
+          <figcaption className="media-caption">{imageCaption}</figcaption>
+        </figure>
       ) : (
-        thumbnail && (
-          <a
-            href={post.data.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="news-detail__image"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={thumbnail} alt="" />
-          </a>
-        )
+        mainMedia
       )}
 
       <div className="article-meta">

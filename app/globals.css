@@ -1608,6 +1608,46 @@ a {
   }
 }
 
+/* ---------- Main image captions (Image Caption field) ---------- */
+
+/* Same look as captions inside an article body (.article-body__caption). */
+.media-caption {
+  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  margin: 0.85rem 0 0;
+}
+
+/* News: the image or video plus its caption. The wrapper takes over the
+   media's own outer margin so the spacing around the pair stays the same. */
+.news-detail__figure {
+  margin: 1rem 0;
+}
+
+.news-detail__figure .news-detail__image,
+.news-detail__figure .youtube-embed {
+  margin: 0;
+}
+
+/* Analysis: wraps the hero image so a caption can sit under it. Takes the
+   image's place in the hero grid, centred against the text like before. */
+.hero__figure {
+  margin: 0;
+  min-width: 0;
+  align-self: center;
+}
+
+.media-caption--hero {
+  margin: 0.85rem 0;
+}
+
+@media (max-width: 760px) {
+  .media-caption--hero {
+    padding: 0 1.5rem;
+  }
+}
+
 .youtube-embed {
   display: block;
   position: relative;

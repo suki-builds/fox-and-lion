@@ -78,6 +78,9 @@ export default async function AnalysisDetailPage({ params }) {
     .filter((other) => other.uid !== post.uid)
     .slice(0, 4);
 
+  // Optional Image Caption field - shown under the cover image when filled.
+  const imageCaption = post.data.cover_image?.url ? post.data.image_caption?.trim() : null;
+
   const formattedDate = new Date(effectivePublishedAt(post)).toLocaleDateString(
     'en-GB',
     { day: 'numeric', month: 'long', year: 'numeric' }
@@ -86,23 +89,28 @@ export default async function AnalysisDetailPage({ params }) {
   return (
     <article>
       <section className="hero">
-        <div
-          className="hero__media"
-          style={{ aspectRatio: imageAspectRatio(post.data.cover_image) }}
-        >
-          {post.data.cover_image?.url ? (
-            <Image
-              src={coverImageSrc(post.data.cover_image.url)}
-              alt={post.data.cover_image.alt || ''}
-              fill
-              sizes="(max-width: 900px) 100vw, 1200px"
-              quality={90}
-              priority
-            />
-          ) : (
-            <IllustrationPlaceholder />
+        <figure className="hero__figure">
+          <div
+            className="hero__media"
+            style={{ aspectRatio: imageAspectRatio(post.data.cover_image) }}
+          >
+            {post.data.cover_image?.url ? (
+              <Image
+                src={coverImageSrc(post.data.cover_image.url)}
+                alt={post.data.cover_image.alt || ''}
+                fill
+                sizes="(max-width: 900px) 100vw, 1200px"
+                quality={90}
+                priority
+              />
+            ) : (
+              <IllustrationPlaceholder />
+            )}
+          </div>
+          {imageCaption && (
+            <figcaption className="media-caption media-caption--hero">{imageCaption}</figcaption>
           )}
-        </div>
+        </figure>
         <div className="hero__copy">
           <span className="category-tag">{post.data.category || 'Analysis'}</span>
           <h1>{post.data.title}</h1>

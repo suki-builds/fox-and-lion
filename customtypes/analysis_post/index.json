@@ -47,6 +47,13 @@
         },
         "type": "Image"
       },
+      "image_caption": {
+        "config": {
+          "label": "Image Caption",
+          "placeholder": "Optional. Shown under the main image, e.g. a photo credit"
+        },
+        "type": "Text"
+      },
       "body": {
         "config": {
           "allowTargetBlank": true,

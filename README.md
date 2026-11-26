@@ -88,12 +88,13 @@ The code reads fields by these exact API IDs. Full definitions are in
 | Author | `author` | Text |
 | Category | `category` | Text |
 | Cover Image | `cover_image` | Image |
+| Image Caption | `image_caption` | Key Text, optional. Shown under the cover image |
 | Body | `body` | Rich Text, with Image and Embed blocks enabled |
 | Published At | `published_at` | Timestamp, optional |
-| SEO Title / Description | `seo_title`, `seo_description` | Text |
+| Meta Title / Meta Description | `meta_title`, `meta_description` | Key Text, optional. Default to the post's title |
+| Meta Image | `meta_image` | Image, optional. Link-preview image; defaults to the cover image |
 | SEO Twitter Card | `seo_twitter_card` | Select (`summary`, `summary_large_image`) |
 | SEO No Index | `seo_no_index` | Boolean |
-| SEO Image | `seo_image` | Image |
 
 </details>
 
@@ -103,14 +104,15 @@ The code reads fields by these exact API IDs. Full definitions are in
 | Field | API ID | Type |
 |---|---|---|
 | Title | `title` | Text |
-| Source URL | `source_url` | Text. Left blank, it becomes https://foxandlion.pub/news |
+| Source URL | `source_url` | Key Text. Left blank, it becomes https://foxandlion.pub/news |
 | Title Image | `title_image` | Image, optional. Overrides the image pulled from the source |
+| Image Caption | `image_caption` | Key Text, optional. Shown under the main image or video |
 | Commentary | `commentary` | Rich Text |
 | Published At | `published_at` | Timestamp, optional |
-| SEO Description | `seo_description` | Text |
-| SEO Twitter Card | `seo_twitter_card` | Select |
+| Meta Title / Meta Description | `meta_title`, `meta_description` | Key Text, optional. Default to the post's title |
+| Meta Image | `meta_image` | Image, optional. Link-preview image; defaults to the Title Image, then the source's image |
+| SEO Twitter Card | `seo_twitter_card` | Select (`summary`, `summary_large_image`) |
 | SEO No Index | `seo_no_index` | Boolean |
-| SEO Image | `seo_image` | Image |
 
 </details>
 
@@ -134,6 +136,7 @@ options must match exactly, including case and the `&`.
 | Description | `description` | Rich Text. `heading5` renders as a divider and `heading6` as a caption. |
 | Posted At | `posted_at` | Timestamp, optional |
 | Featured | `featured` | Boolean. Pins the job to the top of `/careers`. |
+| Meta Title / Meta Description / Meta Image | `meta_title`, `meta_description`, `meta_image` | Optional, in the SEO & Metadata tab |
 
 </details>
 
