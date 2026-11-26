@@ -3458,3 +3458,232 @@ a {
   opacity: 0.6;
   cursor: default;
 }
+
+/* ---------- Camouflage generator (/tools/camo) ---------- */
+
+.camo__intro {
+  color: var(--color-text-body);
+  max-width: 680px;
+  margin: 0 0 1.25rem;
+}
+
+.camo {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.camo__preview {
+  aspect-ratio: 4 / 5;
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.camo__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.camo__designation {
+  margin-top: 0.85rem;
+}
+
+.camo__eyebrow {
+  font-family: var(--label-stack);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 0.3rem;
+}
+
+.camo__name {
+  font-family: var(--display-stack);
+  font-size: 1.6rem;
+  line-height: 1.15;
+  color: var(--color-text);
+  margin: 0 0 0.35rem;
+}
+
+.camo__note {
+  color: var(--color-text-body);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.camo__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.camo__controls {
+  display: grid;
+  gap: 1rem;
+}
+
+.camo__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.camo__field-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.camo__field label,
+.camo__field output {
+  font-family: var(--label-stack);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-body);
+}
+
+.camo__field output {
+  color: var(--color-text);
+}
+
+.camo__field select {
+  appearance: none;
+  width: 100%;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--color-text);
+  background-color: var(--color-panel);
+  /* Chevron, drawn in the muted text colour. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23b6bbc9' stroke-width='1.6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  padding: 0.6rem 2.25rem 0.6rem 0.75rem;
+  cursor: pointer;
+}
+
+.camo__field select option {
+  background: var(--color-panel);
+  color: var(--color-text);
+}
+
+.camo__field input[type='range'] {
+  width: 100%;
+  accent-color: var(--color-accent);
+  cursor: pointer;
+  /* Taller hit area for fingers. */
+  min-height: 1.75rem;
+}
+
+.camo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.camo__downloads {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.camo__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-family: var(--label-stack);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--color-bg);
+  background: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: 4px;
+  padding: 0.7rem 1.1rem;
+  cursor: pointer;
+}
+
+.camo__button--secondary {
+  color: var(--color-text);
+  background: transparent;
+  border-color: var(--color-border-strong);
+}
+
+.camo__button--download {
+  justify-content: space-between;
+  width: 100%;
+}
+
+.camo__button-meta {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+}
+
+.camo__button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .camo__button:not(:disabled):hover {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+  }
+
+  .camo__button--secondary:not(:disabled):hover {
+    background: var(--color-panel-hover);
+    border-color: var(--color-text-muted);
+  }
+}
+
+.camo__field select:focus-visible,
+.camo__field input[type='range']:focus-visible,
+.camo__button:focus-visible,
+.camo__fallback-url:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.camo__status {
+  min-height: 1.4em;
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-body);
+}
+
+.camo__fallback-url {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  background: var(--color-panel);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  padding: 0.55rem 0.7rem;
+}
+
+@media (min-width: 900px) {
+  .camo {
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .camo__stage {
+    position: sticky;
+    top: 1.25rem;
+  }
+
+  .camo__preview {
+    aspect-ratio: 4 / 3;
+  }
+}
